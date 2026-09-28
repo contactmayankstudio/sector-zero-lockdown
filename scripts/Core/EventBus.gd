@@ -14,13 +14,17 @@ signal boss_health_changed(current_health: float, max_health: float)
 signal weapon_fired(weapon_id: String, current_ammo: int, max_ammo: int)
 signal weapon_reloaded(weapon_id: String)
 signal weapon_switched(weapon_id: String, display_name: String)
+signal weapon_equipped(weapon_id: String)
 
 # Mission & Progression Signals
 signal wave_started(wave_number: int, total_waves: int)
 signal wave_completed(wave_number: int)
 signal objective_updated(title: String, description: String, progress: int, target: int)
+signal score_changed(score: int)
 signal cash_changed(new_total: int)
 signal mission_finished(mission_id: String, success: bool)
+signal briefing_opened()
+signal briefing_closed()
 
 # Performance & Settings Signals
 signal quality_changed(quality_name: String)

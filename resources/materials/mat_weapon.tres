@@ -2,5 +2,11 @@
 [ext_resource type="Texture2D" path="res://textures/pbr/tex_weapon_metal.png" id="1_tex"]
 [resource]
 albedo_texture = ExtResource("1_tex")
-metallic = 0.85
-roughness = 0.35
+metallic = 1.0
+metallic_specular = 0.8
+roughness = 0.25
+albedo_color = Color(0.65, 0.65, 0.7, 1.0)
+clearcoat_enabled = true
+clearcoat_roughness = 0.15
+anisotropy_enabled = true
+anisotropy = 0.5

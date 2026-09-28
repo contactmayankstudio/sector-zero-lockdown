@@ -1,44 +1,51 @@
-# BRIEFING — 2026-09-06T13:15:30Z
+# BRIEFING — 2026-09-18T05:06:00Z
 
 ## Mission
-Implement Milestone 1 (Campaign Architecture, Wave Engine & Reward Integrity) for Sector Zero: Lockdown.
+Execute Milestone M1: Clean Asset Provenance & License Quarantine (Requirement R3) for 'Sector Zero: Lockdown'.
 
 ## 🔒 My Identity
-- Archetype: worker
-- Roles: [implementer, qa, specialist]
-- Working directory: /workspaces/targetkill/.agents/worker_m1
-- Original parent: 99c0ac96-a596-4724-a7a2-034957bdda66
-- Milestone: M1 (Campaign Architecture, Wave Engine & Reward Integrity)
+- Archetype: teamwork_preview_worker
+- Roles: implementer, qa, specialist
+- Working directory: /home/am/targetkill/.agents/worker_m1
+- Original parent: 237eaf46-e809-4bcf-b125-d5770dc95b5a
+- Milestone: M1 Clean Asset Provenance & License Quarantine
 
 ## 🔒 Key Constraints
-- DO NOT CHEAT: All implementations genuine, no hardcoded test results or dummy facades.
-- DO NOT touch scenes/environments/UrbanStreet.tscn or scenes/environments/AirportTerminal.tscn (Mission 1 must remain 100% intact).
-- Write ownership: resources/missions/ (mission_01.tres - mission_12.tres), scripts/MissionData.gd, scripts/MissionManager.gd, scripts/SaveManager.gd, scripts/GameManager.gd, scripts/MissionSelectUI.gd, scenes/UI/HUD.gd, scripts/ResultUI.gd.
-- Linear cash rewards: $500 -> $6,000 in $500 increments for missions 1 to 12.
-- Single-claim cash reward enforcement: Replaying a completed mission yields $0 bounty.
-- 3 large waves per mission with directional groups in GameManager.gd.
-- HUD wave indicator synced via EventBus.wave_started.
-- MissionSelectUI expanded to display all 12 missions.
-- Headless test verification: scenes/test/TestRunner.tscn (>= 44/44), assets_tests/Zombie360Test.tscn (5/5), scripts/Tools/test_mission1_gameplay.gd.
+- Genuine implementation only, no cheating, no facade implementations, no hardcoding.
+- Exclusive write ownership:
+  - scenes/environments/UrbanStreet.tscn
+  - scenes/environments/ApartmentComplex.tscn
+  - scenes/environments/NightCityStreet.tscn
+  - scenes/player/Player.gd
+  - scripts/UI/ArmoryUI.gd
+  - scenes/weapons/Weapon.gd
+  - assets/zombies/RealisticZombie.gd
+  - assets/zombies/RealisticZombie.tscn
+  - scenes/zombies/Zombie.tscn
+  - scripts/MissionCardUI.gd
+  - ASSET_LICENSES.md
+  - quarantine_suspect_assets/
+- 0 dangling references to quarantined/suspect assets in runtime scripts and scenes.
+- 100% pass on Godot test suite.
 
 ## Current Parent
-- Conversation ID: 99c0ac96-a596-4724-a7a2-034957bdda66
-- Updated: not yet
+- Conversation ID: 237eaf46-e809-4bcf-b125-d5770dc95b5a
+- Updated: 2026-09-18T05:06:00Z
 
 ## Task Summary
-- **What to build**: 12 mission resources with linear cash rewards, single-claim reward enforcement, 3-wave spawning engine with directional support and HUD sync, and 12-mission selection UI.
-- **Success criteria**: All regression tests pass (>= 44/44), Zombie360Test passes, test_mission1_gameplay passes, cash scaling is exact ($500-$6000), replay grants $0 cash, wave indicator displays WAVE X / 3.
-- **Interface contracts**: PROJECT.md § Interface Contracts
-- **Code layout**: PROJECT.md § Code Layout
+- **What to build**: Sever GTA Grove Street and proprietary meshes from environments, normalize weapons and zombie archetypes to CC0 assets, move suspect files to quarantine_suspect_assets/, update ASSET_LICENSES.md, verify cleanly via Godot headless test suites.
+- **Success criteria**: Zero references in project files to quarantined assets; test_weapons_economy.gd and test_ui_screens.gd pass 100%; ASSET_LICENSES.md fully documented.
+- **Interface contracts**: /home/am/targetkill/.agents/orchestrator_9/SCOPE.md
+- **Code layout**: Standard Godot 4.x structure in /home/am/targetkill
 
 ## Key Decisions Made
-- [Initial]: Follow spec miner and campaign explorer findings; structure waves in MissionData as Array[Dictionary]; preserve procedural fallback in GameManager if mission waves are empty to guarantee Mission 1 compatibility.
+- [TBD] Initial investigation starting.
 
 ## Artifact Index
-- /workspaces/targetkill/.agents/worker_m1/DISPATCH.md — Assignment instructions
-- /workspaces/targetkill/.agents/worker_m1/BRIEFING.md — Working memory & status
-- /workspaces/targetkill/.agents/worker_m1/progress.md — Liveness & progress tracker
-- /workspaces/targetkill/.agents/worker_m1/handoff.md — Final completion handoff
+- DISPATCH.md — Assignment instructions
+- BRIEFING.md — Persistent context & working memory
+- progress.md — Liveness heartbeat and step tracking
+- handoff.md — Final 5-component handoff report
 
 ## Change Tracker
 - **Files modified**: None yet
@@ -46,9 +53,9 @@ Implement Milestone 1 (Campaign Architecture, Wave Engine & Reward Integrity) fo
 - **Pending issues**: None
 
 ## Quality Status
-- **Build/test result**: Baseline 44/44 expected
+- **Build/test result**: Pending initial test run
 - **Lint status**: Clean
-- **Tests added/modified**: TBD
+- **Tests added/modified**: Pending
 
 ## Loaded Skills
-- None
+- None required for this milestone

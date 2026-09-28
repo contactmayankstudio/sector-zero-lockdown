@@ -14,6 +14,10 @@ extends Control
 @onready var invert_check = $ScrollContainer/VBoxContainer/ControlsSection/Margin/VBox/InvertBox/InvertCheck
 
 @onready var quality_option = $ScrollContainer/VBoxContainer/GraphicsSection/Margin/VBox/QualityBox/QualityOption
+@onready var privacy_options_section = $ScrollContainer/VBoxContainer/PrivacyOptionsSection
+@onready var ad_consent_button = $ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox/AdConsentButton
+@onready var privacy_options_button = $ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox/PrivacyOptionsButton
+@onready var privacy_policy_button = $ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox/PrivacyPolicyButton
 
 func _ready():
 	var game_state_mgr = get_node_or_null("/root/GameStateManager")
@@ -37,11 +41,11 @@ func _ready():
 	sfx_val.text = "%d%%" % int(sfx_vol * 100)
 	
 	# Controls initialization
-	var sens = settings.get("sensitivity", 0.22)
+	var sens = settings.get("sensitivity", 0.048)
 	sens_slider.value = sens
 	sens_val.text = "%.2f" % sens
 	
-	var aim_sens = settings.get("aim_sensitivity", 0.16)
+	var aim_sens = settings.get("aim_sensitivity", 0.024)
 	aim_sens_slider.value = aim_sens
 	aim_sens_val.text = "%.2f" % aim_sens
 	
@@ -54,8 +58,43 @@ func _ready():
 	if q_mgr:
 		q_val = q_mgr.current_quality
 	quality_option.selected = q_val
+	_configure_privacy_options()
 	
 	print("[%d ms] [SETTINGS] SettingsUI ready." % Time.get_ticks_msec())
+
+func _configure_privacy_options():
+	privacy_options_section.visible = false
+	privacy_options_button.visible = false
+	if not Engine.has_singleton("SectorZeroAdMob"):
+		return
+	privacy_options_section.visible = true
+	var ads_plugin = Engine.get_singleton("SectorZeroAdMob")
+	if ads_plugin.has_signal("privacy_options_requirement_changed"):
+		var callback = Callable(self, "_on_privacy_options_requirement_changed")
+		if not ads_plugin.is_connected("privacy_options_requirement_changed", callback):
+			ads_plugin.connect("privacy_options_requirement_changed", callback)
+	if ads_plugin.has_method("is_privacy_options_required"):
+		privacy_options_button.visible = ads_plugin.is_privacy_options_required()
+
+func _on_privacy_options_requirement_changed(required: bool):
+	privacy_options_button.visible = required
+
+func _on_ad_consent_pressed():
+	var ad_manager = get_node_or_null("/root/AdManager")
+	if ad_manager and ad_manager.has_method("show_ads_preferences"):
+		ad_manager.show_ads_preferences()
+
+func _on_privacy_policy_pressed():
+	var ad_manager = get_node_or_null("/root/AdManager")
+	if ad_manager and ad_manager.has_method("open_privacy_policy"):
+		ad_manager.open_privacy_policy()
+
+func _on_privacy_options_pressed():
+	if not Engine.has_singleton("SectorZeroAdMob"):
+		return
+	var ads_plugin = Engine.get_singleton("SectorZeroAdMob")
+	if ads_plugin.has_method("show_privacy_options_form"):
+		ads_plugin.show_privacy_options_form()
 
 func _on_master_slider_value_changed(value: float):
 	master_val.text = "%d%%" % int(value * 100)
@@ -106,6 +145,10 @@ func _save_setting(key: String, value):
 	if save_mgr and save_mgr.data.has("settings"):
 		save_mgr.data.settings[key] = value
 		save_mgr.save_game()
+
+func _notification(what):
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		_on_back_button_pressed()
 
 func _on_back_button_pressed():
 	var audio_mgr = get_node_or_null("/root/AudioManager")

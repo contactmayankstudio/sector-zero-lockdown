@@ -8,9 +8,12 @@ enum Profile {
 
 var current_profile: int = Profile.MEDIUM
 var current_fps: float = 60.0
+var simulated_fps: float = -1.0
 var frame_time_ms: float = 16.6
 var low_fps_timer: float = 0.0
+var recovery_fps_timer: float = 0.0
 var is_adaptive_throttling: bool = false
+var pre_throttle_profile: int = Profile.MEDIUM
 var last_load_time_ms: int = 0
 
 var diagnostics_layer: CanvasLayer = null
@@ -26,11 +29,20 @@ func _apply_initial_profile():
 	var save_mgr = get_node_or_null("/root/SaveManager")
 	if save_mgr and save_mgr.data.has("selected_quality"):
 		set_profile(save_mgr.data.selected_quality)
-	else:
-		set_profile(Profile.MEDIUM)
+		return
+	var q_mgr = get_node_or_null("/root/QualityManager")
+	if q_mgr and q_mgr.capabilities.has("recommended_profile"):
+		set_profile(q_mgr.capabilities.recommended_profile)
+		return
+	if OS.get_name() == "Android":
+		set_profile(Profile.LOW)
+		return
+	set_profile(Profile.LOW)
 
 func set_profile(profile_idx: int):
 	current_profile = clamp(profile_idx, 0, 2)
+	if not is_adaptive_throttling:
+		pre_throttle_profile = current_profile
 	var q_mgr = get_node_or_null("/root/QualityManager")
 	if q_mgr and q_mgr.has_method("apply_quality"):
 		q_mgr.apply_quality(current_profile)
@@ -39,19 +51,52 @@ func set_last_load_time(time_ms: int):
 	last_load_time_ms = time_ms
 
 func _process(delta):
-	current_fps = Performance.get_monitor(Performance.TIME_FPS)
+	if simulated_fps >= 0.0:
+		current_fps = simulated_fps
+	else:
+		var mon_fps = Performance.get_monitor(Performance.TIME_FPS)
+		if mon_fps > 0.0:
+			current_fps = mon_fps
 	frame_time_ms = delta * 1000.0
 	
 	# Adaptive performance & frame pacing protection
-	if current_fps < 28.0 and not is_adaptive_throttling:
-		low_fps_timer += delta
-		if low_fps_timer >= 3.0:
-			is_adaptive_throttling = true
-			if current_profile > Profile.LOW:
-				set_profile(Profile.LOW)
-				print("[%d ms] [PERF:ADAPTIVE] Frame pacing dip detected (%.1f ms). Throttling to LOW." % [Time.get_ticks_msec(), frame_time_ms])
+	if not is_adaptive_throttling:
+		if current_fps < 28.0:
+			low_fps_timer += delta
+			if low_fps_timer >= 3.0:
+				is_adaptive_throttling = true
+				low_fps_timer = 0.0
+				recovery_fps_timer = 0.0
+				pre_throttle_profile = current_profile
+				if current_profile > Profile.LOW:
+					set_profile(Profile.LOW)
+					print("[%d ms] [PERF:ADAPTIVE] Frame pacing dip detected (%.1f ms). Throttling to LOW." % [Time.get_ticks_msec(), frame_time_ms])
+		else:
+			low_fps_timer = max(0.0, low_fps_timer - delta)
 	else:
-		low_fps_timer = max(0.0, low_fps_timer - delta)
+		# Recovery logic: if FPS sustains > 29.0 for 4+ seconds, recover profile
+		if current_fps > 29.0:
+			recovery_fps_timer += delta
+			if recovery_fps_timer >= 4.0:
+				is_adaptive_throttling = false
+				recovery_fps_timer = 0.0
+				low_fps_timer = 0.0
+				var target_profile = pre_throttle_profile
+				if target_profile <= Profile.LOW:
+					var save_mgr = get_node_or_null("/root/SaveManager")
+					if save_mgr and save_mgr.data.has("selected_quality"):
+						target_profile = clamp(int(save_mgr.data.selected_quality), 0, 2)
+					else:
+						var q_mgr = get_node_or_null("/root/QualityManager")
+						if q_mgr and q_mgr.capabilities.has("recommended_profile"):
+							target_profile = q_mgr.capabilities.recommended_profile
+						else:
+							target_profile = Profile.LOW
+				if current_profile != target_profile:
+					set_profile(target_profile)
+					print("[%d ms] [PERF:ADAPTIVE] Frame pacing recovered (FPS: %.1f > 29.0 for 4s). Restoring profile %d." % [Time.get_ticks_msec(), current_fps, target_profile])
+		else:
+			recovery_fps_timer = max(0.0, recovery_fps_timer - delta)
 		
 	if is_diagnostics_visible and diagnostics_label:
 		_update_diagnostics_display()

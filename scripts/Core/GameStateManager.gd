@@ -59,9 +59,10 @@ func pause_game() -> bool:
 	return false
 
 func resume_game() -> bool:
+	get_tree().paused = false
 	if current_state == State.PAUSED:
 		return change_state(State.GAMEPLAY)
-	return false
+	return true
 
 func toggle_pause() -> bool:
 	if current_state == State.GAMEPLAY:

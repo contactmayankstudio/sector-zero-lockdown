@@ -1,96 +1,74 @@
-# Project: Sector Zero: Lockdown — 12-Mission Campaign & Mission 2
+# Project: Sector Zero: Lockdown — DEAD TARGET Style Realistic 3D Overhaul
 
 ## Architecture
-Sector Zero: Lockdown is a mobile-first stationary 3D zombie FPS built with Godot 4.5.1 under the `gl_compatibility` renderer.
-The project architecture is composed of:
-- **Core Singletons (Autoloads)**: `SaveManager`, `MissionManager`, `GameStateManager`, `EventBus`, `QualityManager`, `PerformanceManager`, `LoadingManager`, `AudioManager`.
-- **Campaign Data**: `MissionData` resources (`resources/missions/mission_01.tres` through `mission_12.tres`) defining unlock dependencies, 3-wave compositions, threat ratings, and single-claim cash bounties ($500 -> $6,000).
-- **Combat & Spawning**: `GameManager.gd` / `ZombieDirector.gd` managing stationary 360-degree combat with 3 large waves per mission, directional spawn points (`DirectionZone`), and `HitZone` detection (`HEAD` 2.5x, `CHEST` 1.0x, `LEG` 0.7x).
-- **Environment Complexes**: 5 reusable complexes (Airport, Railway, Urban, Industrial, Quarantine) using batched GLB meshes, realistic PBR materials, and mobile-friendly directional lighting profiles.
-- **UI Architecture**: `HUD.tscn` (mobile touch controls, wave indicator `WAVE: %d / %d`, boss bar, reticle), `MissionSelectUI.tscn` (12-mission grid + briefing modal), `ResultUI.tscn` (victory stats, single-claim cash display).
+Sector Zero: Lockdown is a mobile-first stationary 3D zombie FPS built with Godot 4 under the `gl_compatibility` renderer.
+This overhaul transforms the game into a DEAD TARGET style realistic visual and combat experience:
+- **High-Fidelity Weapon Pipeline**: PBR-textured weapon models imported from `real assent grafix import karna he` (Flatline AR, CAR SMG, M134 Minigun, Hawk Shotgun, Vantage Sniper). StandardMaterial3D conversion with diffuse/normal/metallic-roughness textures to resolve GLES3 `KHR_materials_pbrSpecularGlossiness` compatibility. Standardized `MuzzleSocket`, recoil kickback, procedural reload animations, and weapon upgrade progression.
+- **Realistic Environment Staging**: Expansive urban complexes (`street_city_7_for_games_free(1).glb`, `tram_station(1).glb`, `street_city_buildings_8.glb`) configured with golden-hour/night PBR directional lighting, filmic tonemapping, crisp orthogonal shadows, zero-glare mobile atmospheric fog, 360-degree navigation regions, and stationary combat cover staging.
+- **Visceral Combat Feedback**: Impactful hit reactions, headshot multipliers (2.5x) with audio punch, mobile-safe `CPUParticles3D` blood splatters, dynamic hitmarkers, and distinct zombie damage/stagger states.
+- **Mobile Performance Safeguards**: Strict `gl_compatibility` budget (<100 draw calls, <=3 active dynamic lights, ASTC/ETC2 texture compression, .gdignore on raw bulk asset folders) ensuring smooth 30/60 FPS on Android.
 
 ## Feature Inventory
-Every feature identified during the Step 0 Survey is cataloged below with its assigned milestone:
+Every feature identified during the Survey phase is cataloged below with its assigned milestone:
 
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
-| 1 | F1: 12-Mission Registry | Complete definitions for `mission_01.tres` to `mission_12.tres` with sequential unlock requirements | M1 | Survey (Campaign Explorer / Spec Miner) |
-| 2 | F2: Gradual Cash Scaling | Linear bounty scaling ($500 -> $6,000 in $500 steps) | M1 | Survey (Spec Miner / Campaign Explorer) |
-| 3 | F3: Single-Claim Bounty Enforcement | Prevent duplicate cash rewards on replay or restart in `MissionManager.gd` / `SaveManager.gd` | M1 | Survey (Spec Miner / Campaign Explorer) |
-| 4 | F4: Save/Load Persistence | Version 2 atomic JSON persistence for unlocked missions and single-claim cash | M1 | Survey (Spec Miner) |
-| 5 | F5: 3-Wave Spawning Engine | Structured 3-wave system in `GameManager.gd` / `MissionData.gd` with directional groups | M1 | Survey (Campaign Explorer) |
-| 6 | F6: Wave & Result UI Sync | HUD wave display (`WAVE: X / 3`) via `EventBus.wave_started` and replay status on `ResultUI` | M1 | Survey (Campaign Explorer) |
-| 7 | F7: 12-Mission Select UI | Expanded `MissionSelectUI.gd` displaying all 12 missions with tactical briefings | M1 | Survey (Campaign Explorer) |
-| 8 | F8: 5 Environment Complexes | Airport, Railway, Urban, Industrial, Quarantine complexes with distinct atmospheres | M2 | Survey (Assets Explorer) |
-| 9 | F9: Airport Service Road Scene | Dedicated `AirportServiceRoad.tscn` for Mission 2 with tarmac, hangars, and barriers | M2 | Survey (Assets Explorer) |
-| 10 | F10: Infected Dog Skeletal Rig | 18-bone quadruped armature with 5 animations (run, attack, hit_head, hit_body, death) | M3 | Survey (Assets Explorer) |
-| 11 | F11: Dog Combat & HitZones | Dedicated `HeadHitZone` (2.5x) and `BodyHitZone` (1.0x), quadruped AI, SFX audio | M3 | Survey (Assets Explorer) |
-| 12 | F12: Mission 2 Wave Progression | 3 escalating waves: W1 (6 dogs), W2 (12 dogs 3 directions), W3 (14 dogs + Alpha dog) | M3 | Survey (Assets Explorer / Campaign Explorer) |
-| 13 | F13: Android 720p 60fps & CC0 | `gl_compatibility` compliance, <100 draw calls, <=3 lights, ASTC/ETC2, full CC0 licenses | M4 | Survey (Assets Explorer) |
-| 14 | F14: Mission 1 Preservation | `UrbanStreet.tscn` and `AirportTerminal.tscn` remain intact; all 44 regression tests pass | M1 / M5 | Survey (All Explorers) |
-| 15 | F15: Comprehensive Test Expansion | New test suites covering campaign registry, cash scaling, single claim, waves, and dog hitzones | M5 | Survey (Spec Miner) |
+| 1 | F1: Curate Asset Folders & `.gdignore` Protection | Add `.gdignore` to raw `real assent grafix import karna he` directory and curate selected models into `assets/3d/` | M1 | Survey (Explorer 3 / Pipeline) |
+| 2 | F2: Realistic Urban Street Staging | Integrate `street_city_7_for_games_free(1).glb` and `street_city_buildings_8.glb` into realistic street arena with asphalt PBR and navigation | M1 | Survey (Explorer 1 / Assets) |
+| 3 | F3: Tram Station Transit Hub Arena | Integrate `tram_station(1).glb` (mobile 1K textures) with platforms, tracks, canopies, and 360-degree zombie spawners | M1 | Survey (Explorer 1 / Assets) |
+| 4 | F4: Mobile PBR Lighting & Atmosphere | Gritty post-apocalyptic DirectionalLight3D, procedural sky, filmic tonemapping, orthogonal shadows, no SSAO/glare errors | M1 | Survey (Explorer 2 & 3) |
+| 5 | F5: Flatline AR Integration | Import `apex_legends_vk-47_flatline_overheat.glb` to `scenes/weapons/models/flatline.tscn`, PBR materials, `MuzzleSocket`, stats in `flatline.tres` | M2 | Survey (Explorer 1 / Assets) |
+| 6 | F6: CAR SMG Integration | Import `apex_legends_car_smg_brimstone.glb` to `scenes/weapons/models/car_smg.tscn`, PBR materials, `MuzzleSocket`, stats in `car_smg.tres` | M2 | Survey (Explorer 1 / Assets) |
+| 7 | F7: Rotary Minigun Integration | Import `serious_sam_3_minigun.glb` to `scenes/weapons/models/minigun.tscn`, 2K PBR materials, spinning barrel rig, stats in `minigun.tres` | M2 | Survey (Explorer 1 / Assets) |
+| 8 | F8: Viewmodel Rig & Recoil Tuning | Connect new weapons to `FPSArms` tactical rig, synchronize recoil kick, procedural Lissajous breathing, and tactical reload | M2 | Survey (Explorer 2 / Codebase) |
+| 9 | F9: Armory 3D Inspection & Economy | Update `ArmoryUI.tscn` to display 3D previews of new weapons with 4-stat upgrade matrix and unlock progression | M2 | Survey (Explorer 2 / Codebase) |
+| 10 | F10: Visceral Combat Feedback & Gore VFX | Impactful headshot audio punch, golden hitmarkers, mobile-safe `CPUParticles3D` blood splatters, and zombie stagger reactions | M3 | Survey (Explorer 1, 2, 3) |
+| 11 | F11: Mobile GLES3 Compatibility Safeguards | Ensure 0 shader compilation errors, 0 missing texture pink warnings, orthogonal shadows, and light pass budget in `gl_compatibility` | M3 | Survey (Explorer 3 / Pipeline) |
+| 12 | F12: Stationary 360-Degree Combat Verification | Verify zombies navigate from all 360-degree quadrants towards stationary player, taking proper body (1.0x) and headshot (2.5x) damage | M4 | Survey (Explorer 2 / Codebase) |
+| 13 | F13: Automated Headless E2E Regression Suite | Verify `TestRunner.tscn`, `Zombie360Test.tscn`, `test_weapons_economy.gd`, and new weapon integration test pass cleanly (100% PASS) | M4 | Survey (Explorer 3 / Pipeline) |
+| 14 | F14: Forensic Integrity Audit | Independent verification by `teamwork_preview_auditor` confirming authentic implementation, 0 hardcoded cheats, 0 missing assets | M4 | Survey (Integrity Forensics) |
 
 ## Milestones
 
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| M1 | Campaign Architecture, Wave Engine & Reward Integrity (R1) | 12-mission resources (`mission_01` to `mission_12`), single-claim cash fix in `MissionManager.gd`/`SaveManager.gd`, 3-wave system in `GameManager.gd`, HUD wave label sync, `MissionSelectUI` expansion. Mission 1 untouched. | none | PLANNED |
-| M2 | Reusable Environment Complexes & Airport Service Road (R2) | `AirportServiceRoad.tscn` creation for Mission 2, environment setup, CC0 props integration, lighting profiles, `ASSET_LICENSES.md` documentation. | M1 | PLANNED |
-| M3 | Infected Dog Skeletal Rig, Combat AI & Mission 2 Wave Deployment (R3) | Procedural/CC0 quadruped GLB (`infected_dog.glb`) with 18 bones & 5 animations, `InfectedDog.tscn` with Head/Body `HitZone`s, dog SFX, and Mission 2 wave configuration. | M1, M2 | PLANNED |
-| M4 | Performance & Android Targeting (R4) | Audit draw calls, dynamic lights (<=3), textures (<=1024), particle counts, memory lifecycle test, and `ASSET_LICENSES.md` compliance. | M2, M3 | PLANNED |
-| M5 | Final E2E Test Suite Pass & Adversarial Hardening (AC & Workstream F) | Run full headless regression suite (`TestRunner.tscn` >= 50/50), `Zombie360Test.tscn`, `test_mission1_gameplay.gd`, new campaign tests, adversarial edge case stress testing. | M1, M2, M3, M4 | PLANNED |
+| M1 | Realistic Environment Staging & Mobile PBR Lighting (R2) | Curate models with `.gdignore` safeguard; stage high-fidelity Urban Street and Tram Station arenas with PBR materials, crisp orthogonal sun shadows, filmic tonemapping, and 360-degree navigation regions. | none | PLANNED |
+| M2 | High-Fidelity 3D Weapon Pipeline & Viewmodel Rig Integration (R1) | Integrate Flatline AR, CAR SMG, and Serious Sam Minigun models into `assets/3d/weapons/`, create viewmodel scenes with `MuzzleSocket`, configure `WeaponData` resources with audio bindings and 4 upgrade paths, hook into `Player.gd` tactical arms rig and `ArmoryUI`. | M1 | PLANNED |
+| M3 | Visceral Combat Feedback & Mobile Performance Safeguards (R3) | Implement mobile-safe `CPUParticles3D` blood/gore bursts, headshot sound punch, golden hitmarkers, distinct zombie stagger states, and audit console for 0 GLES3/gl_compatibility warnings. | M1, M2 | PLANNED |
+| M4 | E2E Regression Verification & Forensic Integrity Audit | Run complete headless test suite (`TestRunner.tscn`, `Zombie360Test.tscn`, `test_weapons_economy.gd`, and new weapon tests); run `teamwork_preview_auditor` forensic verification. | M1, M2, M3 | PLANNED |
 
 ## Interface Contracts
 
-### MissionData ↔ GameManager
-- `MissionData.wave_count: int` (always 3)
-- `MissionData.waves: Array[Dictionary]`
-  - Each wave dict: `{"wave_num": int, "groups": Array[Dictionary]}`
-  - Each group dict: `{"enemy_type": String, "count": int, "spawn_direction": String, "delay": float}`
-- If `MissionData.waves` is empty, `GameManager` falls back to procedural 3 waves (preserving Mission 1).
+### Weapon ↔ Viewmodel Rig (`Weapon.gd` ↔ `Player.gd`)
+- Each weapon scene under `scenes/weapons/models/<name>.tscn` MUST contain a child node named `MuzzleSocket` (`Node3D`).
+- Scale and rotation of weapon models must face `-Z` forward with proper tactical eye-level offset (approx `Vector3(0.18, -0.18, -0.42)`).
+- `Weapon.gd` searches for `MuzzleSocket` in child model to position `MuzzleFlash` and `MuzzleLight`.
+- Signals: `ammo_changed(current: int, max_ammo: int)`, `weapon_reload_started(duration: float)`.
 
-### GameManager ↔ HUD
-- `EventBus.wave_started.emit(current_wave: int, total_waves: int)`
-- `HUD.gd` connects to `EventBus.wave_started` to update `WaveLabel.text = "WAVE: %d / %d" % [current_wave, total_waves]`.
+### WeaponData ↔ Armory & Gameplay (`WeaponData.gd` ↔ `ArmoryUI.gd` / `SaveManager.gd`)
+- `weapon_id`: Unique identifier matching resource filename (e.g. `flatline`, `car_smg`, `minigun`).
+- Base stats: `base_damage`, `headshot_multiplier` (>=2.0), `base_fire_rate`, `base_mag_size`, `base_reload_time`, `spread`, `recoil`.
+- 4 upgrade paths (levels 0-4): `get_damage()`, `get_mag_size()`, `get_reload_time()`, `get_spread()`, `get_upgrade_cost()`.
+- Unlocked state persisted in `SaveManager.data.unlocked_weapons`.
 
-### MissionManager ↔ SaveManager (Reward Single-Claim Contract)
-- `MissionManager.finish_mission(success: bool)`:
-  - If `success == true`:
-    - Check: `var is_first_win = not save_mgr.is_mission_completed(current_mission.mission_id)`
-    - If `is_first_win`:
-      - `save_mgr.add_cash(current_mission.reward_cash)`
-      - `last_stats["bounty_awarded"] = current_mission.reward_cash`
-    - Else:
-      - Do NOT call `add_cash()`
-      - `last_stats["bounty_awarded"] = 0`
-    - `save_mgr.complete_mission(current_mission.mission_id)`
+### Environment Arena ↔ Combat Spawner (`Environment.tscn` ↔ `GameManager.gd`)
+- `NavigationRegion3D` with baked `NavigationMesh` covering the stationary player perimeter.
+- Spawn markers positioned 10m-25m in 4 quadrants: `SpawnFront`, `SpawnLeft`, `SpawnRight`, `SpawnBack`.
+- Lighting: Exactly 1 `DirectionalLight3D` (sun, orthogonal shadow) + <= 3 `OmniLight3D` local perimeter lights.
 
-### InfectedDog ↔ Weapon (Combat HitZone Contract)
-- `InfectedDog` root `CharacterBody3D` in group `"zombies"`
-- `HeadHitZone` (Area3D, `zone_type = 0` / HEAD) at `pos = Vector3(0, 0.52, -0.45)` with `damage_multiplier = 2.5`
-- `BodyHitZone` (Area3D, `zone_type = 1` / CHEST) at `pos = Vector3(0, 0.38, 0.05)` with `damage_multiplier = 1.0`
-- Responds to `take_hit(damage: float, impact_vector: Vector3)` and returns `HitResult`
-- Responds to `take_damage(amount: float)`
+### Combat HitZone ↔ Weapon Raycast (`HitZone.gd` ↔ `Weapon.gd`)
+- Head hit zone: `zone_type = 0` (HEAD), `damage_multiplier = 2.5`.
+- Chest hit zone: `zone_type = 1` (CHEST), `damage_multiplier = 1.0`.
+- Limb hit zone: `zone_type = 2` (LIMBS), `damage_multiplier = 0.7`.
+- Hit result triggers `HUD.show_hitmarker(is_headshot)` and spawns blood particles at collision normal.
 
 ## Code Layout
-- `resources/missions/`: `mission_01.tres` through `mission_12.tres` (MissionData resources)
-- `scripts/`:
-  - `MissionData.gd`: Resource definition
-  - `MissionManager.gd`: Mission lifecycle, reward granting logic
-  - `SaveManager.gd`: Atomic persistence, completed missions and cash tracking
-  - `GameManager.gd`: Wave spawning controller, stationary combat loop
-  - `MissionSelectUI.gd`: Mission selection UI
-  - `ResultUI.gd`: Post-mission summary screen
-- `scenes/UI/`: `HUD.tscn`, `HUD.gd`, `MissionSelectUI.tscn`, `ResultUI.tscn`
-- `scenes/environments/`:
-  - `UrbanStreet.tscn`: Mission 1 environment (MUST REMAIN INTACT)
-  - `AirportTerminal.tscn`: Mission 1 environment (MUST REMAIN INTACT)
-  - `AirportServiceRoad.tscn`: Mission 2 environment
-  - `RailwayStation.tscn`, `AbandonedTrain.tscn`, `DarkIndustrial.tscn`, `FinalLockdown.tscn`: Environment complexes
-- `scenes/zombies/`:
-  - `Zombie.tscn`, `Zombie.gd`: Generic zombie base
-  - `InfectedDog.tscn`, `InfectedDog.gd`: Mission 2 quadruped infected canine
-- `assets/3d/zombies/`: `infected_dog.glb`
-- `scenes/test/`: `TestRunner.tscn`, `TestRunner.gd`
-- `assets_tests/`: `Zombie360Test.tscn`, `Zombie360Test.gd`
-- `ASSET_LICENSES.md`: CC0 and MIT licensing documentation
+- `assets/3d/weapons/`: High-fidelity GLB models (`flatline.glb`, `car_smg.glb`, `minigun.glb`, `hawk_shotgun.glb`)
+- `assets/3d/environments/`: High-fidelity GLB environment models (`street_city_7.glb`, `tram_station.glb`, `street_buildings.glb`)
+- `scenes/weapons/models/`: Godot 3D viewmodel scenes with `MuzzleSocket` and PBR materials (`flatline.tscn`, `car_smg.tscn`, `minigun.tscn`)
+- `resources/weapons/`: `WeaponData` resource files (`flatline.tres`, `car_smg.tres`, `minigun.tres`, etc.)
+- `scenes/environments/`: Arena scenes (`UrbanStreet.tscn`, `RailwayStation.tscn`, `AirportServiceRoad.tscn`)
+- `scenes/player/`: `Player.tscn`, `Player.gd` (viewmodel rig, stationary rotation, recoil, ADS)
+- `scenes/UI/`: `HUD.tscn`, `ArmoryUI.tscn`
+- `scripts/Zombies/`: `EnemyBase.gd` (hit reactions, headshot multipliers, stagger)
+- `scenes/test/`: `TestRunner.tscn`, test scripts in `scripts/Tools/`

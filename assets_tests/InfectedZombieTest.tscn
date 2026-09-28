@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://assets_tests/InfectedZombieTest.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://assets/external/vitruvian/zombie_realistic_human.glb" id="2_zombie"]
+[ext_resource type="PackedScene" path="res://assets/3d/zombies/zombie_normal.glb" id="2_zombie"]
 [ext_resource type="Material" path="res://assets/external/polyhaven/materials/mat_poly_concrete.tres" id="3_concrete"]
 
 [sub_resource type="Environment" id="Environment_daylight"]

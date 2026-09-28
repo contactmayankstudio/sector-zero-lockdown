@@ -1,32 +1,80 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=11 format=3]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flash"]
+blend_mode = 1
 shading_mode = 0
-albedo_color = Color(1, 0.8, 0.4, 1)
+albedo_color = Color(1, 0.88, 0.45, 1)
 billboard_mode = 3
 particles_anim_h_frames = 1
 particles_anim_v_frames = 1
 particles_anim_loop = false
 
-[sub_resource type="QuadMesh" id="QuadMesh_1"]
-material = SubResource("StandardMaterial3D_1")
-size = Vector2(0.2, 0.2)
+[sub_resource type="QuadMesh" id="QuadMesh_flash"]
+material = SubResource("StandardMaterial3D_flash")
+size = Vector2(0.10, 0.10)
 
-[sub_resource type="Curve" id="Curve_1"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_1"]
-curve = SubResource("Curve_1")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_flash"]
 gravity = Vector3(0, 0, 0)
-scale_curve = SubResource("CurveTexture_1")
+angle_min = -180.0
+angle_max = 180.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sparks"]
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.6, 0.15, 1)
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_sparks"]
+material = SubResource("StandardMaterial3D_sparks")
+size = Vector2(0.02, 0.02)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sparks"]
+direction = Vector3(0, 0, -1)
+spread = 22.0
+initial_velocity_min = 4.5
+initial_velocity_max = 8.5
+gravity = Vector3(0, -6, 0)
+
+[sub_resource type="GDScript" id="GDScript_flash"]
+script/source = "extends GPUParticles3D
+
+@onready var sparks = get_node_or_null(\"MuzzleSparks\")
+
+var _hide_timer: SceneTreeTimer = null
+
+func play_flash():
+	show()
+	restart()
+	emitting = true
+	if sparks:
+		sparks.restart()
+		sparks.emitting = true
+	if is_inside_tree():
+		var t = get_tree().create_timer(0.08)
+		_hide_timer = t
+		await t.timeout
+		if _hide_timer == t:
+			hide()
+"
 
 [node name="MuzzleFlash" type="GPUParticles3D"]
 emitting = false
 amount = 1
+lifetime = 0.05
 one_shot = true
 explosiveness = 1.0
-process_material = SubResource("ParticleProcessMaterial_1")
-draw_pass_1 = SubResource("QuadMesh_1")
+process_material = SubResource("ParticleProcessMaterial_flash")
+draw_pass_1 = SubResource("QuadMesh_flash")
+script = SubResource("GDScript_flash")
+
+[node name="MuzzleSparks" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 3
+lifetime = 0.15
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_sparks")
+draw_pass_1 = SubResource("QuadMesh_sparks")

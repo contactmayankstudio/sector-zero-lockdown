@@ -2,7 +2,7 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://e5p3jseegn57"
+uid="uid://r6xteabhqvt8"
 path="res://.godot/imported/sfx_dog_bark.wav-0a58e89e4cc9673b942c31c10c23710a.sample"
 
 [deps]
@@ -21,4 +21,4 @@ edit/normalize=false
 edit/loop_mode=0
 edit/loop_begin=0
 edit/loop_end=-1
-compress/mode=2
+compress/mode=0

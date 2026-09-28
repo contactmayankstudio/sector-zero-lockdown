@@ -2,8 +2,8 @@ class_name BossZombie
 extends "res://scripts/Zombies/EnemyBase.gd"
 
 @export var ground_slam_radius: float = 6.0
-@export var ground_slam_damage: float = 35.0
-@export var ground_slam_cooldown: float = 7.0
+@export var ground_slam_damage: float = 28.0
+@export var ground_slam_cooldown: float = 8.5
 
 var slam_timer: float = 4.0
 var is_slamming: bool = false
@@ -15,11 +15,11 @@ var has_enraged: bool = false
 func _init():
 	super._init()
 	archetype = "boss"
-	move_speed = 1.2
-	attack_range = 3.0
+	move_speed = 1.1
+	attack_range = 2.7
 	attack_damage = 25.0
-	attack_interval = 2.0
-	reward_on_kill = 100
+	attack_interval = 2.2
+	reward_on_kill = 150
 
 func _ready():
 	archetype = "boss"
@@ -27,12 +27,12 @@ func _ready():
 	_setup_boss_model()
 	_setup_hit_zones()
 	
-	var max_hp = health_component.max_health if health_component else 500.0
+	var max_hp = health_component.max_health if health_component else 950.0
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus and event_bus.has_signal("boss_spawned"):
 		event_bus.boss_spawned.emit("THE ALPHA MUTANT", max_hp)
 		
-	var hud = get_tree().get_first_node_in_group("hud")
+	var hud = get_tree().get_first_node_in_group("hud") if get_tree() else null
 	if hud and hud.has_method("show_boss_health"):
 		hud.show_boss_health("THE ALPHA MUTANT", max_hp)
 		
@@ -43,7 +43,7 @@ func _ready():
 
 func _setup_boss_model():
 	if not model_instance:
-		model_instance = get_node_or_null("SkeletalModel")
+		model_instance = find_child("SkeletalModel", true, false)
 	if model_instance:
 		var anims = model_instance.find_children("*", "AnimationPlayer", true, false)
 		if not anims.is_empty():
@@ -64,8 +64,8 @@ func _physics_process(delta):
 	# Check enrage at 50% HP
 	if not has_enraged and health_component and health_component.current_health <= health_component.max_health * 0.5:
 		has_enraged = true
-		move_speed = 1.7
-		attack_interval = 1.5
+		move_speed = 1.3
+		attack_interval = 1.8
 		if sfx_roar:
 			sfx_roar.play()
 		_play_anim("roar")
@@ -153,6 +153,7 @@ func _on_died():
 	if is_dead: return
 	is_dead = true
 	ai_state = AIState.DEAD
+	_remove_from_zombie_groups()
 	
 	if collision_shape:
 		collision_shape.set_deferred("disabled", true)
@@ -179,7 +180,7 @@ func _on_died():
 		
 	var save_mgr = get_node_or_null("/root/SaveManager")
 	if save_mgr:
-		save_mgr.add_cash(reward_on_kill)
+		save_mgr.add_cash(int(round(reward_on_kill * last_hit_cash_multiplier)))
 		
 	var mission_mgr = get_node_or_null("/root/MissionManager")
 	if mission_mgr:

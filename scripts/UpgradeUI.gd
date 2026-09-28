@@ -29,23 +29,34 @@ extends Control
 @onready var acc_diff_lbl = get_node_or_null("ContentContainer/Panel/Margin/VBox/AccuracyRow/StatBox/StatDiff")
 @onready var acc_btn = get_node_or_null("ContentContainer/Panel/Margin/VBox/AccuracyRow/UpgradeBtn")
 
-var current_weapon_id: String = "m4a1"
+var current_weapon_id: String = "negev_ng7"
 
 var weapon_resources = {
-	"usp45": "res://resources/weapons/usp45.tres",
-	"pistol": "res://resources/weapons/pistol.tres",
-	"m4a1": "res://resources/weapons/m4a1.tres",
-	"rifle": "res://resources/weapons/rifle.tres",
-	"remington870": "res://resources/weapons/remington870.tres",
-	"shotgun": "res://resources/weapons/shotgun.tres",
-	"ak47": "res://resources/weapons/ak47.tres",
-	"desert_eagle": "res://resources/weapons/desert_eagle.tres",
-	"mp5": "res://resources/weapons/mp5.tres",
-	"awp": "res://resources/weapons/awp.tres",
-	"combat_knife": "res://resources/weapons/combat_knife.tres",
-	"crossbow": "res://resources/weapons/crossbow.tres",
-	"grenade_launcher": "res://resources/weapons/grenade_launcher.tres",
-	"heavy_gun": "res://resources/weapons/heavy_gun.tres"
+	"negev_ng7": "res://resources/weapons/negev_ng7.tres",
+	"p90": "res://resources/weapons/p90.tres",
+	"ak74_bayonet": "res://resources/weapons/ak74_bayonet.tres",
+	"akx_scifi": "res://resources/weapons/akx_scifi.tres",
+	"n7_rifle": "res://resources/weapons/n7_rifle.tres",
+	"car_smg": "res://resources/weapons/car_smg.tres",
+	"grenade_mk2": "res://resources/weapons/grenade_mk2.tres",
+	"primordium_vandal": "res://resources/weapons/primordium_vandal.tres",
+	"prowler_smg": "res://resources/weapons/prowler_smg.tres",
+	"ray_gun_cod": "res://resources/weapons/ray_gun_cod.tres",
+	"plasma_gun": "res://resources/weapons/plasma_gun.tres",
+	"rocket_launcher": "res://resources/weapons/rocket_launcher.tres",
+	"pestilence_handgun": "res://resources/weapons/pestilence_handgun.tres",
+	"arcade_gun": "res://resources/weapons/arcade_gun.tres",
+	"retro_ray_gun": "res://resources/weapons/retro_ray_gun.tres",
+	"scifi_battle_rifle": "res://resources/weapons/scifi_battle_rifle.tres",
+	"prowl_blaster": "res://resources/weapons/prowl_blaster.tres",
+	"vaccinator_energy": "res://resources/weapons/vaccinator_energy.tres",
+	"axon_cannon": "res://resources/weapons/axon_cannon.tres",
+	"usp45": "res://resources/weapons/negev_ng7.tres",
+	"pistol": "res://resources/weapons/negev_ng7.tres",
+	"m4a1": "res://resources/weapons/negev_ng7.tres",
+	"rifle": "res://resources/weapons/negev_ng7.tres",
+	"remington870": "res://resources/weapons/negev_ng7.tres",
+	"shotgun": "res://resources/weapons/negev_ng7.tres"
 }
 
 var weapon_subtitles = {

@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://grenade001test"]
+[gd_scene load_steps=6 format=3 uid="uid://grenade001test"]
 
 [ext_resource type="Script" path="res://scenes/weapons/Grenade.gd" id="1_grn"]
+[ext_resource type="AudioStream" path="res://audio/weapons/sfx_grenade_explosion.ogg" id="2_blast"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_bounce"]
 bounce = 0.5
@@ -23,3 +24,10 @@ shape = SubResource("SphereShape3D_grn")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_grn")
+
+[node name="SfxExplosion" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_blast")
+unit_size = 14.0
+max_distance = 45.0
+volume_db = 6.0
+bus = &"SFX"

@@ -34,12 +34,18 @@ case "$command" in
         ;;
     build_debug|build_apk)
         echo "=== EXPORTING SIGNED ANDROID DEBUG APK ==="
-        godot --headless --export-debug "Android" "$PROJECT_DIR/SectorZero-Lockdown-debug.apk"
+        godot --headless --export-debug "Android Debug APK" "$PROJECT_DIR/SectorZero-Lockdown-debug.apk"
         ls -lh "$PROJECT_DIR/SectorZero-Lockdown-debug.apk"
         sha256sum "$PROJECT_DIR/SectorZero-Lockdown-debug.apk"
         ;;
+    build_release_aab)
+        echo "=== EXPORTING PLAY CONSOLE RELEASE APP BUNDLE ==="
+        godot --headless --export-release "Android" "$PROJECT_DIR/SectorZero-Lockdown-release.aab"
+        ls -lh "$PROJECT_DIR/SectorZero-Lockdown-release.aab"
+        sha256sum "$PROJECT_DIR/SectorZero-Lockdown-release.aab"
+        ;;
     *)
-        echo "Usage: $0 {run_tests|validate_assets|validate_android|build_debug|build_apk}"
+        echo "Usage: $0 {run_tests|validate_assets|validate_android|build_debug|build_apk|build_release_aab}"
         exit 1
         ;;
 esac

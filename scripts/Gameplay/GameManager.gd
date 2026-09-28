@@ -22,6 +22,8 @@ func _ready():
 		mission = mission_mgr.current_mission
 	else:
 		mission = load("res://resources/missions/mission_01.tres")
+		if mission_mgr:
+			mission_mgr.current_mission = mission
 		
 	player_ref = get_tree().get_first_node_in_group("player")
 	start_next_wave()
@@ -119,11 +121,9 @@ func _check_wave_end():
 		mission_mgr.on_wave_completed()
 	if not mission:
 		return
-	if mission.objective_type == MissionData.ObjectiveType.SURVIVE_WAVES:
-		if current_wave < mission.wave_count:
-			await get_tree().create_timer(wave_delay).timeout
-			start_next_wave()
-	else:
-		if mission_mgr and mission_mgr.kill_count < mission.target_count:
-			await get_tree().create_timer(wave_delay).timeout
+	if current_wave < mission.wave_count:
+		if mission_mgr and mission_mgr.get("_is_finishing") == true:
+			return
+		await get_tree().create_timer(wave_delay).timeout
+		if is_inside_tree() and (not mission_mgr or not mission_mgr.get("_is_finishing")):
 			start_next_wave()

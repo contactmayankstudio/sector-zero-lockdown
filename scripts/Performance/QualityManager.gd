@@ -16,6 +16,8 @@ func _ready():
 	var chosen = capabilities.recommended_profile
 	if save_mgr and save_mgr.data.has("selected_quality"):
 		chosen = save_mgr.data.selected_quality
+	elif OS.get_name() == "Android":
+		chosen = Profile.ANDROID_LEGACY
 		
 	apply_quality(chosen)
 	print("[%d ms] [BOOT:04] QualityManager ready (Device: %s, Profile: %s, Vulkan: %s)" % [
@@ -74,9 +76,9 @@ func setup_legacy_profile():
 	var vp = get_viewport()
 	if vp:
 		vp.msaa_3d = Viewport.MSAA_DISABLED
-		vp.screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
-		vp.use_hdr_2d = false
-		vp.scaling_3d_scale = 0.85
+		vp.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
+		vp.use_hdr_2d = true
+		vp.scaling_3d_scale = 1.0
 	_update_environment(false, false, false)
 
 func setup_balanced_profile():
@@ -125,11 +127,11 @@ func _update_environment(glow: bool, ssao: bool, fog: bool):
 	var world_env = get_tree().root.find_child("WorldEnvironment", true, false)
 	if world_env and world_env.environment:
 		var env = world_env.environment
-		env.glow_enabled = glow
-		# Gracefully guard SSAO on non-Vulkan / compatibility
-		if ssao and RenderingServer.get_rendering_device() == null:
+		if RenderingServer.get_rendering_device() == null or capabilities.get("recommended_profile", 0) == Profile.ANDROID_LEGACY:
+			env.glow_enabled = false
+			env.fog_enabled = false
 			env.ssao_enabled = false
-			ErrorHandler.report_error(ErrorHandler.Category.GRAPHICS_FALLBACK, "SSAO disabled on GLES3/Compatibility renderer")
 		else:
+			env.glow_enabled = glow
 			env.ssao_enabled = ssao
-		env.fog_enabled = fog
+			env.fog_enabled = fog

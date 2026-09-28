@@ -138,7 +138,7 @@ func _init():
 	var knife_scene = WeaponManager.get_weapon_scene("combat_knife")
 	var knife = knife_scene.instantiate()
 	root.add_child(knife)
-	knife._ready()
+	await process_frame
 	knife.shoot()
 	test.call("Combat Knife Melee Fire", knife.current_ammo == 1, "Melee knife maintains readiness")
 	knife.queue_free()
@@ -146,7 +146,7 @@ func _init():
 	var awp_scene = WeaponManager.get_weapon_scene("awp")
 	var awp = awp_scene.instantiate()
 	root.add_child(awp)
-	awp._ready()
+	await process_frame
 	var awp_init_ammo = awp.current_ammo
 	awp.shoot()
 	test.call("AWP Fire Consumes Ammo", awp.current_ammo == awp_init_ammo - 1, "Ammo: %d -> %d" % [awp_init_ammo, awp.current_ammo])
@@ -154,8 +154,6 @@ func _init():
 
 	var gl_scene = WeaponManager.get_weapon_scene("grenade_launcher")
 	var gl = gl_scene.instantiate()
-	root.add_child(gl)
-	gl._ready()
 	test.call("Grenade Launcher Area Damage Method Ready", gl.has_method("_apply_area_explosion"))
 	gl.queue_free()
 

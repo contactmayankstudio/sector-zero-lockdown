@@ -37,8 +37,23 @@ func _init():
 	mm_alt.queue_free()
 	await process_frame
 
-	# --- 2. MISSION SELECT AUDIT ---
-	print("\n[TEST 2] Auditing 12-Mission Select UI...")
+	# --- 2. DAILY OPS AUDIT ---
+	print("\n[TEST 2] Auditing Daily Ops UI...")
+	var daily_scene = load("res://scenes/UI/DailyOps.tscn")
+	assert(daily_scene != null, "res://scenes/UI/DailyOps.tscn must load")
+	var daily = daily_scene.instantiate()
+	root.add_child(daily)
+	await process_frame
+	assert(daily.find_child("Title", true, false) != null, "Daily Ops title must exist")
+	assert(daily.find_child("ProgressBar", true, false) != null, "Daily Ops progress bar must exist")
+	var daily_action = daily.find_child("ActionButton", true, false)
+	assert(daily_action != null and daily_action.visible, "Daily Ops action button must exist")
+	print("  [PASS] DailyOps.tscn verified: challenge title, progress, reward, action button.")
+	daily.queue_free()
+	await process_frame
+
+	# --- 3. MISSION SELECT AUDIT ---
+	print("\n[TEST 3] Auditing 12-Mission Select UI...")
 	var ms_scene = load("res://scenes/UI/MissionSelect.tscn")
 	assert(ms_scene != null, "res://scenes/UI/MissionSelect.tscn must load")
 	var ms = ms_scene.instantiate()
@@ -48,7 +63,7 @@ func _init():
 	var mission_list = ms.find_child("VBoxContainer", true, false)
 	assert(mission_list != null, "Mission card container must exist")
 	var card_count = mission_list.get_child_count()
-	assert(card_count == 12, "Must instantiate all 12 mission cards (found: %d)" % card_count)
+	assert(card_count == 13, "Must instantiate 12 campaign cards plus Endless (found: %d)" % card_count)
 	
 	# Verify first mission card structure
 	var card1 = mission_list.get_child(0)
@@ -81,8 +96,8 @@ func _init():
 	assert(ms_ui_scene != null, "res://scenes/UI/MissionSelectUI.tscn alias must load")
 	print("  [PASS] MissionSelectUI.tscn alias verified.")
 
-	# --- 3. HUD AUDIT ---
-	print("\n[TEST 3] Auditing Gameplay HUD...")
+	# --- 4. HUD AUDIT ---
+	print("\n[TEST 4] Auditing Gameplay HUD...")
 	var hud_scene = load("res://scenes/UI/HUD.tscn")
 	assert(hud_scene != null, "res://scenes/UI/HUD.tscn must load")
 	var hud = hud_scene.instantiate()
@@ -127,8 +142,8 @@ func _init():
 	hud.queue_free()
 	await process_frame
 
-	# --- 4. ARMORY AUDIT ---
-	print("\n[TEST 4] Auditing Armory & Weapon Upgrades...")
+	# --- 5. ARMORY AUDIT ---
+	print("\n[TEST 5] Auditing Armory & Weapon Upgrades...")
 	var armory_scene = load("res://scenes/UI/ArmoryUI.tscn")
 	assert(armory_scene != null, "res://scenes/UI/ArmoryUI.tscn must load")
 	var armory = armory_scene.instantiate()
@@ -153,8 +168,8 @@ func _init():
 	armory.queue_free()
 	await process_frame
 
-	# --- 5. RESULT UI AUDIT ---
-	print("\n[TEST 5] Auditing Result UI...")
+	# --- 6. RESULT UI AUDIT ---
+	print("\n[TEST 6] Auditing Result UI...")
 	var res_scene = load("res://scenes/UI/ResultUI.tscn")
 	assert(res_scene != null, "res://scenes/UI/ResultUI.tscn must load")
 	var res_ui = res_scene.instantiate()
@@ -165,11 +180,13 @@ func _init():
 	var r_kills = res_ui.find_child("Kills", true, false)
 	var r_headshots = res_ui.find_child("Headshots", true, false)
 	var r_accuracy = res_ui.find_child("Accuracy", true, false)
+	var r_score = res_ui.find_child("Score", true, false)
 	var r_cash = res_ui.find_child("CashLabel", true, false)
 	assert(r_title != null, "Title label must exist")
 	assert(r_kills != null, "Kills label must exist")
 	assert(r_headshots != null, "Headshots label must exist")
 	assert(r_accuracy != null, "Accuracy label must exist")
+	assert(r_score != null, "Score label must exist")
 	assert(r_cash != null, "CashLabel must exist")
 	
 	# Simulate Victory First Win
@@ -205,6 +222,6 @@ func _init():
 	await process_frame
 
 	print("\n==================================================")
-	print("ALL 5 UI SCREENS VERIFIED 100% OPERATIONAL!")
+	print("ALL 6 UI SCREEN GROUPS VERIFIED 100% OPERATIONAL!")
 	print("==================================================")
 	quit(0)

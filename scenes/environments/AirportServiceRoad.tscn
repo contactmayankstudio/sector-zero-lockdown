@@ -10,27 +10,29 @@
 [ext_resource type="Material" path="res://resources/materials/mat_asphalt.tres" id="8_masph"]
 [ext_resource type="AudioStream" path="res://audio/ambience/sfx_ambience_airport.wav" id="9_samb"]
 [ext_resource type="PackedScene" path="res://assets/3d/environments/airport_terminal_section.glb" id="10_gsec"]
-[ext_resource type="PackedScene" path="res://assets/external/city_props/glb/concrete_jersey_barrier_01_large.glb" id="11_barr"]
-[ext_resource type="PackedScene" path="res://assets/external/city_props/glb/barrel_02_big_yellow.glb" id="12_barr_y"]
-[ext_resource type="PackedScene" path="res://assets/external/city_props/glb/cone_large.glb" id="13_cone"]
-[ext_resource type="PackedScene" path="res://assets/external/city_props/glb/traffic_bollard_01_yellow_large.glb" id="14_boll"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/ConcreteBarrierA.scn" id="11_barr"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/ConcreteBarrierB.scn" id="12_barr_b"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/TrafficCone.scn" id="13_cone"]
 [ext_resource type="PackedScene" path="res://scenes/environments/AtmosphereEnhancer.tscn" id="15_atmo"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/RoadSignClosed.scn" id="16_sign_c"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/RoadSignWorks.scn" id="17_sign_w"]
+[ext_resource type="PackedScene" path="res://scenes/objects/ExplosiveBarrel.tscn" id="18_barrel"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_road"]
-vertices = PackedVector3Array(-20, 0, -20, -20, 0, 20, 20, 0, 20, 20, 0, -20)
+vertices = PackedVector3Array(-30, 0, -30, -30, 0, 30, 30, 0, 30, 30, 0, -30)
 polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3)]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flr"]
-size = Vector3(40, 0.2, 40)
+size = Vector3(60, 0.2, 60)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_flr"]
-size = Vector2(40, 40)
+size = Vector2(60, 60)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dusk"]
-sky_top_color = Color(0.08, 0.12, 0.22, 1)
-sky_horizon_color = Color(0.18, 0.22, 0.32, 1)
-ground_bottom_color = Color(0.03, 0.04, 0.06, 1)
-ground_horizon_color = Color(0.12, 0.14, 0.2, 1)
+sky_top_color = Color(0.20, 0.35, 0.65, 1)
+sky_horizon_color = Color(0.48, 0.60, 0.78, 1)
+ground_bottom_color = Color(0.18, 0.20, 0.24, 1)
+ground_horizon_color = Color(0.35, 0.42, 0.50, 1)
 sun_angle_max = 25.0
 
 [sub_resource type="Sky" id="Sky_dusk"]
@@ -40,16 +42,14 @@ sky_material = SubResource("ProceduralSkyMaterial_dusk")
 background_mode = 2
 sky = SubResource("Sky_dusk")
 ambient_light_source = 3
-ambient_light_color = Color(0.25, 0.3, 0.4, 1)
-ambient_light_energy = 0.3
+ambient_light_color = Color(0.65, 0.75, 0.88, 1)
+ambient_light_energy = 0.9
 tonemap_mode = 3
 tonemap_white = 1.6
-glow_enabled = true
+glow_enabled = false
 glow_intensity = 1.1
 glow_bloom = 0.12
-fog_enabled = true
-fog_light_color = Color(0.12, 0.15, 0.22, 1)
-fog_density = 0.003
+fog_enabled = false
 
 [node name="AirportServiceRoad" type="Node3D"]
 
@@ -58,8 +58,8 @@ environment = SubResource("Environment_road")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866, -0.354, 0.354, 0, 0.707, 0.707, -0.5, -0.612, 0.612, 0, 22, 0)
-light_color = Color(0.5, 0.6, 0.75, 1)
-light_energy = 0.5
+light_color = Color(0.95, 0.96, 1.0, 1)
+light_energy = 1.3
 shadow_enabled = true
 shadow_bias = 0.03
 
@@ -90,43 +90,49 @@ surface_material_override/0 = ExtResource("8_masph")
 [node name="Props" type="Node3D" parent="."]
 
 [node name="TerminalHangarSection" parent="Props" instance=ExtResource("10_gsec")]
-transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, -18)
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -32, 0, -18)
 
 [node name="BarrierFrontLeft" parent="Props" instance=ExtResource("11_barr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -8)
 
 [node name="BarrierFrontRight" parent="Props" instance=ExtResource("11_barr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -8)
 
 [node name="BarrierBackLeft" parent="Props" instance=ExtResource("11_barr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 12)
 
 [node name="BarrierBackRight" parent="Props" instance=ExtResource("11_barr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 12)
 
 [node name="BarrierSideLeft" parent="Props" instance=ExtResource("11_barr")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -9, 0, 0)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -11, 0, 0)
 
 [node name="BarrierSideRight" parent="Props" instance=ExtResource("11_barr")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 9, 0, 0)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 11, 0, 0)
 
-[node name="HazardBarrel1" parent="Props" instance=ExtResource("12_barr_y")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -7.5)
+[node name="BarrierB_Left" parent="Props" instance=ExtResource("12_barr_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -7.5)
 
-[node name="HazardBarrel2" parent="Props" instance=ExtResource("12_barr_y")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 7.5)
+[node name="BarrierB_Right" parent="Props" instance=ExtResource("12_barr_b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 11.5)
 
 [node name="TrafficCone1" parent="Props" instance=ExtResource("13_cone")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -5)
 
 [node name="TrafficCone2" parent="Props" instance=ExtResource("13_cone")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -5)
 
-[node name="TrafficBollard1" parent="Props" instance=ExtResource("14_boll")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 4)
+[node name="TrafficCone3" parent="Props" instance=ExtResource("13_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, 4)
 
-[node name="TrafficBollard2" parent="Props" instance=ExtResource("14_boll")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -4)
+[node name="TrafficCone4" parent="Props" instance=ExtResource("13_cone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, -4)
+
+[node name="RoadSignClosed1" parent="Props" instance=ExtResource("16_sign_c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.0, 0, -6.5)
+
+[node name="RoadSignWorks1" parent="Props" instance=ExtResource("17_sign_w")]
+transform = Transform3D(0.866, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866, -4.5, 0, 6)
 
 [node name="Player" parent="." instance=ExtResource("1_p001")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.099, 0)
@@ -137,22 +143,22 @@ zombie_scene = ExtResource("3_z001")
 spawn_points = [NodePath("SpawnFront"), NodePath("SpawnBack"), NodePath("SpawnLeft"), NodePath("SpawnRight"), NodePath("SpawnFrontLeft"), NodePath("SpawnFrontRight")]
 
 [node name="SpawnFront" type="Node3D" parent="ZombieSpawner"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.1, -8.5)
 
 [node name="SpawnBack" type="Node3D" parent="ZombieSpawner"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.1, -11.5)
 
 [node name="SpawnLeft" type="Node3D" parent="ZombieSpawner"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0, 0.1, -10.0)
 
 [node name="SpawnRight" type="Node3D" parent="ZombieSpawner"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0, 0.1, -10.0)
 
 [node name="SpawnFrontLeft" type="Node3D" parent="ZombieSpawner"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 0.1, -8.5)
 
 [node name="SpawnFrontRight" type="Node3D" parent="ZombieSpawner"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 0.1, -8.5)
 
 [node name="ImpactPool" type="Node3D" parent="." groups=["impact_pool"]]
 script = ExtResource("4_i001")
@@ -164,9 +170,16 @@ impact_scenes = {
 [node name="ResultUI" parent="." instance=ExtResource("7_r001")]
 
 [node name="AmbiencePlayer" type="AudioStreamPlayer" parent="."]
+process_mode = 1
 stream = ExtResource("9_samb")
 volume_db = -6.0
 autoplay = true
 
 [node name="AtmosphereEnhancer" parent="." instance=ExtResource("15_atmo")]
+
+[node name="ExplosiveBarrel1" parent="." instance=ExtResource("18_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -9.0)
+
+[node name="ExplosiveBarrel2" parent="." instance=ExtResource("18_barrel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -11.0)
 

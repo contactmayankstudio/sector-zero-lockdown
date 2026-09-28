@@ -1,16 +1,16 @@
-# Progress — Worker M1
+# Progress - Milestone M1: Clean Asset Provenance & License Quarantine
 
-**Last visited**: 2026-09-06T13:15:30Z
-**Current Status**: Investigating codebase and baseline test runs
+**Last visited**: 2026-09-18T05:06:30Z
+**Status**: IN_PROGRESS
 
-## Work Items
-- [ ] Baseline test runs (TestRunner, Zombie360Test, test_mission1_gameplay)
-- [ ] Implement MissionData.gd (waves schema)
-- [ ] Author 12 mission resources (mission_01.tres to mission_12.tres) with $500->$6000 scaling and 3-wave definitions
-- [ ] Implement single-claim cash reward enforcement in MissionManager.gd, SaveManager.gd, ResultUI.gd
-- [ ] Implement structured 3-wave engine with directional groups in GameManager.gd
-- [ ] Sync HUD wave counter (WAVE: X / 3) via EventBus.wave_started in HUD.gd
-- [ ] Expand MissionSelectUI.gd to display all 12 missions
-- [ ] Add unit/regression tests for M1 features
-- [ ] Final verification of all test suites
-- [ ] Write handoff.md and notify orchestrator
+### Steps:
+- [x] Step 0: Initialize DISPATCH.md, BRIEFING.md, and progress.md
+- [ ] Step 1: Read input documents (ORIGINAL_REQUEST.md, SCOPE.md, explorer_r3_r4/handoff.md)
+- [ ] Step 2: Create quarantine_suspect_assets directory and check existing status
+- [ ] Step 3: Implement Environment scene cleans (UrbanStreet.tscn, ApartmentComplex.tscn, NightCityStreet.tscn, MissionCardUI.gd)
+- [ ] Step 4: Implement Weapon normalization (Player.gd, ArmoryUI.gd, Weapon.gd)
+- [ ] Step 5: Implement Zombie archetype normalization (RealisticZombie.gd, RealisticZombie.tscn, Zombie.tscn)
+- [ ] Step 6: Move suspect/quarantined asset files to quarantine_suspect_assets/
+- [ ] Step 7: Update ASSET_LICENSES.md
+- [ ] Step 8: Verification (Python scanner for suspect references, Godot headless tests)
+- [ ] Step 9: Finalize handoff.md and report to parent

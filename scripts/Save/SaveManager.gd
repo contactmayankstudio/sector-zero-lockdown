@@ -11,7 +11,7 @@ var data = {
 	"completed_missions": [],
 	"unlocked_weapons": ["pistol", "rifle", "shotgun"],
 	"is_first_launch": true,
-	"selected_quality": 1, # 0: Low, 1: Medium, 2: High
+	"selected_quality": 0 if OS.get_name() == "Android" else 1, # 0: Low, 1: Medium, 2: High
 	"settings": {
 		"master_volume": 1.0,
 		"music_volume": 0.8,

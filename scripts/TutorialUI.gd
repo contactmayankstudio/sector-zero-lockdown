@@ -12,8 +12,17 @@ var steps = [
 ]
 var current_step = 0
 
+func _get_save_manager():
+	if is_inside_tree():
+		return get_node_or_null("/root/SaveManager")
+	var tree = Engine.get_main_loop() as SceneTree
+	if tree and tree.root:
+		return tree.root.get_node_or_null("SaveManager")
+	return null
+
 func _ready():
-	if not SaveManager.data.is_first_launch:
+	var save_mgr = _get_save_manager()
+	if save_mgr and not save_mgr.data.get("is_first_launch", true):
 		queue_free()
 		return
 	update_step()
@@ -21,8 +30,10 @@ func _ready():
 func _on_next_button_pressed():
 	current_step += 1
 	if current_step >= steps.size():
-		SaveManager.data.is_first_launch = false
-		SaveManager.save_game()
+		var save_mgr = _get_save_manager()
+		if save_mgr:
+			save_mgr.data.is_first_launch = false
+			save_mgr.save_game()
 		queue_free()
 	else:
 		update_step()

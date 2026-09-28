@@ -1,9 +1,9 @@
 [gd_scene load_steps=12 format=3]
 
-[ext_resource type="Script" path="res://assets/zombies/RealisticZombie.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/Zombies/EnemyBase.gd" id="1_script"]
 [ext_resource type="Script" path="res://scripts/HealthComponent.gd" id="2_health"]
 [ext_resource type="Script" path="res://scripts/Combat/HitZone.gd" id="3_hitzone"]
-[ext_resource type="PackedScene" path="res://assets/external/vitruvian/zombie_realistic_human.glb" id="4_model"]
+[ext_resource type="PackedScene" path="res://scenes/zombies/models/zombie_scary.scn" id="4_model"]
 [ext_resource type="AudioStream" path="res://audio/zombies/sfx_zombie_growl.wav" id="5_sfx_growl"]
 [ext_resource type="AudioStream" path="res://audio/zombies/sfx_zombie_attack.wav" id="6_sfx_attack"]
 [ext_resource type="AudioStream" path="res://audio/zombies/sfx_zombie_death.wav" id="7_sfx_death"]

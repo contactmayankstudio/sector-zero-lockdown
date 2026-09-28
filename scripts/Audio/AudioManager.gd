@@ -24,7 +24,7 @@ func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	apply_volumes()
 	bg_player = AudioStreamPlayer.new()
-	bg_player.bus = "Master"
+	bg_player.bus = "Ambience"
 	add_child(bg_player)
 	print("[%d ms] [BOOT:03] AudioManager ready." % Time.get_ticks_msec())
 
@@ -32,7 +32,7 @@ func play_sfx(sound_name: String):
 	if sounds.has(sound_name):
 		var p = AudioStreamPlayer.new()
 		p.stream = sounds[sound_name]
-		p.bus = "Master"
+		p.bus = "SFX"
 		add_child(p)
 		p.finished.connect(func(): p.queue_free())
 		p.play()
@@ -41,6 +41,7 @@ func play_sound_3d(stream: AudioStream, pos: Vector3, max_dist: float = 25.0):
 	if not stream: return
 	var p = AudioStreamPlayer3D.new()
 	p.stream = stream
+	p.bus = "SFX"
 	p.max_distance = max_dist
 	p.global_position = pos
 	get_tree().root.add_child(p)
@@ -77,7 +78,7 @@ func play_location_ambience(location_name: String):
 		current_ambience_key = key
 		if not bg_player:
 			bg_player = AudioStreamPlayer.new()
-			bg_player.bus = "Master"
+			bg_player.bus = "Ambience"
 			add_child(bg_player)
 		var s = load(ambience_paths[key])
 		if s:

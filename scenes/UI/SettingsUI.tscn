@@ -259,6 +259,43 @@ popup/item_1/id = 1
 popup/item_2/text = "HIGH (ANDROID_HIGH: Max Resolution, Volumetric FX, High-End Devices)"
 popup/item_2/id = 2
 
+[node name="PrivacyOptionsSection" type="PanelContainer" parent="ScrollContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/VBoxContainer/PrivacyOptionsSection"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SectionTitle" type="Label" parent="ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+text = "PRIVACY & AD CHOICES"
+
+[node name="AdConsentButton" type="Button" parent="ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "MANAGE AD CHOICES"
+
+[node name="PrivacyPolicyButton" type="LinkButton" parent="ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "READ PRIVACY POLICY"
+
+[node name="PrivacyOptionsButton" type="Button" parent="ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox"]
+visible = false
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "GOOGLE PRIVACY OPTIONS"
+
 [connection signal="pressed" from="TopBar/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/AudioSection/Margin/VBox/MasterBox/MasterSlider" to="." method="_on_master_slider_value_changed"]
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/AudioSection/Margin/VBox/MusicBox/MusicSlider" to="." method="_on_music_slider_value_changed"]
@@ -267,3 +304,6 @@ popup/item_2/id = 2
 [connection signal="value_changed" from="ScrollContainer/VBoxContainer/ControlsSection/Margin/VBox/AimSensBox/AimSensSlider" to="." method="_on_aim_sens_slider_value_changed"]
 [connection signal="toggled" from="ScrollContainer/VBoxContainer/ControlsSection/Margin/VBox/InvertBox/InvertCheck" to="." method="_on_invert_check_toggled"]
 [connection signal="item_selected" from="ScrollContainer/VBoxContainer/GraphicsSection/Margin/VBox/QualityBox/QualityOption" to="." method="_on_quality_option_item_selected"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox/PrivacyOptionsButton" to="." method="_on_privacy_options_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox/AdConsentButton" to="." method="_on_ad_consent_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/PrivacyOptionsSection/Margin/VBox/PrivacyPolicyButton" to="." method="_on_privacy_policy_pressed"]

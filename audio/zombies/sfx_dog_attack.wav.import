@@ -2,7 +2,7 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://bc3sr8d3e2un8"
+uid="uid://b437kjc5rnnts"
 path="res://.godot/imported/sfx_dog_attack.wav-0fb96e6109bf93b3c5ab6516facc5fe3.sample"
 
 [deps]
@@ -21,4 +21,4 @@ edit/normalize=false
 edit/loop_mode=0
 edit/loop_begin=0
 edit/loop_end=-1
-compress/mode=2
+compress/mode=0

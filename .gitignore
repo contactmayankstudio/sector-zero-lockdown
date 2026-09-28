@@ -6,3 +6,6 @@ __pycache__/
 *.pyc
 .env*
 assets/ai_generated/**/*.glb
+*.keystore
+*.aab
+build/

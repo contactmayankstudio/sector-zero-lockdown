@@ -13,9 +13,17 @@ config_version=5
 config/name="Sector Zero: Lockdown"
 run/main_scene="res://scenes/UI/MainMenu.tscn"
 config/features=PackedStringArray("4.3", "Mobile")
-config/icon="res://icon.svg"
-run/max_fps=30
-run/low_processor_mode=true
+config/icon="res://icon.png"
+boot_splash/image="res://textures/ui/boot_splash.png"
+boot_splash/bg_color=Color(0.04, 0.05, 0.07, 1)
+boot_splash/show_image=true
+boot_splash/fullsize=false
+run/max_fps=60
+run/low_processor_mode=false
+
+[animation]
+
+warnings/check_invalid_track_paths=false
 
 [autoload]
 
@@ -29,6 +37,7 @@ GameStateManager="*res://scripts/Core/GameStateManager.gd"
 EventBus="*res://scripts/Core/EventBus.gd"
 LoadingManager="*res://scripts/Loading/LoadingManager.gd"
 PerformanceManager="*res://scripts/Performance/PerformanceManager.gd"
+ChallengeManager="*res://scripts/Core/ChallengeManager.gd"
 
 [display]
 
@@ -38,6 +47,10 @@ window/size/window_width_override=960
 window/size/window_height_override=540
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
 
 [input]
 
@@ -79,6 +92,19 @@ move_right={
 
 [rendering]
 
+environment/defaults/default_clear_color=Color(0.04, 0.05, 0.07, 1)
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
+scaling_3d/scale=0.85
+scaling_3d/mode=0
+anti_aliasing/quality/msaa_3d=0
+lights_and_shadows/directional_shadow/size=1024
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=0
+occlusion_culling/use_occlusion_culling=true
+mesh_lod/lod_change/threshold_pixels=4.0
+
+[audio]
+
+buses/default_bus_layout="res://default_bus_layout.tres"

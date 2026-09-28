@@ -1,16 +1,26 @@
-[gd_scene load_steps=14 format=3 uid="uid://c7zombie001scene"]
+[gd_scene load_steps=18 format=3 uid="uid://c7zombie001scene"]
 
-[ext_resource type="Script" path="res://scenes/zombies/Zombie.gd" id="1_y4r2w"]
+[ext_resource type="Script" path="res://scripts/Zombies/EnemyBase.gd" id="1_y4r2w"]
 [ext_resource type="Script" path="res://scripts/HealthComponent.gd" id="2_z3s4q"]
 [ext_resource type="ArrayMesh" path="res://models/zombies/zombie_normal.obj" id="3_mesh_znorm"]
 [ext_resource type="Material" path="res://resources/materials/mat_zombie_normal.tres" id="4_mat_znorm"]
-[ext_resource type="AudioStream" path="res://audio/zombies/sfx_zombie_growl.wav" id="5_sfx_growl"]
-[ext_resource type="AudioStream" path="res://audio/zombies/sfx_zombie_attack.wav" id="6_sfx_attack"]
-[ext_resource type="AudioStream" path="res://audio/zombies/sfx_zombie_death.wav" id="7_sfx_death"]
+[ext_resource type="Script" path="res://scripts/Combat/HitZone.gd" id="5_hitzone"]
+[ext_resource type="AudioStream" path="res://audio/zombies/sfx_zombie_growl.wav" id="6_sfx_growl"]
+[ext_resource type="AudioStream" path="res://audio/zombies/sfx_zombie_attack.wav" id="7_sfx_attack"]
+[ext_resource type="AudioStream" path="res://audio/zombies/sfx_zombie_death.wav" id="8_sfx_death"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.4
 height = 1.8
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_head"]
+radius = 0.22
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_chest"]
+size = Vector3(0.7, 0.55, 0.45)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_legs"]
+size = Vector3(0.6, 0.8, 0.4)
 
 [sub_resource type="Animation" id="Animation_idle"]
 resource_name = "idle"
@@ -148,11 +158,13 @@ _data = {
 "death": SubResource("Animation_death"),
 "hit_react": SubResource("Animation_hit_react"),
 "idle": SubResource("Animation_idle"),
+"stagger": SubResource("Animation_hit_react"),
 "walk": SubResource("Animation_walk")
 }
 
-[node name="Zombie" type="CharacterBody3D" groups=["zombies"]]
+[node name="Zombie" type="CharacterBody3D" groups=["zombie", "zombies"]]
 collision_layer = 2
+collision_mask = 1
 script = ExtResource("1_y4r2w")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -160,6 +172,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+visible = false
 mesh = ExtResource("3_mesh_znorm")
 surface_material_override/0 = ExtResource("4_mat_znorm")
 
@@ -177,18 +190,51 @@ script = ExtResource("2_z3s4q")
 max_health = 50.0
 
 [node name="SfxGrowl" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("5_sfx_growl")
+stream = ExtResource("6_sfx_growl")
 max_distance = 15.0
 
 [node name="SfxAttack" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("6_sfx_attack")
+stream = ExtResource("7_sfx_attack")
 max_distance = 8.0
 
 [node name="SfxDeath" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("7_sfx_death")
+stream = ExtResource("8_sfx_death")
 max_distance = 12.0
 
 [node name="SfxTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="HeadHitZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("5_hitzone")
+zone_type = 0
+damage_multiplier = 2.5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HeadHitZone"]
+shape = SubResource("SphereShape3D_head")
+
+[node name="ChestHitZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("5_hitzone")
+zone_type = 1
+damage_multiplier = 1.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ChestHitZone"]
+shape = SubResource("BoxShape3D_chest")
+
+[node name="LegsHitZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("5_hitzone")
+zone_type = 3
+damage_multiplier = 0.7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LegsHitZone"]
+shape = SubResource("BoxShape3D_legs")
 
 [connection signal="timeout" from="SfxTimer" to="." method="_on_sfx_timer_timeout"]

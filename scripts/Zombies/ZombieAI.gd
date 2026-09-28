@@ -48,36 +48,36 @@ var archetype_data = {
 	"normal": {
 		"mesh": "res://assets/3d/zombies/zombie_normal.glb",
 		"material": "res://resources/materials/mat_zombie_normal.tres",
-		"hp": 50.0,
-		"speed": 2.2,
-		"damage": 12.0,
+		"hp": 35.0,
+		"speed": 1.4,
+		"damage": 6.0,
 		"scale": Vector3(1, 1, 1),
 		"reward": 10
 	},
 	"fast": {
 		"mesh": "res://assets/3d/zombies/zombie_fast.glb",
 		"material": "res://resources/materials/mat_zombie_fast.tres",
-		"hp": 30.0,
-		"speed": 4.2,
-		"damage": 10.0,
+		"hp": 22.0,
+		"speed": 1.4,
+		"damage": 3.0,
 		"scale": Vector3(0.95, 0.95, 0.95),
 		"reward": 15
 	},
 	"heavy": {
 		"mesh": "res://assets/3d/zombies/zombie_heavy.glb",
 		"material": "res://resources/materials/mat_zombie_heavy.tres",
-		"hp": 160.0,
-		"speed": 1.4,
-		"damage": 26.0,
+		"hp": 110.0,
+		"speed": 0.95,
+		"damage": 12.0,
 		"scale": Vector3(1.2, 1.2, 1.2),
 		"reward": 25
 	},
 	"boss": {
 		"mesh": "res://assets/3d/zombies/zombie_boss.glb",
 		"material": "res://resources/materials/mat_zombie_boss.tres",
-		"hp": 500.0,
-		"speed": 1.8,
-		"damage": 40.0,
+		"hp": 320.0,
+		"speed": 1.2,
+		"damage": 20.0,
 		"scale": Vector3(1.45, 1.45, 1.45),
 		"reward": 100
 	}
@@ -118,6 +118,8 @@ func _apply_archetype():
 			
 		model_instance = res.instantiate()
 		model_instance.name = "SkeletalModel"
+		# Flip 180 degrees so the zombie face/chest points forward (-Z) towards the player
+		model_instance.rotation.y = PI
 		add_child(model_instance)
 		
 		var anims = model_instance.find_children("*", "AnimationPlayer", true, false)
@@ -143,6 +145,7 @@ func _apply_archetype():
 		var mat_res = load(cfg.material)
 		mesh_instance.mesh = res
 		mesh_instance.material_override = mat_res
+		mesh_instance.rotation.y = PI
 		mesh_instance.visible = true
 	
 	scale = cfg.scale * randf_range(0.96, 1.04)
@@ -170,11 +173,13 @@ func _on_health_changed(hp):
 			hud.update_boss_health(hp)
 
 var last_hit_was_headshot: bool = false
+var last_hit_cash_multiplier: float = 1.0
 
-func take_damage(amount: float, is_headshot: bool = false, hit_dir: Vector3 = Vector3.ZERO):
+func take_damage(amount: float, is_headshot: bool = false, hit_dir: Vector3 = Vector3.ZERO, cash_multiplier: float = 1.0):
 	if is_dead:
 		return
 	last_hit_was_headshot = is_headshot
+	last_hit_cash_multiplier = clampf(cash_multiplier, 0.0, 1.0)
 	health_component.take_damage(amount)
 	if is_dead:
 		return
@@ -279,8 +284,7 @@ func _handle_chase(dist_to_player: float, delta: float):
 	# Look towards player
 	var look_target = player.global_position
 	look_target.y = global_position.y
-	if global_position.distance_to(look_target) > 0.1:
-		look_at(look_target, Vector3.UP)
+	_safe_look_at(look_target)
 	
 	var dir = (player.global_position - global_position).normalized()
 	dir.y = 0.0
@@ -291,14 +295,21 @@ func _handle_chase(dist_to_player: float, delta: float):
 	if active_anim_player and active_anim_player.current_animation != walk_anim:
 		_play_anim(walk_anim)
 
+func _safe_look_at(target_pos: Vector3):
+	var diff = target_pos - global_position
+	diff.y = 0.0
+	if diff.length_squared() > 0.04:
+		var norm = diff.normalized()
+		if abs(norm.dot(Vector3.UP)) < 0.98:
+			look_at(global_position + diff, Vector3.UP)
+
 func _handle_attack(dist_to_player: float, _delta: float):
 	velocity = Vector3.ZERO
 	move_and_slide()
 	
 	var look_target = player.global_position
 	look_target.y = global_position.y
-	if global_position.distance_to(look_target) > 0.1:
-		look_at(look_target, Vector3.UP)
+	_safe_look_at(look_target)
 		
 	if dist_to_player > attack_range * 1.3:
 		ai_state = AIState.CHASE
@@ -319,7 +330,7 @@ func _handle_search(delta: float):
 		var dir = (last_known_player_pos - global_position).normalized()
 		dir.y = 0.0
 		velocity = dir * (move_speed * 0.75)
-		look_at(last_known_player_pos, Vector3.UP)
+		_safe_look_at(last_known_player_pos)
 		move_and_slide()
 		_play_anim("walk")
 	else:
@@ -340,6 +351,10 @@ func _on_died():
 	if is_dead: return
 	is_dead = true
 	ai_state = AIState.DEAD
+	if is_in_group("zombies"):
+		remove_from_group("zombies")
+	if is_in_group("zombie"):
+		remove_from_group("zombie")
 	
 	collision_shape.set_deferred("disabled", true)
 	velocity = Vector3.ZERO
@@ -354,7 +369,7 @@ func _on_died():
 		
 	var save_mgr = get_node_or_null("/root/SaveManager")
 	if save_mgr:
-		save_mgr.add_cash(reward_on_kill)
+		save_mgr.add_cash(int(round(reward_on_kill * last_hit_cash_multiplier)))
 		
 	var mission_mgr = get_node_or_null("/root/MissionManager")
 	if mission_mgr:

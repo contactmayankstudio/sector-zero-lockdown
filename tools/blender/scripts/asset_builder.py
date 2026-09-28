@@ -101,5 +101,5 @@ def export_glb(filepath, blend_backup_path=None):
 
 def export_obj(filepath):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    bpy.ops.wm.obj_export(filepath=filepath, export_materials=True, export_selected_objects=False)
+    bpy.ops.export_scene.obj(filepath=filepath, use_materials=True, use_selection=False)
     print(f"Successfully exported OBJ: {filepath} ({os.path.getsize(filepath)} bytes)")

@@ -12,11 +12,11 @@ Experience a gritty, atmospheric first-person shooter designed specifically for 
 
 **FEATURES:**
 * **Intense Offline Action:** No internet required. Complete missions anywhere, anytime.
-* **Tactical Arsenal:** Choose between the balanced USP-45, the high-rate M4A1 Sentinel, or the devastating Remington 870.
-* **In-Depth Upgrades:** Earn coins through missions and enhance your weapon's damage, magazine capacity, and reload speed.
-* **Diverse Undead:** Face Normal walkers, high-speed Sprinters, armored Heavies, and the terrifying Alpha Boss.
-* **Cinematic Atmosphere:** Realistic PBR materials, immersive lighting, and post-apocalyptic urban environments.
-* **Responsive Controls:** Fluid touch-aiming and customizable sensitivity optimized for mid-range and high-end Android devices.
+* **Tactical Arsenal:** Master a specialized military arsenal including the NG7 Heavy LMG, P90 Tactical, AK-74 Bayonet, Valkyrie V7 Carbine, and high-impact explosives.
+* **In-Depth Upgrades:** Earn rewards through missions and enhance your weapon's damage, magazine capacity, and reload speed.
+* **Diverse Undead:** Face terrifying infected walkers, mutated brutes, and agile sprinters across post-apocalyptic hot zones.
+* **Cinematic Atmosphere:** Realistic lighting, urban road blockades, and gritty quarantine perimeters.
+* **Responsive Controls:** Fluid touch-aiming and customizable sensitivity optimized for all Android devices.
 
 **ARE YOU READY TO ENTER SECTOR ZERO?**
 Lock and load. The quarantine has begun.
@@ -24,9 +24,9 @@ Lock and load. The quarantine has begun.
 ---
 
 ## What's New (v1.0.0)
-* Initial Release
-* 5 challenging missions in the Urban Street sector.
-* 3 upgradable weapons.
-* 4 unique zombie archetypes.
-* Interactive tutorial for new recruits.
-* Graphics profiles (LOW/MEDIUM/HIGH) for optimal performance.
+* Initial Official Release.
+* 12 intense campaign missions across Airport, Service Road, and Urban sectors.
+* 7 upgradable tactical weapons.
+* Realistic infected mutant archetypes.
+* Interactive tutorial and customizable mobile controls.
+* Android Low-End / Legacy optimization profiles for smooth gameplay.

@@ -5,12 +5,24 @@ var pools = {}
 @export var impact_scenes: Dictionary = {}
 @export var pool_size: int = 16
 
-var audio_flesh = preload("res://audio/impacts/sfx_impact_flesh.wav")
 var audio_concrete = preload("res://audio/impacts/sfx_impact_concrete.wav")
+
+const AUDIO_POOL_SIZE: int = 8
+var _audio_pool: Array[AudioStreamPlayer3D] = []
+var _audio_pool_idx: int = 0
 
 func _ready():
 	add_to_group("impact_pool")
 	_init_pools()
+	_init_audio_pool()
+
+func _init_audio_pool():
+	for i in range(AUDIO_POOL_SIZE):
+		var p = AudioStreamPlayer3D.new()
+		p.max_distance = 25.0
+		p.bus = "SFX"
+		add_child(p)
+		_audio_pool.append(p)
 
 func _init_pools():
 	if impact_scenes.is_empty():
@@ -40,7 +52,8 @@ func spawn_impact(type: String, pos: Vector3, normal: Vector3):
 		if not effect.visible:
 			effect.global_position = pos
 			if normal.length() > 0.1:
-				effect.look_at(pos + normal, Vector3.UP)
+				var up = Vector3.UP if abs(normal.dot(Vector3.UP)) < 0.99 else Vector3.FORWARD
+				effect.look_at(pos + normal, up)
 			effect.show()
 			
 			if effect.has_method("play_effect"):
@@ -57,10 +70,9 @@ func _schedule_auto_hide(node: Node3D, delay: float):
 		node.hide()
 
 func _play_impact_audio(type: String, pos: Vector3):
-	var p = AudioStreamPlayer3D.new()
-	p.stream = audio_flesh if type == "blood" else audio_concrete
-	p.max_distance = 25.0
-	add_child(p)
+	if _audio_pool.is_empty(): return
+	var p = _audio_pool[_audio_pool_idx]
+	_audio_pool_idx = (_audio_pool_idx + 1) % AUDIO_POOL_SIZE
+	p.stream = audio_concrete
 	p.global_position = pos
-	p.finished.connect(func(): p.queue_free())
 	p.play()

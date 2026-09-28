@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://assets_tests/RealHumanTest.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://assets/external/vitruvian/zombie_realistic_human.glb" id="2_model"]
+[ext_resource type="PackedScene" path="res://assets/3d/zombies/zombie_normal.glb" id="2_model"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.38, 0.55, 0.78, 1)

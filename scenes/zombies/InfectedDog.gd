@@ -7,11 +7,11 @@ extends "res://scripts/Zombies/EnemyBase.gd"
 func _init():
 	super._init()
 	archetype = "dog"
-	move_speed = 4.5
-	attack_range = 2.0
-	attack_damage = 12.0
-	attack_interval = 1.8
-	reward_on_kill = 15
+	move_speed = 4.1
+	attack_range = 3.2
+	attack_damage = 20.0
+	attack_interval = 1.2
+	reward_on_kill = 35
 
 func _ready():
 	archetype = "dog"
@@ -20,24 +20,47 @@ func _ready():
 	_setup_hit_zones()
 
 func _setup_dog_model():
-	# If model_instance wasn't already set up by _apply_archetype, ensure infected_dog.glb is wired
 	if not model_instance:
-		model_instance = get_node_or_null("SkeletalModel")
+		model_instance = find_child("SkeletalModel", true, false)
 	if model_instance:
+		model_instance.scale = Vector3(1.0, 1.0, 1.0)
+		model_instance.rotation.y = 0.0
 		var anims = model_instance.find_children("*", "AnimationPlayer", true, false)
 		if not anims.is_empty():
 			active_anim_player = anims[0]
-			active_anim_player.speed_scale = randf_range(1.05, 1.25)
+			active_anim_player.speed_scale = randf_range(1.15, 1.35)
+			_setup_animation_aliases()
+
+func _setup_animation_aliases():
+	if not active_anim_player:
+		return
+	var lib = active_anim_player.get_animation_library("")
+	if not lib:
+		return
+	var alias_map = {
+		"walk": ["run", "walk", "Fox|Fox_WalkFast_F"],
+		"idle": ["idle", "Fox|Fox_Stand"],
+		"attack": ["attack", "Fox|Fox_Howl"],
+		"death": ["death"],
+		"stagger": ["hit_react", "stagger"]
+	}
+	for target_name in alias_map:
+		if not lib.has_animation(target_name):
+			for candidate in alias_map[target_name]:
+				if lib.has_animation(candidate):
+					lib.add_animation(target_name, lib.get_animation(candidate))
+					break
 
 func _setup_hit_zones():
 	for child in get_children():
 		if child is HitZone:
 			child.parent_entity = self
 
-func take_damage(amount: float, is_headshot: bool = false, hit_dir: Vector3 = Vector3.ZERO):
+func take_damage(amount: float, is_headshot: bool = false, hit_dir: Vector3 = Vector3.ZERO, cash_multiplier: float = 1.0):
 	if is_dead:
 		return
 	last_hit_was_headshot = is_headshot
+	last_hit_cash_multiplier = clampf(cash_multiplier, 0.0, 1.0)
 	if health_component:
 		health_component.take_damage(amount)
 	if is_dead:
@@ -65,6 +88,7 @@ func _on_died():
 	if is_dead: return
 	is_dead = true
 	ai_state = AIState.DEAD
+	_remove_from_zombie_groups()
 	
 	if collision_shape:
 		collision_shape.set_deferred("disabled", true)
@@ -85,7 +109,7 @@ func _on_died():
 		
 	var save_mgr = get_node_or_null("/root/SaveManager")
 	if save_mgr:
-		save_mgr.add_cash(reward_on_kill)
+		save_mgr.add_cash(int(round(reward_on_kill * last_hit_cash_multiplier)))
 		
 	var mission_mgr = get_node_or_null("/root/MissionManager")
 	if mission_mgr:

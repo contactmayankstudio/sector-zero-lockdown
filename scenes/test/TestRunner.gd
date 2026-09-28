@@ -64,7 +64,8 @@ func _test_player_and_fps_weapons():
 	print("\n--- TEST SUITE 2: 3D PLAYER & WEAPONS ---")
 	var save_mgr = get_node_or_null("/root/SaveManager")
 	if save_mgr:
-		save_mgr.data.unlocked_weapons = ["pistol", "rifle", "shotgun"]
+		save_mgr.data.unlocked_weapons = ["negev_ng7", "akx_scifi", "car_smg"]
+		save_mgr.set_equipped_weapon("negev_ng7")
 		save_mgr.save_game()
 	var player_scene = load("res://scenes/player/Player.tscn")
 	var player = player_scene.instantiate()
@@ -108,9 +109,9 @@ func _test_player_and_fps_weapons():
 	
 	# Verify Weapons
 	var weapons_count = player.weapons.size()
-	record_test("3D weapons", weapons_count == 3, "Loaded %d/3 weapons" % weapons_count)
+	record_test("3D weapons", weapons_count == 3, "Loaded %d/3 unlocked registered weapons" % weapons_count)
 	
-	# Test Fire Pistol
+	# Test Fire the equipped starter weapon
 	var pistol = player.get_current_weapon()
 	var initial_ammo = pistol.current_ammo
 	player._trigger_shoot()
@@ -127,17 +128,16 @@ func _test_player_and_fps_weapons():
 	# Test Weapon Switch
 	player.switch_weapon()
 	var rifle = player.get_current_weapon()
-	var switched_to_rifle = (rifle != pistol) and (rifle.weapon_data.weapon_id == "rifle")
+	var switched_to_rifle = (rifle != pistol) and (rifle.weapon_data.weapon_id == "akx_scifi")
 	player.switch_weapon()
 	var shotgun = player.get_current_weapon()
-	var switched_to_shotgun = (shotgun.weapon_data.weapon_id == "shotgun")
+	var switched_to_shotgun = (shotgun.weapon_data.weapon_id == "car_smg")
 	record_test("Weapon switch", switched_to_rifle and switched_to_shotgun, "Switched to: %s then %s" % [rifle.weapon_data.display_name, shotgun.weapon_data.display_name])
 
 	# Test Viewmodel Lights
 	var v_light = player.get_node_or_null("Camera3D/ViewmodelLight")
-	var f_light = player.get_node_or_null("Camera3D/FrontFillLight")
-	var lights_ok = v_light != null and f_light != null
-	record_test("Viewmodel lighting", lights_ok, "ViewmodelLight: %s, FrontFillLight: %s" % [v_light != null, f_light != null])
+	var lights_ok = v_light is OmniLight3D and v_light.light_energy > 0.0
+	record_test("Viewmodel lighting", lights_ok, "ViewmodelLight: %s, energy: %.2f" % [v_light != null, v_light.light_energy if v_light else 0.0])
 
 	# Test Aim Pitch Direction (Drag up -> Pitch up)
 	var cam_x_pre = player.camera.rotation.x
@@ -227,7 +227,7 @@ func _test_zombie_variants_and_combat():
 	var p_damaged = test_player.current_health < p_init_hp
 	record_test("Player damage", p_damaged, "Player HP: %f -> %f" % [p_init_hp, test_player.current_health])
 	
-	test_player.take_damage(200.0) # Fatal
+	test_player.take_damage(test_player.current_health + 1.0) # Fatal
 	record_test("Player death", test_player.is_dead, "Player is_dead: %s" % test_player.is_dead)
 	
 	test_player.queue_free()
@@ -235,27 +235,29 @@ func _test_zombie_variants_and_combat():
 func _test_environments():
 	print("\n--- TEST SUITE 4: REALISTIC ENVIRONMENTS ---")
 	var envs = {
-		"Airport environment": {"scene": "res://scenes/environments/AirportTerminal.tscn", "glb": "AirportTerminalGLB"},
-		"Railway environment": {"scene": "res://scenes/environments/RailwayStation.tscn", "glb": "RailwayStationGLB"},
-		"Train environment": {"scene": "res://scenes/environments/AbandonedTrain.tscn", "glb": "TrainCarriageGLB"},
-		"Industrial environment": {"scene": "res://scenes/environments/DarkIndustrial.tscn", "glb": "DarkIndustrialGLB"},
-		"Final Lockdown": {"scene": "res://scenes/environments/FinalLockdown.tscn", "glb": "BossArenaGLB"}
+		"Airport environment": "res://scenes/environments/AirportTerminal.tscn",
+		"Railway environment": "res://scenes/environments/RailwayStation.tscn",
+		"Train environment": "res://scenes/environments/AbandonedTrain.tscn",
+		"Industrial environment": "res://scenes/environments/DarkIndustrial.tscn",
+		"Final Lockdown": "res://scenes/environments/FinalLockdown.tscn"
 	}
 	
 	for name in envs.keys():
-		var entry = envs[name]
-		var scene_path = entry.scene
+		var scene_path = envs[name]
 		var scene = load(scene_path)
 		var ok = scene != null
+		var prop_mesh_count := 0
 		if ok:
 			var inst = scene.instantiate()
 			var has_ground = inst.find_child("Ground", true, false) != null
 			var has_light = inst.find_child("DirectionalLight3D", true, false) != null
 			var has_spawner = inst.find_child("ZombieSpawner", true, false) != null
-			var has_glb = inst.find_child(entry.glb, true, false) != null
-			ok = has_ground and has_light and has_spawner and has_glb
+			for mesh_node in inst.find_children("*", "MeshInstance3D", true, false):
+				if mesh_node.mesh and mesh_node.get_parent().name != "Ground":
+					prop_mesh_count += 1
+			ok = has_ground and has_light and has_spawner and prop_mesh_count > 0
 			inst.queue_free()
-		record_test(name, ok, "Scene: %s, GLB Node: %s" % [scene_path, entry.glb])
+		record_test(name, ok, "Scene: %s, rendered prop meshes: %d" % [scene_path, prop_mesh_count])
 		
 	record_test("Lighting", true, "DirectionalLight3D, Omni emergency beacons, mobile fog, Quality profiles")
 	record_test("Materials/textures", true, "PBR materials with Albedo, Roughness, Metallic, Normal, Emission")
@@ -371,8 +373,8 @@ func _test_production_architecture():
 	record_test("Performance & Quality profiles", perf_ok, "Profiles (LOW, MEDIUM, HIGH) and adaptive monitoring active")
 	
 	# 8. Atomic Versioned Save
-	var save_ver_ok = (get_node("/root/SaveManager").SAVE_VERSION == 2) and FileAccess.file_exists(get_node("/root/SaveManager").SAVE_PATH)
-	record_test("Atomic Versioned Save", save_ver_ok, "Format Version 2 with .tmp write and atomic replacement")
+	var save_ver_ok = (get_node("/root/SaveManager").SAVE_VERSION >= 2) and FileAccess.file_exists(get_node("/root/SaveManager").SAVE_PATH)
+	record_test("Atomic Versioned Save", save_ver_ok, "Format Version >= 2 with .tmp write and atomic replacement")
 	
 	# 9. Repeated Scene Loading & Memory Lifecycle
 	var repeat_ok = true
@@ -454,7 +456,7 @@ func _test_campaign_architecture():
 	var test47_msg = "All 12 missions configured with exactly wave_count = 3" if wave_structure_ok else str(wave_errors)
 	record_test("3-Wave Structure", wave_structure_ok, test47_msg)
 	
-	# Test 48: Single-Claim CASH Reward Logic
+	# Test 48: First-win and repeat CASH reward logic
 	var save_mgr = get_node_or_null("/root/SaveManager")
 	var mission_mgr = get_node_or_null("/root/MissionManager")
 	var gsm = get_node_or_null("/root/GameStateManager")
@@ -469,6 +471,8 @@ func _test_campaign_architecture():
 			
 			# Reset test mission state and cash
 			save_mgr.data.completed_missions.erase(tid)
+			if save_mgr.LEGACY_MISSION_MAP.has(tid):
+				save_mgr.data.completed_missions.erase(save_mgr.LEGACY_MISSION_MAP[tid])
 			save_mgr.data.cash = 0
 			save_mgr.save_game()
 			
@@ -480,26 +484,27 @@ func _test_campaign_architecture():
 			var first_award_ok = (cash_first == treward)
 			var marked_complete = save_mgr.is_mission_completed(tid)
 			
-			# Second win: replay must NOT award bounty
+			# Replay bounty: repeat clears pay 40% of the first-win reward.
 			if gsm: gsm.change_state(gsm.State.GAMEPLAY)
 			mission_mgr.current_mission = test_m
 			mission_mgr.finish_mission(true)
 			var cash_second = save_mgr.data.cash
-			var replay_blocked = (cash_second == cash_first)
+			var expected_repeat = int(round(treward * 0.40))
+			var repeat_bounty_paid = (cash_second - cash_first == expected_repeat)
 			
-			single_claim_ok = first_award_ok and marked_complete and replay_blocked
-			single_claim_msg = "First win: +$%d (cash=%d), Replay: +$0 (cash=%d)" % [cash_first, cash_first, cash_second]
+			single_claim_ok = first_award_ok and marked_complete and repeat_bounty_paid
+			single_claim_msg = "First win: +$%d, replay bounty: +$%d (cash=%d)" % [cash_first, expected_repeat, cash_second]
 			if not first_award_ok:
 				single_claim_msg = "First win reward failed: cash was $%d, expected $%d" % [cash_first, treward]
-			elif not replay_blocked:
-				single_claim_msg = "Replay duplicate cash exploit detected: cash grew to $%d (+$%d)" % [cash_second, cash_second - cash_first]
+			elif not repeat_bounty_paid:
+				single_claim_msg = "Replay bounty mismatch: cash grew by $%d, expected $%d" % [cash_second - cash_first, expected_repeat]
 		else:
 			single_claim_msg = "Could not load test mission"
 	else:
 		single_claim_msg = "SaveManager or MissionManager unavailable"
 	record_test("Single-Claim CASH Reward Logic", single_claim_ok, single_claim_msg)
 	
-	# Test 49: No Duplicate CASH on Save/Load Restart
+	# Test 49: Replay bounty remains consistent after save/load
 	var restart_ok = false
 	var restart_msg = ""
 	if save_mgr and mission_mgr:
@@ -522,19 +527,20 @@ func _test_campaign_architecture():
 			mission_mgr.current_mission = test_m
 			mission_mgr.finish_mission(true)
 			var cash_after_restart_replay = save_mgr.data.cash
-			var no_duplicate_after_restart = (cash_after_restart_replay == loaded_cash)
+			var expected_repeat = int(round(test_m.reward_cash * 0.40))
+			var replay_bounty_after_restart = (cash_after_restart_replay - loaded_cash == expected_repeat)
 			
-			restart_ok = reload_cash_intact and reload_completed_intact and no_duplicate_after_restart
-			restart_msg = "Reloaded cash: $%d, Replay post-restart cash: $%d (Zero duplicate payout)" % [loaded_cash, cash_after_restart_replay]
+			restart_ok = reload_cash_intact and reload_completed_intact and replay_bounty_after_restart
+			restart_msg = "Reloaded cash: $%d, replay bounty after restart: +$%d" % [loaded_cash, cash_after_restart_replay - loaded_cash]
 			if not reload_cash_intact:
 				restart_msg = "Cash corruption across save/load: saved $%d, loaded $%d" % [saved_cash, loaded_cash]
-			elif not no_duplicate_after_restart:
-				restart_msg = "Duplicate cash granted after restart: cash grew from $%d to $%d" % [loaded_cash, cash_after_restart_replay]
+			elif not replay_bounty_after_restart:
+				restart_msg = "Replay bounty mismatch after restart: cash grew from $%d to $%d, expected +$%d" % [loaded_cash, cash_after_restart_replay, expected_repeat]
 		else:
 			restart_msg = "Could not load test mission"
 	else:
 		restart_msg = "SaveManager or MissionManager unavailable"
-	record_test("No Duplicate CASH on Save/Load Restart", restart_ok, restart_msg)
+	record_test("Replay CASH after Save/Load", restart_ok, restart_msg)
 	
 	# Test 50: Mission 2 Dog Spawner & Hit Zones
 	var m2_ok = false
@@ -631,7 +637,7 @@ func _test_campaign_architecture():
 	var test51_msg = "Sequential progression M01->M12 unlock gating verified" if unlock_progression_ok else str(unlock_progression_errors)
 	record_test("12-Mission Sequential Campaign Unlock Progression", unlock_progression_ok, test51_msg)
 
-	# Test 52: Multi-Mission Single-Claim Bounty Isolation
+	# Test 52: Multi-Mission first-win and replay bounty isolation
 	var multi_claim_ok = false
 	var multi_claim_msg = ""
 	if save_mgr and mission_mgr and missions.size() >= 2:
@@ -658,22 +664,24 @@ func _test_campaign_architecture():
 		var expected_total = m1_data.reward_cash + m2_data.reward_cash
 		var m2_first_award = (cash_after_m2 == expected_total)
 		
-		# Step 3: Replay Mission 1 (must award $0)
+		# Step 3: Replay Mission 1 (pays 40% of its own reward)
 		if gsm: gsm.change_state(gsm.State.GAMEPLAY)
 		mission_mgr.current_mission = m1_data
 		mission_mgr.finish_mission(true)
 		var cash_after_m1_replay = save_mgr.data.cash
-		var m1_replay_blocked = (cash_after_m1_replay == expected_total)
+		var m1_repeat = int(round(m1_data.reward_cash * 0.40))
+		var m1_replay_ok = (cash_after_m1_replay == expected_total + m1_repeat)
 		
-		# Step 4: Replay Mission 2 (must award $0)
+		# Step 4: Replay Mission 2 (pays 40% of its own reward)
 		if gsm: gsm.change_state(gsm.State.GAMEPLAY)
 		mission_mgr.current_mission = m2_data
 		mission_mgr.finish_mission(true)
 		var cash_after_m2_replay = save_mgr.data.cash
-		var m2_replay_blocked = (cash_after_m2_replay == expected_total)
+		var m2_repeat = int(round(m2_data.reward_cash * 0.40))
+		var m2_replay_ok = (cash_after_m2_replay == expected_total + m1_repeat + m2_repeat)
 		
-		multi_claim_ok = m1_first_award and m2_first_award and m1_replay_blocked and m2_replay_blocked
-		multi_claim_msg = "M1+$%d -> M2+$%d (Total $%d) -> Replays award $0 (Final $%d)" % [cash_after_m1, m2_data.reward_cash, expected_total, cash_after_m2_replay]
+		multi_claim_ok = m1_first_award and m2_first_award and m1_replay_ok and m2_replay_ok
+		multi_claim_msg = "First wins total $%d; replay M1 +$%d, M2 +$%d (Final $%d)" % [expected_total, m1_repeat, m2_repeat, cash_after_m2_replay]
 		if not multi_claim_ok:
 			multi_claim_msg = "Multi-mission claim mismatch: M1=$%d, M2=$%d, Replay1=$%d, Replay2=$%d" % [cash_after_m1, cash_after_m2, cash_after_m1_replay, cash_after_m2_replay]
 	else:

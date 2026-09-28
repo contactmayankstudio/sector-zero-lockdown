@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://b8xxmainmenu"]
+[gd_scene load_steps=9 format=3 uid="uid://b8xxmainmenu"]
 
 [ext_resource type="Script" path="res://scripts/MainMenuUI.gd" id="1_m3s4d"]
 [ext_resource type="PackedScene" path="res://scenes/UI/Components/PrimaryButton.tscn" id="2_btn"]
+[ext_resource type="Texture2D" path="res://textures/ui/game_logo.webp" id="3_logo"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_night"]
 sky_top_color = Color(0.02, 0.05, 0.1, 1)
@@ -99,33 +100,96 @@ grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="CenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 18
+
+[node name="LogoContainer" type="CenterContainer" parent="CenterContainer/VBox"]
+layout_mode = 2
+
+[node name="Logo" type="TextureRect" parent="CenterContainer/VBox/LogoContainer"]
+custom_minimum_size = Vector2(112, 112)
+layout_mode = 2
+texture = ExtResource("3_logo")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Title" type="Label" parent="CenterContainer/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
-theme_override_font_sizes/font_size = 64
+theme_override_colors/font_color = Color(0.92, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 48
 text = "SECTOR ZERO: LOCKDOWN"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/VBox"]
 layout_mode = 2
 
-[node name="HBox" type="HBoxContainer" parent="CenterContainer/VBox"]
+[node name="HighestWaveLabel" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.34, 1)
+theme_override_font_sizes/font_size = 18
+text = "SURVIVAL RECORD: UNTESTED"
+horizontal_alignment = 1
+
+[node name="DailyOpsLabel" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.76, 0.84, 1)
+theme_override_font_sizes/font_size = 15
+text = "DAILY OPS: READY"
+horizontal_alignment = 1
+
+[node name="ActionStack" type="VBoxContainer" parent="CenterContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PlayRow" type="HBoxContainer" parent="CenterContainer/VBox/ActionStack"]
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 40
+theme_override_constants/separation = 16
 
-[node name="StartButton" parent="CenterContainer/VBox/HBox" instance=ExtResource("2_btn")]
+[node name="SurvivalButton" parent="CenterContainer/VBox/ActionStack/PlayRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(360, 76)
 layout_mode = 2
-text = "MISSIONS"
+theme_override_font_sizes/font_size = 23
+text = "ENDLESS SURVIVAL"
 
-[node name="UpgradesButton" parent="CenterContainer/VBox/HBox" instance=ExtResource("2_btn")]
+[node name="StartButton" parent="CenterContainer/VBox/ActionStack/PlayRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(360, 76)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "CAMPAIGN"
+
+[node name="UtilityRow" type="HBoxContainer" parent="CenterContainer/VBox/ActionStack"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="UpgradesButton" parent="CenterContainer/VBox/ActionStack/UtilityRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(176, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
 text = "ARMORY"
 
-[node name="SettingsButton" parent="CenterContainer/VBox/HBox" instance=ExtResource("2_btn")]
+[node name="DailyOpsButton" parent="CenterContainer/VBox/ActionStack/UtilityRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(176, 56)
 layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "DAILY OPS"
+
+[node name="DailyRewardButton" parent="CenterContainer/VBox/ActionStack/UtilityRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(176, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "🎁 REWARDS"
+
+[node name="LuckySpinButton" parent="CenterContainer/VBox/ActionStack/UtilityRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(176, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "🎰 SPIN"
+
+[node name="SettingsButton" parent="CenterContainer/VBox/ActionStack/UtilityRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(176, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
 text = "SETTINGS"
 
 [node name="VersionLabel" type="Label" parent="."]
@@ -136,16 +200,19 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -100.0
-offset_top = -40.0
+offset_top = -124.0
 offset_right = -16.0
-offset_bottom = -16.0
+offset_bottom = -100.0
 grow_horizontal = 0
 grow_vertical = 0
 text = "v1.0.0"
 horizontal_alignment = 2
 
-[connection signal="pressed" from="CenterContainer/VBox/HBox/StartButton" to="." method="_on_start_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBox/HBox/UpgradesButton" to="." method="_on_upgrades_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBox/HBox/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/ActionStack/PlayRow/SurvivalButton" to="." method="_on_survival_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/ActionStack/PlayRow/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/ActionStack/UtilityRow/UpgradesButton" to="." method="_on_upgrades_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/ActionStack/UtilityRow/DailyOpsButton" to="." method="_on_daily_ops_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/ActionStack/UtilityRow/DailyRewardButton" to="." method="_on_daily_reward_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/ActionStack/UtilityRow/LuckySpinButton" to="." method="_on_lucky_spin_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/ActionStack/UtilityRow/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="gui_input" from="VersionLabel" to="." method="_on_version_label_gui_input"]
-

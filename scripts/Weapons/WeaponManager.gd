@@ -3,145 +3,182 @@ extends Node
 
 # Canonical registry of all 10 weapons
 const WEAPON_REGISTRY: Dictionary = {
-	"usp45": {
-		"id": "usp45",
-		"display_name": "USP-45",
-		"subtitle": "Tactical .45 ACP Sidearm - Reliable Critical Headshots",
-		"category": "Pistol",
-		"resource_path": "res://resources/weapons/usp45.tres",
-		"scene_path": "res://scenes/weapons/USP45.tscn",
-		"model_path": "res://assets/3d/weapons/usp45.glb",
+	"negev_ng7": {
+		"id": "negev_ng7",
+		"display_name": "NG7 Heavy LMG",
+		"subtitle": "7.62mm Sustained Fire Suppressive LMG",
+		"category": "Machine Gun",
+		"resource_path": "res://resources/weapons/negev_ng7.tres",
+		"scene_path": "res://scenes/weapons/models/negev_ng7.scn",
+		"model_path": "res://scenes/weapons/models/negev_ng7.scn",
 		"unlock_price": 0,
 		"default_unlocked": true,
-		"aliases": ["pistol"]
+		"aliases": ["negev", "lmg"]
 	},
-	"m4a1": {
-		"id": "m4a1",
-		"display_name": "M4A1 Sentinel",
-		"subtitle": "5.56 NATO Tactical Carbine - High Cyclic Fire Rate",
-		"category": "Assault Rifle",
-		"resource_path": "res://resources/weapons/m4a1.tres",
-		"scene_path": "res://scenes/weapons/M4A1.tscn",
-		"model_path": "res://assets/3d/weapons/m4a1.glb",
-		"unlock_price": 0,
-		"default_unlocked": true,
-		"aliases": ["rifle"]
-	},
-	"remington870": {
-		"id": "remington870",
-		"display_name": "Remington 870",
-		"subtitle": "12-Gauge Pump Action - Lethal Close-Quarters Spread",
-		"category": "Shotgun",
-		"resource_path": "res://resources/weapons/remington870.tres",
-		"scene_path": "res://scenes/weapons/Remington870.tscn",
-		"model_path": "res://assets/3d/weapons/remington870.glb",
-		"unlock_price": 0,
-		"default_unlocked": true,
-		"aliases": ["shotgun"]
-	},
-	"ak47": {
-		"id": "ak47",
-		"display_name": "AK-47 Vanguard",
-		"subtitle": "7.62x39mm Combat Rifle - Heavy Kinetic Punch",
-		"category": "Combat Rifle",
-		"resource_path": "res://resources/weapons/ak47.tres",
-		"scene_path": "res://scenes/weapons/AK47.tscn",
-		"model_path": "res://assets/3d/weapons/ak47.glb",
-		"unlock_price": 1500,
+	"grenade_mk2": {
+		"id": "grenade_mk2",
+		"display_name": "MK2 Frag Grenade",
+		"subtitle": "High-Explosive Shrapnel Grenade",
+		"category": "Explosive",
+		"resource_path": "res://resources/weapons/grenade_mk2.tres",
+		"scene_path": "res://scenes/weapons/models/grenade_mk2.scn",
+		"model_path": "res://scenes/weapons/models/grenade_mk2.scn",
+		"unlock_price": 1800,
 		"default_unlocked": false,
-		"aliases": []
+		"aliases": ["grenade"]
 	},
-	"desert_eagle": {
-		"id": "desert_eagle",
-		"display_name": "Desert Eagle .50 AE",
-		"subtitle": ".50 Action Express Hand Cannon - Devastating Stopping Power",
-		"category": "Heavy Handgun",
-		"resource_path": "res://resources/weapons/desert_eagle.tres",
-		"scene_path": "res://scenes/weapons/DesertEagle.tscn",
-		"model_path": "res://assets/3d/weapons/desert_eagle.glb",
-		"unlock_price": 2200,
-		"default_unlocked": false,
-		"aliases": ["deagle"]
-	},
-	"mp5": {
-		"id": "mp5",
-		"display_name": "MP5 Tactical",
-		"subtitle": "9mm Submachine Gun - Ultra Fast Cyclic Fire Rate",
+	"car_smg": {
+		"id": "car_smg",
+		"display_name": "Frontier SMG-9",
+		"subtitle": "Dual-Feed High Cyclic SMG",
 		"category": "Submachine Gun",
-		"resource_path": "res://resources/weapons/mp5.tres",
-		"scene_path": "res://scenes/weapons/MP5.tscn",
-		"model_path": "res://assets/3d/weapons/mp5.glb",
-		"unlock_price": 1200,
-		"default_unlocked": false,
-		"aliases": []
-	},
-	"awp": {
-		"id": "awp",
-		"display_name": "AWP Arctic Warfare",
-		"subtitle": ".338 Lapua Bolt-Action Sniper - Extreme Range One-Shot Lethality",
-		"category": "Sniper Rifle",
-		"resource_path": "res://resources/weapons/awp.tres",
-		"scene_path": "res://scenes/weapons/AWP.tscn",
-		"model_path": "res://assets/3d/weapons/awp.glb",
-		"unlock_price": 3500,
-		"default_unlocked": false,
-		"aliases": []
-	},
-	"combat_knife": {
-		"id": "combat_knife",
-		"display_name": "Combat Knife",
-		"subtitle": "Serrated Tanto Blade - Silent Rapid Melee Takedowns",
-		"category": "Melee",
-		"resource_path": "res://resources/weapons/combat_knife.tres",
-		"scene_path": "res://scenes/weapons/CombatKnife.tscn",
-		"model_path": "res://assets/3d/weapons/combat_knife.glb",
-		"unlock_price": 800,
-		"default_unlocked": false,
-		"aliases": ["knife"]
-	},
-	"crossbow": {
-		"id": "crossbow",
-		"display_name": "Silent Hunter Crossbow",
-		"subtitle": "Composite Bolt Thrower - High-Tension Silent Piercing",
-		"category": "Tactical Special",
-		"resource_path": "res://resources/weapons/crossbow.tres",
-		"scene_path": "res://scenes/weapons/Crossbow.tscn",
-		"model_path": "res://assets/3d/weapons/crossbow.glb",
+		"resource_path": "res://resources/weapons/car_smg.tres",
+		"scene_path": "res://scenes/weapons/models/car_smg.scn",
+		"model_path": "res://scenes/weapons/models/car_smg.scn",
 		"unlock_price": 2800,
 		"default_unlocked": false,
-		"aliases": []
+		"aliases": ["car"]
 	},
-	"grenade_launcher": {
-		"id": "grenade_launcher",
-		"display_name": "M79 Grenade Launcher",
-		"subtitle": "40mm Area Ordinance - High-Explosive Crowd Annihilation",
-		"category": "Heavy Explosive",
-		"resource_path": "res://resources/weapons/grenade_launcher.tres",
-		"scene_path": "res://scenes/weapons/GrenadeLauncher.tscn",
-		"model_path": "res://assets/3d/weapons/grenade_launcher.glb",
-		"unlock_price": 4500,
+	"pestilence_handgun": {
+		"id": "pestilence_handgun",
+		"display_name": "Pestilence Mag-Pistol",
+		"subtitle": "Heavy Caliber Bio-Magnetic Handgun",
+		"category": "Pistol",
+		"resource_path": "res://resources/weapons/pestilence_handgun.tres",
+		"scene_path": "res://scenes/weapons/models/pestilence_handgun.scn",
+		"model_path": "res://scenes/weapons/models/pestilence_handgun.scn",
+		"unlock_price": 4000,
 		"default_unlocked": false,
-		"aliases": ["m79"]
+		"aliases": ["pestilence"]
+	},
+	"akx_scifi": {
+		"id": "akx_scifi",
+		"display_name": "AKX Cyber Carbine",
+		"subtitle": "Advanced Plasma-Coated Kinetic Rifle",
+		"category": "Assault Rifle",
+		"resource_path": "res://resources/weapons/akx_scifi.tres",
+		"scene_path": "res://scenes/weapons/models/akx_scifi.scn",
+		"model_path": "res://scenes/weapons/models/akx_scifi.scn",
+		"unlock_price": 5500,
+		"default_unlocked": false,
+		"aliases": ["akx"]
+	},
+	"prowler_smg": {
+		"id": "prowler_smg",
+		"display_name": "Prowler Reactive SMG",
+		"subtitle": "Liquid-Cooled High Cyclic Burst SMG",
+		"category": "Submachine Gun",
+		"resource_path": "res://resources/weapons/prowler_smg.tres",
+		"scene_path": "res://scenes/weapons/models/prowler_smg.scn",
+		"model_path": "res://scenes/weapons/models/prowler_smg.scn",
+		"unlock_price": 7500,
+		"default_unlocked": false,
+		"aliases": ["prowler"]
+	},
+	"primordium_vandal": {
+		"id": "primordium_vandal",
+		"display_name": "Primordium Vandal",
+		"subtitle": "Golden Precision Kinetic Assault Rifle",
+		"category": "Assault Rifle",
+		"resource_path": "res://resources/weapons/primordium_vandal.tres",
+		"scene_path": "res://scenes/weapons/models/primordium_vandal.scn",
+		"model_path": "res://scenes/weapons/models/primordium_vandal.scn",
+		"unlock_price": 10000,
+		"default_unlocked": false,
+		"aliases": ["vandal"]
+	},
+	"arcade_gun": {
+		"id": "arcade_gun",
+		"display_name": "Retro Arcade Blaster",
+		"subtitle": "Classic Light-Gun Rapid Blaster",
+		"category": "Pistol",
+		"resource_path": "res://resources/weapons/arcade_gun.tres",
+		"scene_path": "res://scenes/weapons/models/arcade_gun.scn",
+		"model_path": "res://scenes/weapons/models/arcade_gun.scn",
+		"unlock_price": 13000,
+		"default_unlocked": false,
+		"aliases": ["arcade"]
+	},
+	"prowl_blaster": {
+		"id": "prowl_blaster",
+		"display_name": "Prowl Cyber Blaster",
+		"subtitle": "Compact Tactical Energy Sidearm",
+		"category": "Pistol",
+		"resource_path": "res://resources/weapons/prowl_blaster.tres",
+		"scene_path": "res://scenes/weapons/models/prowl_blaster.scn",
+		"model_path": "res://scenes/weapons/models/prowl_blaster.scn",
+		"unlock_price": 16500,
+		"default_unlocked": false,
+		"aliases": ["prowl"]
+	},
+	"vaccinator_energy": {
+		"id": "vaccinator_energy",
+		"display_name": "Vaccinator Beam Rifle",
+		"subtitle": "High-Tech Continuous Energy Weapon",
+		"category": "Rifle",
+		"resource_path": "res://resources/weapons/vaccinator_energy.tres",
+		"scene_path": "res://scenes/weapons/models/vaccinator_energy.scn",
+		"model_path": "res://scenes/weapons/models/vaccinator_energy.scn",
+		"unlock_price": 20500,
+		"default_unlocked": false,
+		"aliases": ["vaccinator"]
+	},
+	"retro_ray_gun": {
+		"id": "retro_ray_gun",
+		"display_name": "Alien Disintegrator",
+		"subtitle": "Retro-Futuristic Disintegration Ray",
+		"category": "Special",
+		"resource_path": "res://resources/weapons/retro_ray_gun.tres",
+		"scene_path": "res://scenes/weapons/models/retro_ray_gun.scn",
+		"model_path": "res://scenes/weapons/models/retro_ray_gun.scn",
+		"unlock_price": 25000,
+		"default_unlocked": false,
+		"aliases": ["disintegrator"]
+	},
+	"ray_gun_cod": {
+		"id": "ray_gun_cod",
+		"display_name": "Wonder Ray Gun",
+		"subtitle": "Alien Concentrated Energy Disintegrator",
+		"category": "Special",
+		"resource_path": "res://resources/weapons/ray_gun_cod.tres",
+		"scene_path": "res://scenes/weapons/models/ray_gun_cod.scn",
+		"model_path": "res://scenes/weapons/models/ray_gun_cod.scn",
+		"unlock_price": 30000,
+		"default_unlocked": false,
+		"aliases": ["raygun", "ray_gun"]
+	},
+	"axon_cannon": {
+		"id": "axon_cannon",
+		"display_name": "Axon Heavy Blaster",
+		"subtitle": "Devastating Ion-Particle Heavy Cannon",
+		"category": "Special",
+		"resource_path": "res://resources/weapons/axon_cannon.tres",
+		"scene_path": "res://scenes/weapons/models/axon_cannon.scn",
+		"model_path": "res://scenes/weapons/models/axon_cannon.scn",
+		"unlock_price": 36000,
+		"default_unlocked": false,
+		"aliases": ["axon"]
+	},
+	"rocket_launcher": {
+		"id": "rocket_launcher",
+		"display_name": "Titan Rocket Launcher",
+		"subtitle": "Anti-Armor High-Explosive Rocket Launcher",
+		"category": "Explosive",
+		"resource_path": "res://resources/weapons/rocket_launcher.tres",
+		"scene_path": "res://scenes/weapons/models/rocket_launcher.scn",
+		"model_path": "res://scenes/weapons/models/rocket_launcher.scn",
+		"unlock_price": 45000,
+		"default_unlocked": false,
+		"aliases": ["rpg", "rocket"]
 	}
 }
 
 # Alias resolution mapping
 static func resolve_weapon_id(id: String) -> String:
-	match id:
-		"pistol": return "usp45"
-		"rifle": return "m4a1"
-		"shotgun": return "remington870"
-		"deagle": return "desert_eagle"
-		"knife": return "combat_knife"
-		"m79": return "grenade_launcher"
-		_: return id
-
+	return id
 static func get_all_weapon_ids() -> Array[String]:
-	return [
-		"usp45", "m4a1", "remington870", "ak47", "desert_eagle",
-		"mp5", "awp", "combat_knife", "crossbow", "grenade_launcher"
-	]
-
+	var arr: Array[String] = ["negev_ng7", "akx_scifi", "car_smg", "grenade_mk2", "primordium_vandal", "prowler_smg", "ray_gun_cod", "rocket_launcher", "pestilence_handgun", "arcade_gun", "retro_ray_gun", "prowl_blaster", "vaccinator_energy", "axon_cannon"]
+	return arr
 static func get_weapon_entry(id: String) -> Dictionary:
 	var canonical = resolve_weapon_id(id)
 	return WEAPON_REGISTRY.get(canonical, {})
@@ -164,6 +201,28 @@ static func get_weapon_scene(id: String) -> PackedScene:
 		return load(path) as PackedScene
 	return null
 
+static func is_weapon_owned(id: String, save_mgr = null) -> bool:
+	if not save_mgr:
+		var tree = Engine.get_main_loop() as SceneTree
+		if tree and tree.root.has_node("SaveManager"):
+			save_mgr = tree.root.get_node("SaveManager")
+	if not save_mgr:
+		var entry = get_weapon_entry(id)
+		return entry.get("default_unlocked", false)
+	
+	var canonical = resolve_weapon_id(id)
+	if save_mgr.has_method("is_weapon_owned"):
+		return save_mgr.is_weapon_owned(canonical)
+		
+	var unlocked = save_mgr.data.get("unlocked_weapons", [])
+	if canonical in unlocked:
+		return true
+	var entry = get_weapon_entry(canonical)
+	for alias in entry.get("aliases", []):
+		if alias in unlocked:
+			return true
+	return false
+
 static func is_weapon_unlocked(id: String, save_mgr = null) -> bool:
 	if not save_mgr:
 		var tree = Engine.get_main_loop() as SceneTree
@@ -174,15 +233,9 @@ static func is_weapon_unlocked(id: String, save_mgr = null) -> bool:
 		return entry.get("default_unlocked", false)
 	
 	var canonical = resolve_weapon_id(id)
-	var unlocked = save_mgr.data.get("unlocked_weapons", [])
-	if canonical in unlocked:
-		return true
-	# Check aliases
-	var entry = get_weapon_entry(canonical)
-	for alias in entry.get("aliases", []):
-		if alias in unlocked:
-			return true
-	return false
+	if save_mgr.has_method("is_weapon_unlocked"):
+		return save_mgr.is_weapon_unlocked(canonical)
+	return is_weapon_owned(id, save_mgr)
 
 static func unlock_weapon(id: String, save_mgr = null) -> bool:
 	if not save_mgr:
@@ -254,14 +307,18 @@ static func purchase_upgrade(id: String, stat_name: String, save_mgr = null) -> 
 		
 	var canonical = resolve_weapon_id(id)
 	var cost = get_upgrade_cost(canonical, stat_name, save_mgr)
-	if cost <= 0 or save_mgr.data.cash < cost:
+	if cost <= 0:
 		return false
 		
 	var cur_lvl = get_upgrade_level(canonical, stat_name, save_mgr)
 	if cur_lvl >= WeaponData.MAX_UPGRADE_LEVEL:
 		return false
 		
-	save_mgr.add_cash(-cost)
+	var spent = save_mgr.spend_cash(cost) if save_mgr.has_method("spend_cash") else (save_mgr.data.cash >= cost)
+	if not spent:
+		return false
+	if not save_mgr.has_method("spend_cash"):
+		save_mgr.add_cash(-cost)
 	var lvls = get_upgrade_levels(canonical, save_mgr)
 	lvls[stat_name] = cur_lvl + 1
 	save_mgr.data.weapon_upgrades[canonical] = lvls
@@ -288,9 +345,10 @@ static func purchase_weapon(id: String, save_mgr = null) -> bool:
 		
 	var entry = get_weapon_entry(canonical)
 	var price = entry.get("unlock_price", 0)
-	if save_mgr.data.cash < price:
+	var spent = save_mgr.spend_cash(price) if save_mgr.has_method("spend_cash") else (save_mgr.data.cash >= price)
+	if not spent:
 		return false
-		
-	save_mgr.add_cash(-price)
+	if not save_mgr.has_method("spend_cash"):
+		save_mgr.add_cash(-price)
 	unlock_weapon(canonical, save_mgr)
 	return true

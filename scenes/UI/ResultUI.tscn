@@ -2,23 +2,24 @@
 
 [ext_resource type="Script" path="res://scripts/ResultUI.gd" id="1_r3s4d"]
 [ext_resource type="PackedScene" path="res://scenes/UI/Components/PrimaryButton.tscn" id="2_btn"]
+[ext_resource type="PackedScene" path="res://scenes/UI/Components/TacticalButton.tscn" id="3_tac01"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
-bg_color = Color(0.05, 0.05, 0.07, 0.95)
+bg_color = Color(0.04, 0.05, 0.07, 0.88)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.12, 0.14, 0.17, 0.9)
+bg_color = Color(0.07, 0.09, 0.12, 0.96)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.3, 0.4, 0.5, 0.6)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-shadow_color = Color(0, 0, 0, 0.8)
-shadow_size = 12
+border_color = Color(0.18, 0.5, 0.75, 0.9)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.85)
+shadow_size = 18
 
 [node name="ResultUI" type="Control"]
 process_mode = 3
@@ -48,7 +49,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Panel" type="Panel" parent="Center"]
-custom_minimum_size = Vector2(500, 450)
+custom_minimum_size = Vector2(580, 580)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
@@ -57,20 +58,34 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = 32.0
-offset_right = -32.0
-offset_bottom = -32.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 10
 alignment = 1
+
+[node name="HeaderTag" type="Label" parent="Center/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.75, 0.95, 0.8)
+theme_override_font_sizes/font_size = 12
+text = "// FIELD OPERATION DEBRIEFING"
+horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="Center/Panel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 36
 text = "MISSION COMPLETE"
+horizontal_alignment = 1
+
+[node name="GradeLabel" type="Label" parent="Center/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 16
+text = "GRADE: S [OUTSTANDING]"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="Center/Panel/VBox"]
@@ -78,20 +93,30 @@ layout_mode = 2
 
 [node name="Kills" type="Label" parent="Center/Panel/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "Enemies Eliminated: 0"
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Zombies Eliminated: 0"
 horizontal_alignment = 1
 
 [node name="Headshots" type="Label" parent="Center/Panel/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.8, 0.25, 1)
+theme_override_font_sizes/font_size = 18
 text = "Headshots: 0"
 horizontal_alignment = 1
 
 [node name="Accuracy" type="Label" parent="Center/Panel/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.3, 0.95, 0.5, 1)
+theme_override_font_sizes/font_size = 18
 text = "Accuracy: 0%"
+horizontal_alignment = 1
+
+[node name="Score" type="Label" parent="Center/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 18
+text = "Score: 0"
 horizontal_alignment = 1
 
 [node name="HSeparator2" type="HSeparator" parent="Center/Panel/VBox"]
@@ -99,10 +124,23 @@ layout_mode = 2
 
 [node name="CashLabel" type="Label" parent="Center/Panel/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 1, 0.4, 1)
-theme_override_font_sizes/font_size = 28
-text = "Reward: +$0 CASH"
+theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+text = "Reward: 0 CASH"
 horizontal_alignment = 1
+
+[node name="TotalCashLabel" type="Label" parent="Center/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 0.85)
+theme_override_font_sizes/font_size = 13
+text = "TOTAL SECTOR CASH: 0"
+horizontal_alignment = 1
+
+[node name="DoubleRewardButton" parent="Center/Panel/VBox" instance=ExtResource("2_btn")]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 46)
+theme_override_colors/font_color = Color(1, 0.9, 0.25, 1)
+text = "🎬 2X CASH: DOUBLE REWARD"
 
 [node name="Spacer" type="Control" parent="Center/Panel/VBox"]
 layout_mode = 2
@@ -110,14 +148,30 @@ size_flags_vertical = 3
 
 [node name="NextButton" parent="Center/Panel/VBox" instance=ExtResource("2_btn")]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 48)
 text = "CONTINUE"
+
+[node name="SubActionHBox" type="HBoxContainer" parent="Center/Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="ArmoryButton" parent="Center/Panel/VBox/SubActionHBox" instance=ExtResource("3_tac01")]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 44)
+text = "WEAPONS"
+
+[node name="MapButton" parent="Center/Panel/VBox/SubActionHBox" instance=ExtResource("3_tac01")]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 44)
+text = "MISSION MAP"
 
 [node name="ReplayButton" parent="Center/Panel/VBox" instance=ExtResource("2_btn")]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 44)
 text = "REPLAY MISSION"
 
 [connection signal="pressed" from="Center/Panel/VBox/NextButton" to="." method="_on_next_pressed"]
 [connection signal="pressed" from="Center/Panel/VBox/ReplayButton" to="." method="_on_replay_pressed"]
-

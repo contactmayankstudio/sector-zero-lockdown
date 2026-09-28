@@ -32,38 +32,55 @@ extends Control
 
 @onready var equip_btn = find_child("EquipBtn", true, false)
 @onready var unlock_btn = find_child("UnlockBtn", true, false)
+@onready var rent_btn = find_child("RentBtn", true, false)
 @onready var feedback_label = find_child("FeedbackLabel", true, false)
 
 var card_prefab: PackedScene = preload("res://scenes/UI/Components/WeaponCard.tscn")
 
-var current_weapon_id: String = "m4a1"
+var current_weapon_id: String = "negev_ng7"
 var active_mesh: Node3D = null
 var current_res: WeaponData = null
 var is_purchasing_locked: bool = false
 
 # 10 Canonical Weapons
 var weapons = [
-	"usp45", "m4a1", "remington870", "ak47", "desert_eagle", 
-	"mp5", "awp", "combat_knife", "crossbow", "grenade_launcher"
+	"negev_ng7", "akx_scifi", "car_smg", "grenade_mk2",
+	"primordium_vandal", "prowler_smg", "ray_gun_cod", "rocket_launcher", "pestilence_handgun",
+	"arcade_gun", "retro_ray_gun", "prowl_blaster", "vaccinator_energy", "axon_cannon"
 ]
 
 var meshes = {
-	"usp45": "res://scenes/weapons/models/usp45.tscn",
-	"pistol": "res://scenes/weapons/models/usp45.tscn",
-	"m4a1": "res://scenes/weapons/models/m4a1.tscn",
-	"rifle": "res://scenes/weapons/models/m4a1.tscn",
-	"remington870": "res://scenes/weapons/models/remington870.tscn",
-	"shotgun": "res://scenes/weapons/models/remington870.tscn",
-	"ak47": "res://scenes/weapons/models/ak47.tscn",
-	"desert_eagle": "res://scenes/weapons/models/desert_eagle.tscn",
-	"mp5": "res://scenes/weapons/models/mp5.tscn",
-	"awp": "res://scenes/weapons/models/awp.tscn",
-	"combat_knife": "res://scenes/weapons/models/combat_knife.tscn",
-	"crossbow": "res://scenes/weapons/models/crossbow.tscn",
-	"grenade_launcher": "res://scenes/weapons/models/grenade_launcher.tscn"
+	"negev_ng7": "res://scenes/weapons/models/negev_ng7.scn",
+	"akx_scifi": "res://scenes/weapons/models/akx_scifi.scn",
+	"car_smg": "res://scenes/weapons/models/car_smg.scn",
+	"grenade_mk2": "res://scenes/weapons/models/grenade_mk2.scn",
+	"primordium_vandal": "res://scenes/weapons/models/primordium_vandal.scn",
+	"prowler_smg": "res://scenes/weapons/models/prowler_smg.scn",
+	"ray_gun_cod": "res://scenes/weapons/models/ray_gun_cod.scn",
+	"rocket_launcher": "res://scenes/weapons/models/rocket_launcher.scn",
+	"pestilence_handgun": "res://scenes/weapons/models/pestilence_handgun.scn",
+	"arcade_gun": "res://scenes/weapons/models/arcade_gun.scn",
+	"retro_ray_gun": "res://scenes/weapons/models/retro_ray_gun.scn",
+	"prowl_blaster": "res://scenes/weapons/models/prowl_blaster.scn",
+	"vaccinator_energy": "res://scenes/weapons/models/vaccinator_energy.scn",
+	"axon_cannon": "res://scenes/weapons/models/axon_cannon.scn"
 }
 
 const WEAPON_ORIENTATIONS: Dictionary = {
+	"negev_ng7": Vector3(0, 0, 0),
+	"akx_scifi": Vector3(0, 90, 0),
+	"car_smg": Vector3(0, 90, 0),
+	"grenade_mk2": Vector3(0, 0, 0),
+	"primordium_vandal": Vector3(0, 90, 0),
+	"prowler_smg": Vector3(0, 90, 0),
+	"ray_gun_cod": Vector3(0, 90, 0),
+	"rocket_launcher": Vector3(0, 0, 0),
+	"pestilence_handgun": Vector3(0, 0, 0),
+	"arcade_gun": Vector3(0, 0, 0),
+	"retro_ray_gun": Vector3(0, 90, 0),
+	"prowl_blaster": Vector3(0, 0, 90),
+	"vaccinator_energy": Vector3(0, 0, 90),
+	"axon_cannon": Vector3(0, 0, 0),
 	"usp45": Vector3(90, -90, 0),
 	"pistol": Vector3(90, -90, 0),
 	"m4a1": Vector3(90, -90, 0),
@@ -80,6 +97,20 @@ const WEAPON_ORIENTATIONS: Dictionary = {
 }
 
 const WEAPON_TARGET_SIZES: Dictionary = {
+	"negev_ng7": 0.85,
+	"akx_scifi": 0.75,
+	"car_smg": 0.65,
+	"grenade_mk2": 0.40,
+	"primordium_vandal": 0.85,
+	"prowler_smg": 0.65,
+	"ray_gun_cod": 0.55,
+	"rocket_launcher": 0.95,
+	"pestilence_handgun": 0.45,
+	"arcade_gun": 0.45,
+	"retro_ray_gun": 0.55,
+	"prowl_blaster": 0.45,
+	"vaccinator_energy": 0.85,
+	"axon_cannon": 0.95,
 	"usp45": 0.42,
 	"pistol": 0.42,
 	"desert_eagle": 0.46,
@@ -128,6 +159,8 @@ func _ready():
 		equip_btn.pressed.connect(_on_equip)
 	if unlock_btn and not unlock_btn.pressed.is_connected(_on_unlock):
 		unlock_btn.pressed.connect(_on_unlock)
+	if rent_btn and not rent_btn.pressed.is_connected(_on_rent):
+		rent_btn.pressed.connect(_on_rent)
 		
 	if view_container:
 		view_container.gui_input.connect(_on_view_container_input)
@@ -210,7 +243,9 @@ func _populate_list():
 				if res and "unlock_price" in res:
 					unlock_price = res.unlock_price
 				
-		var is_unlocked = WeaponManager.is_weapon_unlocked(wid, save_mgr) if save_mgr else true
+		var is_owned = WeaponManager.is_weapon_owned(wid, save_mgr) if save_mgr else true
+		var is_rented = save_mgr.is_weapon_rented(wid) if (save_mgr and save_mgr.has_method("is_weapon_rented")) else false
+		var is_unlocked = is_owned or is_rented
 		var is_equipped = (wid == equipped_wid or
 			(equipped_wid in ["pistol", "usp45"] and wid in ["pistol", "usp45"]) or
 			(equipped_wid in ["rifle", "m4a1"] and wid in ["rifle", "m4a1"]) or
@@ -219,7 +254,7 @@ func _populate_list():
 		var card = card_prefab.instantiate()
 		card.name = "WepBtn_" + wid
 		weapon_list.add_child(card)
-		card.setup(wid, d_name, category, is_unlocked, is_equipped, unlock_price)
+		card.setup(wid, d_name, category, is_unlocked, is_equipped, unlock_price, is_rented)
 		card.weapon_card_selected.connect(_select_weapon)
 		if wid == current_weapon_id:
 			card.set_selected(true)
@@ -268,18 +303,28 @@ func _select_weapon(wid: String):
 	
 	_update_ui()
 
+func _get_rel_transform(child: Node3D, ancestor: Node3D) -> Transform3D:
+	var t = child.transform
+	var curr = child.get_parent()
+	while curr and curr != ancestor and curr is Node3D:
+		t = curr.transform * t
+		curr = curr.get_parent()
+	return t
+
 func _setup_active_mesh(inst: Node3D, wid: String):
 	var base_rot = WEAPON_ORIENTATIONS.get(wid, Vector3.ZERO)
 	inst.rotation_degrees = base_rot
 	
-	# Calculate transformed AABB
+	# Calculate transformed AABB relative to inst
 	var aabb = AABB()
 	var first = true
 	var meshes_found = inst.find_children("*", "MeshInstance3D", true, false)
 	if inst is MeshInstance3D: meshes_found.append(inst)
+	
 	for mi in meshes_found:
 		if mi.mesh:
-			var m_aabb = mi.transform * mi.mesh.get_aabb()
+			var rel_t = _get_rel_transform(mi, inst)
+			var m_aabb = rel_t * mi.mesh.get_aabb()
 			if first:
 				aabb = m_aabb
 				first = false
@@ -290,12 +335,16 @@ func _setup_active_mesh(inst: Node3D, wid: String):
 		var center = aabb.get_center()
 		var max_dim = max(aabb.size.x, max(aabb.size.y, aabb.size.z))
 		var target_size = WEAPON_TARGET_SIZES.get(wid, 0.72)
-		var s = target_size / max_dim
+		var s = target_size / max_dim if max_dim > 0.001 else 1.0
+		if not is_finite(s) or is_nan(s) or s <= 0.0:
+			s = 1.0
 		inst.scale = Vector3(s, s, s)
-		var rot_center = inst.transform.basis * center
+		var rot_center = center * s
+		if not is_finite(rot_center.x) or not is_finite(rot_center.y) or not is_finite(rot_center.z):
+			rot_center = Vector3.ZERO
 		inst.position = -rot_center + Vector3(0, 0.04, 0)
 	else:
-		inst.scale = Vector3(2.2, 2.2, 2.2)
+		inst.scale = Vector3(1.0, 1.0, 1.0)
 		inst.position = Vector3(0, 0.04, 0)
 
 func _update_ui():
@@ -310,7 +359,9 @@ func _update_ui():
 	
 	var w_entry = WeaponManager.get_weapon_entry(current_weapon_id)
 	var category = w_entry.get("category", "Tactical Firearm")
-	var is_unlocked = WeaponManager.is_weapon_unlocked(current_weapon_id, save_mgr)
+	var is_owned = WeaponManager.is_weapon_owned(current_weapon_id, save_mgr) if save_mgr else true
+	var is_rented = save_mgr.is_weapon_rented(current_weapon_id) if (save_mgr and save_mgr.has_method("is_weapon_rented")) else false
+	var is_unlocked = is_owned or is_rented
 	var unlock_price = w_entry.get("unlock_price", current_res.unlock_price if "unlock_price" in current_res and current_res.unlock_price > 0 else 1500)
 	
 	var equipped_wid = save_mgr.get_equipped_weapon() if save_mgr.has_method("get_equipped_weapon") else "m4a1"
@@ -325,9 +376,16 @@ func _update_ui():
 		weapon_subtitle.text = "[%s] // %s" % [category.to_upper(), w_entry.get("subtitle", "Combat Ready Specimen")]
 	if status_badge:
 		if is_equipped:
-			status_badge.text = "STATUS: EQUIPPED IN COMBAT LOADOUT"
-			status_badge.modulate = Color(0.2, 1.0, 0.5)
-		elif is_unlocked:
+			if is_rented:
+				status_badge.text = "STATUS: EQUIPPED // RENTED (1 MATCH REMAINING)"
+				status_badge.modulate = Color(1.0, 0.85, 0.2)
+			else:
+				status_badge.text = "STATUS: EQUIPPED IN COMBAT LOADOUT"
+				status_badge.modulate = Color(0.2, 1.0, 0.5)
+		elif is_rented:
+			status_badge.text = "STATUS: RENTED (1 MATCH REMAINING) // READY TO EQUIP"
+			status_badge.modulate = Color(1.0, 0.85, 0.2)
+		elif is_owned:
 			status_badge.text = "STATUS: OWNED // READY TO EQUIP"
 			status_badge.modulate = Color(0.0, 0.85, 1.0)
 		else:
@@ -437,8 +495,10 @@ func _update_ui():
 				acc_btn.disabled = false
 		
 	# Equip / Unlock Buttons
-	if is_unlocked:
+	# Equip / Unlock / Rent Buttons
+	if is_owned:
 		if unlock_btn: unlock_btn.visible = false
+		if rent_btn: rent_btn.visible = false
 		if equip_btn:
 			equip_btn.visible = true
 			if is_equipped:
@@ -447,6 +507,24 @@ func _update_ui():
 			else:
 				equip_btn.text = "EQUIP WEAPON"
 				equip_btn.disabled = false
+	elif is_rented:
+		if rent_btn: rent_btn.visible = false
+		if equip_btn:
+			equip_btn.visible = true
+			if is_equipped:
+				equip_btn.text = "EQUIPPED (RENTAL)"
+				equip_btn.disabled = true
+			else:
+				equip_btn.text = "EQUIP WEAPON (RENTAL)"
+				equip_btn.disabled = false
+		if unlock_btn:
+			unlock_btn.visible = true
+			if cash < unlock_price:
+				unlock_btn.text = "INSUFFICIENT CASH (%s)" % _format_number(unlock_price)
+				unlock_btn.disabled = true
+			else:
+				unlock_btn.text = "PERMANENT UNLOCK: %s CASH" % _format_number(unlock_price)
+				unlock_btn.disabled = false
 	else:
 		if equip_btn: equip_btn.visible = false
 		if unlock_btn:
@@ -455,8 +533,12 @@ func _update_ui():
 				unlock_btn.text = "INSUFFICIENT CASH (%s)" % _format_number(unlock_price)
 				unlock_btn.disabled = true
 			else:
-				unlock_btn.text = "UNLOCK FOR %s CASH" % _format_number(unlock_price)
+				unlock_btn.text = "PERMANENT UNLOCK: %s CASH" % _format_number(unlock_price)
 				unlock_btn.disabled = false
+		if rent_btn:
+			rent_btn.visible = true
+			rent_btn.disabled = false
+			rent_btn.text = "🎬 PERMANENT UNLOCK (WATCH AD)"
 
 func _on_equip():
 	var save_mgr = get_node_or_null("/root/SaveManager")
@@ -524,6 +606,42 @@ func _on_unlock():
 		_show_feedback("INSUFFICIENT CASH TO UNLOCK!", Color(1.0, 0.3, 0.3))
 		
 	get_tree().create_timer(0.2).timeout.connect(func(): is_purchasing_locked = false)
+
+func _on_rent():
+	var ad_mgr = get_node_or_null("/root/AdManager")
+	if not ad_mgr:
+		_show_feedback("AD SERVICE UNAVAILABLE", Color(1.0, 0.3, 0.3))
+		return
+		
+	var wid = current_weapon_id
+	var fail_cb: Callable
+	var cb = func(rtype: String, data: Dictionary):
+		if ad_mgr.ad_failed.is_connected(fail_cb):
+			ad_mgr.ad_failed.disconnect(fail_cb)
+		if rtype == "unlock_gun" and data.get("weapon_id", "") == wid:
+			var save_mgr = get_node_or_null("/root/SaveManager")
+			if not save_mgr or not WeaponManager.is_weapon_owned(wid, save_mgr):
+				_show_feedback("AD REWARD COULD NOT UNLOCK THIS WEAPON", Color(1.0, 0.3, 0.3))
+				return
+			save_mgr.set_equipped_weapon(wid)
+			var audio_mgr = get_node_or_null("/root/AudioManager")
+			if audio_mgr and audio_mgr.has_method("play_ui_click"):
+				audio_mgr.play_ui_click()
+			_show_feedback("GUN PERMANENTLY UNLOCKED & EQUIPPED!", Color(0.2, 1.0, 0.6))
+			_populate_list()
+			_select_weapon(wid)
+			_update_ui()
+			
+	if not ad_mgr.reward_granted.is_connected(cb):
+		ad_mgr.reward_granted.connect(cb, CONNECT_ONE_SHOT)
+	fail_cb = func(reason: String):
+		if ad_mgr.reward_granted.is_connected(cb):
+			ad_mgr.reward_granted.disconnect(cb)
+		_show_feedback("AD UNAVAILABLE: %s" % reason, Color(1.0, 0.3, 0.3))
+	if not ad_mgr.ad_failed.is_connected(fail_cb):
+		ad_mgr.ad_failed.connect(fail_cb, CONNECT_ONE_SHOT)
+		
+	ad_mgr.show_rewarded_ad("unlock_gun", {"weapon_id": current_weapon_id})
 
 func _show_feedback(msg: String, col: Color):
 	if feedback_label:

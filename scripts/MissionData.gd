@@ -20,3 +20,6 @@ enum ObjectiveType { KILL_COUNT, SURVIVE_WAVES, BOSS_KILL }
 	{"type": "normal", "weight": 1.0}
 ]
 @export var waves: Array[Dictionary] = []
+@export var is_endless: bool = false
+@export var endless_base_count: int = 5
+@export var endless_scale_per_wave: int = 3

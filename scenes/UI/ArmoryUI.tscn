@@ -1,22 +1,136 @@
-[gd_scene load_steps=7 format=3 uid="uid://cy8xx1234abcd"]
+[gd_scene load_steps=16 format=3 uid="uid://cy8xx1234abcd"]
 
 [ext_resource type="Script" path="res://scripts/UI/ArmoryUI.gd" id="1_armory"]
 [ext_resource type="PackedScene" path="res://scenes/UI/Components/PrimaryButton.tscn" id="2_btn"]
+[ext_resource type="PackedScene" path="res://scenes/UI/Components/CashDisplay.tscn" id="3_csh01"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
-bg_color = Color(0.08, 0.09, 0.11, 1)
+bg_color = Color(0.04, 0.05, 0.07, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.12, 0.14, 0.17, 0.9)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
+bg_color = Color(0.06, 0.08, 0.11, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
 border_width_bottom = 2
-border_color = Color(0.25, 0.3, 0.35, 1)
+border_color = Color(0.12, 0.22, 0.32, 0.85)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
+bg_color = Color(0.04, 0.06, 0.09, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.12, 0.2, 0.28, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_dmg"]
+bg_color = Color(1, 0.45, 0.15, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_mag"]
+bg_color = Color(0.0, 0.85, 1, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_reload"]
+bg_color = Color(0.2, 0.95, 0.5, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_acc"]
+bg_color = Color(1, 0.85, 0.2, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_equip"]
+bg_color = Color(0.0, 0.65, 0.55, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.2, 1.0, 0.7, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0.0, 0.8, 0.5, 0.3)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_unlock"]
+bg_color = Color(0.85, 0.55, 0.1, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(1.0, 0.85, 0.3, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(1.0, 0.6, 0.1, 0.3)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_rent"]
+bg_color = Color(0.1, 0.42, 0.72, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.35, 0.85, 1.0, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0.1, 0.5, 0.9, 0.35)
+shadow_size = 6
+
+[sub_resource type="Environment" id="Environment_armory"]
+background_mode = 1
+background_color = Color(0.03, 0.04, 0.06, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.12, 0.18, 0.24, 1)
+ambient_light_energy = 0.8
+tonemap_mode = 2
+tonemap_exposure = 1.15
+ssr_enabled = false
+ssr_max_steps = 64
+ssao_enabled = false
+ssao_radius = 1.5
+ssao_intensity = 2.0
+glow_enabled = true
+glow_intensity = 1.5
+glow_bloom = 0.2
+glow_blend_mode = 0
+
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pedestal"]
+albedo_color = Color(0.08, 0.1, 0.14, 1)
+metallic = 0.85
+roughness = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pedestal"]
+top_radius = 0.8
+bottom_radius = 0.85
+height = 0.04
 
 [node name="ArmoryUI" type="Control"]
 layout_mode = 3
@@ -34,6 +148,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
 
 [node name="3DView" type="SubViewportContainer" parent="."]
@@ -43,84 +158,144 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 0
 stretch = true
 
 [node name="SubViewport" type="SubViewport" parent="3DView"]
-transparent_bg = true
+own_world_3d = true
+transparent_bg = false
 handle_input_locally = false
 size = Vector2i(1280, 720)
 render_target_update_mode = 4
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="3DView/SubViewport"]
+environment = SubResource("Environment_armory")
+
+
+[node name="ReflectionProbe" type="ReflectionProbe" parent="3DView/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+extents = Vector3(5, 5, 5)
+origin_offset = Vector3(0, -0.5, 0)
+box_projection = true
+enable_shadows = true
+intensity = 1.5
+
 [node name="WeaponPreviewCam" type="Camera3D" parent="3DView/SubViewport"]
-transform = Transform3D(0.866025, -0.17101, 0.469846, 0, 0.939693, 0.34202, -0.5, -0.296198, 0.813798, 1.2, 0.8, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 1.25)
+fov = 42.0
 current = true
 
+[node name="KeyLight" type="DirectionalLight3D" parent="3DView/SubViewport"]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 2, 2, 2)
+light_color = Color(1, 0.96, 0.92, 1)
+light_energy = 4.0
+light_specular = 1.5
+
+[node name="FillLight" type="DirectionalLight3D" parent="3DView/SubViewport"]
+transform = Transform3D(0.642788, 0.383022, -0.663414, 0, 0.866025, 0.5, 0.766044, -0.321394, 0.55667, -2, -1, 2)
+light_color = Color(0.2, 0.65, 0.95, 1)
+light_energy = 1.2
+
+[node name="RimLight" type="DirectionalLight3D" parent="3DView/SubViewport"]
+transform = Transform3D(-0.707107, 0.353553, -0.612372, 0, 0.866025, 0.5, 0.707107, 0.353553, -0.612372, 0, 2, -2)
+light_color = Color(0.4, 0.85, 1, 1)
+light_energy = 2.6
+
+[node name="FloorAccent" type="OmniLight3D" parent="3DView/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.38, 0)
+light_color = Color(0, 0.85, 1, 1)
+light_energy = 1.8
+omni_range = 2.5
+
+[node name="Pedestal" type="MeshInstance3D" parent="3DView/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.34, 0)
+material_override = SubResource("StandardMaterial3D_pedestal")
+mesh = SubResource("CylinderMesh_pedestal")
+
 [node name="WeaponPivot" type="Node3D" parent="3DView/SubViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="3DView/SubViewport"]
-transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 5, 0)
-light_color = Color(0.9, 0.95, 1, 1)
-light_energy = 1.5
-
-[node name="OmniLight3D" type="OmniLight3D" parent="3DView/SubViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.5, 1)
-light_color = Color(1, 0.8, 0.6, 1)
-light_energy = 2.0
-omni_range = 3.0
 
 [node name="TopBar" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 32.0
-offset_top = 32.0
-offset_right = -32.0
-offset_bottom = 72.0
+offset_left = 28.0
+offset_top = 20.0
+offset_right = -28.0
+offset_bottom = 68.0
 grow_horizontal = 2
+theme_override_constants/separation = 16
 
 [node name="BackButton" parent="TopBar" instance=ExtResource("2_btn")]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 40)
-text = "BACK"
+custom_minimum_size = Vector2(130, 44)
+text = "< BACK"
+
+[node name="TitleBox" type="VBoxContainer" parent="TopBar"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 0
+
+[node name="HeaderTitle" type="Label" parent="TopBar/TitleBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.98, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "WEAPONS & UPGRADES"
+
+[node name="HeaderSub" type="Label" parent="TopBar/TitleBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.8, 1, 0.75)
+theme_override_font_sizes/font_size = 10
+text = "SELECT & UPGRADE FIREARMS"
 
 [node name="Spacer" type="Control" parent="TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CashLabel" type="Label" parent="TopBar"]
+[node name="CashDisplay" parent="TopBar" instance=ExtResource("3_csh01")]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.5, 1, 0.5, 1)
-theme_override_font_sizes/font_size = 28
-text = "CASH: $0"
 
 [node name="WeaponListPanel" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = 100.0
-offset_right = 382.0
-offset_bottom = -32.0
+offset_left = 28.0
+offset_top = 80.0
+offset_right = 380.0
+offset_bottom = -20.0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="Scroll" type="ScrollContainer" parent="WeaponListPanel"]
+[node name="Margin" type="MarginContainer" parent="WeaponListPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
 
-[node name="VBox" type="VBoxContainer" parent="WeaponListPanel/Scroll"]
+[node name="VBoxContainer" type="VBoxContainer" parent="WeaponListPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ListHeader" type="Label" parent="WeaponListPanel/Margin/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.8, 1, 0.9)
+theme_override_font_sizes/font_size = 11
+text = "SELECT WEAPON [10 FIREARMS]"
+
+[node name="Scroll" type="ScrollContainer" parent="WeaponListPanel/Margin/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="VBox" type="VBoxContainer" parent="WeaponListPanel/Margin/VBoxContainer/Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="StatsPanel" type="Panel" parent="."]
 layout_mode = 1
@@ -128,10 +303,10 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -450.0
-offset_top = 100.0
-offset_right = -32.0
-offset_bottom = -32.0
+offset_left = -460.0
+offset_top = 80.0
+offset_right = -28.0
+offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
@@ -141,30 +316,35 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = 24.0
-offset_right = -24.0
-offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
 
 [node name="VBox" type="VBoxContainer" parent="StatsPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 10
 
 [node name="WeaponTitle" type="Label" parent="StatsPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.95, 0.98, 1, 1)
+theme_override_font_sizes/font_size = 26
 text = "WEAPON NAME"
-horizontal_alignment = 1
 
 [node name="WeaponSubtitle" type="Label" parent="StatsPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
-theme_override_font_sizes/font_size = 18
-text = "Description here"
-horizontal_alignment = 1
+theme_override_colors/font_color = Color(0, 0.8, 1, 0.85)
+theme_override_font_sizes/font_size = 11
+text = "[ASSAULT RIFLE] // TACTICAL HIGH-RPM CARBINE"
 autowrap_mode = 2
+
+[node name="StatusBadge" type="Label" parent="StatsPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 12
+text = "OWNED & COMBAT READY"
 
 [node name="HSeparator" type="HSeparator" parent="StatsPanel/Margin/VBox"]
 layout_mode = 2
@@ -172,88 +352,176 @@ layout_mode = 2
 [node name="DamageRow" type="HBoxContainer" parent="StatsPanel/Margin/VBox"]
 layout_mode = 2
 alignment = 1
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="StatsPanel/Margin/VBox/DamageRow"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(85, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "DAMAGE"
 
-[node name="Value" type="Label" parent="StatsPanel/Margin/VBox/DamageRow"]
+[node name="DamageBar" type="ProgressBar" parent="StatsPanel/Margin/VBox/DamageRow"]
+custom_minimum_size = Vector2(70, 14)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_dmg")
+max_value = 250.0
+value = 50.0
+show_percentage = false
+
+[node name="Value" type="Label" parent="StatsPanel/Margin/VBox/DamageRow"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "100"
 horizontal_alignment = 2
 
 [node name="UpgradeBtn" parent="StatsPanel/Margin/VBox/DamageRow" instance=ExtResource("2_btn")]
 layout_mode = 2
-custom_minimum_size = Vector2(120, 40)
-text = "$1500"
+custom_minimum_size = Vector2(130, 36)
+theme_override_font_sizes/font_size = 11
+text = "UPGRADE"
 
 [node name="MagRow" type="HBoxContainer" parent="StatsPanel/Margin/VBox"]
 layout_mode = 2
 alignment = 1
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="StatsPanel/Margin/VBox/MagRow"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(85, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "AMMO"
 
-[node name="Value" type="Label" parent="StatsPanel/Margin/VBox/MagRow"]
+[node name="MagBar" type="ProgressBar" parent="StatsPanel/Margin/VBox/MagRow"]
+custom_minimum_size = Vector2(70, 14)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_mag")
+max_value = 150.0
+value = 30.0
+show_percentage = false
+
+[node name="Value" type="Label" parent="StatsPanel/Margin/VBox/MagRow"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "30"
 horizontal_alignment = 2
 
 [node name="UpgradeBtn" parent="StatsPanel/Margin/VBox/MagRow" instance=ExtResource("2_btn")]
 layout_mode = 2
-custom_minimum_size = Vector2(120, 40)
-text = "$1000"
+custom_minimum_size = Vector2(130, 36)
+theme_override_font_sizes/font_size = 11
+text = "UPGRADE"
 
 [node name="ReloadRow" type="HBoxContainer" parent="StatsPanel/Margin/VBox"]
 layout_mode = 2
 alignment = 1
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="StatsPanel/Margin/VBox/ReloadRow"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(85, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "RELOAD"
 
-[node name="Value" type="Label" parent="StatsPanel/Margin/VBox/ReloadRow"]
+[node name="ReloadBar" type="ProgressBar" parent="StatsPanel/Margin/VBox/ReloadRow"]
+custom_minimum_size = Vector2(70, 14)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_reload")
+max_value = 100.0
+value = 70.0
+show_percentage = false
+
+[node name="Value" type="Label" parent="StatsPanel/Margin/VBox/ReloadRow"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "2.5s"
 horizontal_alignment = 2
 
 [node name="UpgradeBtn" parent="StatsPanel/Margin/VBox/ReloadRow" instance=ExtResource("2_btn")]
 layout_mode = 2
-custom_minimum_size = Vector2(120, 40)
-text = "$1200"
+custom_minimum_size = Vector2(130, 36)
+theme_override_font_sizes/font_size = 11
+text = "UPGRADE"
 
 [node name="AccuracyRow" type="HBoxContainer" parent="StatsPanel/Margin/VBox"]
 layout_mode = 2
 alignment = 1
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="StatsPanel/Margin/VBox/AccuracyRow"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(85, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "ACCURACY"
 
-[node name="Value" type="Label" parent="StatsPanel/Margin/VBox/AccuracyRow"]
+[node name="AccuracyBar" type="ProgressBar" parent="StatsPanel/Margin/VBox/AccuracyRow"]
+custom_minimum_size = Vector2(70, 14)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_acc")
+max_value = 100.0
+value = 90.0
+show_percentage = false
+
+[node name="Value" type="Label" parent="StatsPanel/Margin/VBox/AccuracyRow"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "90%"
 horizontal_alignment = 2
 
 [node name="UpgradeBtn" parent="StatsPanel/Margin/VBox/AccuracyRow" instance=ExtResource("2_btn")]
 layout_mode = 2
-custom_minimum_size = Vector2(120, 40)
-text = "$1000"
+custom_minimum_size = Vector2(130, 36)
+theme_override_font_sizes/font_size = 11
+text = "UPGRADE"
 
 [node name="HSeparator2" type="HSeparator" parent="StatsPanel/Margin/VBox"]
 layout_mode = 2
 
-[node name="UnlockBtn" parent="StatsPanel/Margin/VBox" instance=ExtResource("2_btn")]
+[node name="ActionButtonsVBox" type="VBoxContainer" parent="StatsPanel/Margin/VBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 60)
-text = "UNLOCK (WATCH AD OR $5000)"
+theme_override_constants/separation = 8
 
+[node name="EquipBtn" type="Button" parent="StatsPanel/Margin/VBox/ActionButtonsVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 48)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_equip")
+text = "EQUIP WEAPON"
+
+[node name="UnlockBtn" type="Button" parent="StatsPanel/Margin/VBox/ActionButtonsVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 48)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_unlock")
+text = "UNLOCK FOR CASH"
+
+[node name="RentBtn" type="Button" parent="StatsPanel/Margin/VBox/ActionButtonsVBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 48)
+theme_override_colors/font_color = Color(1, 0.95, 0.35, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_rent")
+text = "🎬 PERMANENT UNLOCK (WATCH AD)"
+
+[node name="FeedbackLabel" type="Label" parent="StatsPanel/Margin/VBox/ActionButtonsVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0.6, 1)
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1

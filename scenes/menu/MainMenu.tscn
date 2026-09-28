@@ -1,7 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://b8xxmainmenualt"]
+[gd_scene load_steps=12 format=3 uid="uid://b8xxmainmenu"]
 
 [ext_resource type="Script" path="res://scripts/MainMenuUI.gd" id="1_m3s4d"]
 [ext_resource type="PackedScene" path="res://scenes/UI/Components/PrimaryButton.tscn" id="2_btn"]
+[ext_resource type="PackedScene" path="res://scenes/UI/Components/CashDisplay.tscn" id="3_csh01"]
+[ext_resource type="PackedScene" path="res://scenes/UI/Components/TacticalButton.tscn" id="4_tac01"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_night"]
 sky_top_color = Color(0.02, 0.05, 0.1, 1)
@@ -26,7 +28,21 @@ glow_intensity = 1.5
 size = Vector2(40, 40)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_overlay"]
-bg_color = Color(0, 0, 0, 0.3)
+bg_color = Color(0.02, 0.04, 0.06, 0.55)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.07, 0.09, 0.12, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.25, 0.25, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 14
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -49,10 +65,10 @@ shadow_enabled = true
 
 [node name="SpotLight3D" type="SpotLight3D" parent="Background3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0)
-light_color = Color(1, 0.2, 0.2, 1)
-light_energy = 5.0
-spot_range = 10.0
-spot_angle = 30.0
+light_color = Color(0.2, 0.6, 1, 1)
+light_energy = 4.0
+spot_range = 12.0
+spot_angle = 35.0
 
 [node name="Ground" type="MeshInstance3D" parent="Background3D"]
 mesh = SubResource("PlaneMesh_tarmac")
@@ -67,27 +83,25 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_overlay")
 
 [node name="TopBar" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 32.0
-offset_top = 32.0
-offset_right = -32.0
-offset_bottom = 72.0
+offset_left = 28.0
+offset_top = 20.0
+offset_right = -28.0
+offset_bottom = 68.0
 grow_horizontal = 2
 
 [node name="Spacer" type="Control" parent="TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CashLabel" type="Label" parent="TopBar"]
+[node name="CashDisplay" parent="TopBar" instance=ExtResource("3_csh01")]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.5, 1, 0.5, 1)
-theme_override_font_sizes/font_size = 28
-text = "CASH: $0"
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -99,22 +113,30 @@ grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="CenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 24
+custom_minimum_size = Vector2(340, 0)
+theme_override_constants/separation = 12
 
 [node name="Title" type="Label" parent="CenterContainer/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
-theme_override_font_sizes/font_size = 64
+theme_override_font_sizes/font_size = 46
 text = "SECTOR ZERO: LOCKDOWN"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.66, 0.73, 0.77, 1)
+theme_override_font_sizes/font_size = 13
+text = "TACTICAL ZOMBIE RESPONSE NETWORK  //  OFFLINE PROTOCOL"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/VBox"]
 layout_mode = 2
 
-[node name="HBox" type="HBoxContainer" parent="CenterContainer/VBox"]
+[node name="HBox" type="VBoxContainer" parent="CenterContainer/VBox"]
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 40
+theme_override_constants/separation = 10
 
 [node name="StartButton" parent="CenterContainer/VBox/HBox" instance=ExtResource("2_btn")]
 layout_mode = 2
@@ -122,11 +144,51 @@ text = "MISSIONS"
 
 [node name="UpgradesButton" parent="CenterContainer/VBox/HBox" instance=ExtResource("2_btn")]
 layout_mode = 2
-text = "ARMORY"
+text = "WEAPONS"
 
 [node name="SettingsButton" parent="CenterContainer/VBox/HBox" instance=ExtResource("2_btn")]
 layout_mode = 2
 text = "SETTINGS"
+
+[node name="HBox2" type="VBoxContainer" parent="CenterContainer/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="DailyOpsButton" parent="CenterContainer/VBox/HBox2" instance=ExtResource("2_btn")]
+layout_mode = 2
+text = "DAILY OPS"
+self_modulate = Color(0.65, 0.95, 1, 1)
+
+[node name="SurvivalButton" parent="CenterContainer/VBox/HBox2" instance=ExtResource("2_btn")]
+layout_mode = 2
+text = "SURVIVAL MODE"
+self_modulate = Color(1, 0.85, 0.2, 1)
+
+[node name="QuitButton" parent="CenterContainer/VBox/HBox2" instance=ExtResource("2_btn")]
+layout_mode = 2
+text = "QUIT"
+
+[node name="HighestWaveLabel" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+text = ""
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 0.85)
+theme_override_font_sizes/font_size = 13
+
+[node name="TotalStarsLabel" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+text = ""
+theme_override_colors/font_color = Color(1, 0.95, 0.3, 0.75)
+theme_override_font_sizes/font_size = 13
+
+[node name="DailyOpsLabel" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "DAILY OPS: READY"
+theme_override_colors/font_color = Color(0.35, 0.85, 0.95, 0.95)
+theme_override_font_sizes/font_size = 13
 
 [node name="VersionLabel" type="Label" parent="."]
 layout_mode = 1
@@ -141,11 +203,81 @@ offset_right = -16.0
 offset_bottom = -16.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 0
 text = "v1.0.0"
 horizontal_alignment = 2
+
+[node name="QuitConfirmModal" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.03, 0.04, 0.06, 0.85)
+
+[node name="Center" type="CenterContainer" parent="QuitConfirmModal"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="QuitConfirmModal/Center"]
+custom_minimum_size = Vector2(380, 200)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="Margin" type="MarginContainer" parent="QuitConfirmModal/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 18
+
+[node name="VBox" type="VBoxContainer" parent="QuitConfirmModal/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="QuitTitle" type="Label" parent="QuitConfirmModal/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.35, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "EXIT SECTOR ZERO?"
+horizontal_alignment = 1
+
+[node name="QuitDesc" type="Label" parent="QuitConfirmModal/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.8, 0.85, 1)
+theme_override_font_sizes/font_size = 13
+text = "Confirm shutdown of tactical command link and exit to system?"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="HBox" type="HBoxContainer" parent="QuitConfirmModal/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="QuitCancelBtn" parent="QuitConfirmModal/Center/Panel/Margin/VBox/HBox" instance=ExtResource("4_tac01")]
+custom_minimum_size = Vector2(130, 42)
+layout_mode = 2
+text = "CANCEL"
+
+[node name="QuitConfirmBtn" parent="QuitConfirmModal/Center/Panel/Margin/VBox/HBox" instance=ExtResource("4_tac01")]
+custom_minimum_size = Vector2(130, 42)
+layout_mode = 2
+text = "EXIT GAME"
 
 [connection signal="pressed" from="CenterContainer/VBox/HBox/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBox/HBox/UpgradesButton" to="." method="_on_upgrades_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBox/HBox/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/HBox2/SurvivalButton" to="." method="_on_survival_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/HBox2/DailyOpsButton" to="." method="_on_daily_ops_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/HBox2/QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="gui_input" from="VersionLabel" to="." method="_on_version_label_gui_input"]
-
+[connection signal="pressed" from="QuitConfirmModal/Center/Panel/Margin/VBox/HBox/QuitCancelBtn" to="." method="_on_quit_cancel_pressed"]
+[connection signal="pressed" from="QuitConfirmModal/Center/Panel/Margin/VBox/HBox/QuitConfirmBtn" to="." method="_on_quit_confirm_pressed"]

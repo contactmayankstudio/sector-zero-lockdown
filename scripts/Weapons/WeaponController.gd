@@ -1,5 +1,7 @@
 extends Node3D
 
+const BlastVFX = preload("res://scripts/Objects/BlastVFX.gd")
+
 @onready var raycast: RayCast3D = $RayCast3D
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var muzzle_flash = $MuzzleFlash
@@ -113,6 +115,8 @@ func shoot():
 	
 	if current_ammo <= 0 and not is_knife:
 		sfx_empty.play()
+		if is_inside_tree():
+			reload()
 		return
 		
 	if is_knife:
@@ -133,6 +137,13 @@ func shoot():
 	# Synchronized Pipeline Execution:
 	# 1. Visual & Audio Flash in lockstep
 	muzzle_flash_fx()
+	sfx_shoot.pitch_scale = randf_range(0.96, 1.03)
+	if weapon_data and weapon_data.weapon_id in ["grenade_launcher", "rocket_launcher", "axon_cannon"]:
+		sfx_shoot.volume_db = 6.5
+	elif weapon_data and weapon_data.weapon_id in ["negev_ng7", "akx_scifi", "primordium_vandal"]:
+		sfx_shoot.volume_db = 5.5
+	else:
+		sfx_shoot.volume_db = 4.5
 	sfx_shoot.play()
 	
 	# 2. Viewmodel Recoil
@@ -226,8 +237,11 @@ func _fire_projectiles():
 			hud_node.show_hitmarker(had_headshot)
 
 func _apply_area_explosion(epicenter: Vector3, blast_dmg: float):
-	var zombies = get_tree().get_nodes_in_group("zombies")
 	var blast_radius: float = 7.0
+	var world := get_tree().current_scene as Node3D if get_tree() else null
+	if world:
+		BlastVFX.spawn(world, epicenter, blast_radius, Color(1.0, 0.48, 0.14, 0.96))
+	var zombies = get_tree().get_nodes_in_group("zombies")
 	for z in zombies:
 		if is_instance_valid(z) and z.has_method("take_damage"):
 			var dist = z.global_position.distance_to(epicenter)
@@ -235,7 +249,7 @@ func _apply_area_explosion(epicenter: Vector3, blast_dmg: float):
 				var falloff = 1.0 - (dist / blast_radius)
 				var applied_dmg = blast_dmg * max(0.2, falloff)
 				var dir = (z.global_position - epicenter).normalized()
-				z.take_damage(applied_dmg, false, dir)
+				z.take_damage(applied_dmg, false, dir, 0.5)
 
 func _spawn_impact(type: String, pos: Vector3, normal: Vector3):
 	if not impact_pool:
@@ -291,6 +305,10 @@ func _process(delta):
 	position.z = lerp(position.z, 0.0, 10.0 * delta)
 	position.y = lerp(position.y, 0.0, 10.0 * delta)
 	rotation.x = lerp(rotation.x, 0.0, 10.0 * delta)
+
+func _notification(what):
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		set_process(visible)
 
 func _on_fire_timer_timeout():
 	can_shoot = true
