@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://test_weather_scene_01"]
+
+[ext_resource type="Script" path="res://scenes/test/test_weather_system.gd" id="1_test"]
+[ext_resource type="PackedScene" uid="uid://weather_controller_001" path="res://scenes/environments/WeatherController.tscn" id="2_wc"]
+[ext_resource type="Material" path="res://resources/materials/mat_real_asphalt_pbr.tres" id="3_asph"]
+
+[sub_resource type="Environment" id="Environment_test"]
+background_mode = 1
+ambient_light_energy = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_road"]
+size = Vector2(20, 100)
+
+[node name="TestWeatherScene" type="Node3D"]
+script = ExtResource("1_test")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, -0.354, 0.354, 0, 0.707, 0.707, -0.5, -0.612, 0.612, 0, 20, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_test")
+
+[node name="StreetLamps" type="Node3D" parent="."]
+
+[node name="Lamp1" type="OmniLight3D" parent="StreetLamps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 5, -20)
+light_energy = 1.0
+
+[node name="Lamp2" type="OmniLight3D" parent="StreetLamps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 5, -20)
+light_energy = 1.0
+
+[node name="Lamp3" type="OmniLight3D" parent="StreetLamps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 5, 20)
+light_energy = 1.0
+
+[node name="Lamp4" type="OmniLight3D" parent="StreetLamps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 5, 20)
+light_energy = 1.0
+
+[node name="HighwayAsphalt" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_road")
+surface_material_override/0 = ExtResource("3_asph")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.966, 0.259, 0, -0.259, 0.966, 0, 2, 8)
+
+[node name="WeatherController" parent="." instance=ExtResource("2_wc")]

@@ -17,9 +17,9 @@ func _init():
 	archetype = "boss"
 	move_speed = 1.1
 	attack_range = 2.7
-	attack_damage = 25.0
+	attack_damage = 38.0
 	attack_interval = 2.2
-	reward_on_kill = 150
+	reward_on_kill = 5000
 
 func _ready():
 	archetype = "boss"
@@ -27,18 +27,38 @@ func _ready():
 	_setup_boss_model()
 	_setup_hit_zones()
 	
-	var max_hp = health_component.max_health if health_component else 950.0
+	var max_hp = health_component.max_health if health_component else 35000.0
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus and event_bus.has_signal("boss_spawned"):
-		event_bus.boss_spawned.emit("THE ALPHA MUTANT", max_hp)
+		event_bus.boss_spawned.emit("TITAN MUTANT", max_hp)
 		
-	var hud = get_tree().get_first_node_in_group("hud") if get_tree() else null
-	if hud and hud.has_method("show_boss_health"):
-		hud.show_boss_health("THE ALPHA MUTANT", max_hp)
+	if get_tree():
+		for h in get_tree().get_nodes_in_group("hud"):
+			if h and h.has_method("show_boss_health"):
+				h.show_boss_health("TITAN MUTANT", max_hp)
 		
-	# Initial roar
+	# Find player and trigger camera screen shake on entrance
+	var p = player
+	if not p and get_tree():
+		p = get_tree().get_first_node_in_group("player")
+		if not p:
+			p = get_tree().get_first_node_in_group("players")
+	if not p and get_parent():
+		p = get_parent().find_child("Player", true, false)
+	if p and p.has_method("apply_shake"):
+		p.apply_shake(0.42)
+		
+	# Initial roar (attenuated positional + unattenuated stinger on SFX bus)
 	if sfx_roar:
 		sfx_roar.play()
+	var unattenuated_roar = AudioStreamPlayer.new()
+	unattenuated_roar.stream = load("res://audio/zombies/sfx_boss_roar.wav")
+	unattenuated_roar.bus = "SFX"
+	unattenuated_roar.volume_db = 4.0
+	add_child(unattenuated_roar)
+	unattenuated_roar.play()
+	unattenuated_roar.finished.connect(unattenuated_roar.queue_free)
+	
 	_play_anim("roar")
 
 func _setup_boss_model():
@@ -49,6 +69,40 @@ func _setup_boss_model():
 		if not anims.is_empty():
 			active_anim_player = anims[0]
 			active_anim_player.speed_scale = 1.0
+
+	# Enable biohazard red/green emission veins across all meshes
+	var meshes = find_children("*", "MeshInstance3D", true, false)
+	for m in meshes:
+		if not m or not m.mesh:
+			continue
+		for s in range(m.mesh.get_surface_count()):
+			var mat = m.get_surface_override_material(s)
+			if not mat:
+				var active_mat = m.get_active_material(s)
+				if active_mat:
+					mat = active_mat.duplicate()
+				else:
+					mat = StandardMaterial3D.new()
+			else:
+				mat = mat.duplicate()
+			if mat is StandardMaterial3D:
+				mat.emission_enabled = true
+				mat.emission = Color(1.0, 0.15, 0.05)
+				mat.emission_energy_multiplier = 3.8
+				mat.rim_enabled = true
+				mat.rim = 1.0
+				mat.rim_tint = 0.6
+				m.set_surface_override_material(s, mat)
+
+	# Chest OmniLight3D for glowing biohazard veins aura
+	if not get_node_or_null("ChestLight"):
+		var chest_light = OmniLight3D.new()
+		chest_light.name = "ChestLight"
+		chest_light.light_color = Color(1.0, 0.2, 0.05)
+		chest_light.light_energy = 2.0
+		chest_light.omni_range = 5.0
+		chest_light.position = Vector3(0, 1.8, 0.3)
+		add_child(chest_light)
 
 func _setup_hit_zones():
 	for child in get_children():
@@ -140,14 +194,15 @@ func _spawn_slam_vfx():
 	tw.tween_callback(vfx.queue_free)
 
 func _on_health_changed(hp):
-	var max_hp = health_component.max_health if health_component else 500.0
+	var max_hp = health_component.max_health if health_component else 35000.0
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus and event_bus.has_signal("boss_health_changed"):
 		event_bus.boss_health_changed.emit(hp, max_hp)
 		
-	var hud = get_tree().get_first_node_in_group("hud")
-	if hud and hud.has_method("update_boss_health"):
-		hud.update_boss_health(hp)
+	if get_tree():
+		for h in get_tree().get_nodes_in_group("hud"):
+			if h and h.has_method("update_boss_health"):
+				h.update_boss_health(hp)
 
 func _on_died():
 	if is_dead: return
@@ -174,9 +229,10 @@ func _on_died():
 		if event_bus.has_signal("boss_health_changed"):
 			event_bus.boss_health_changed.emit(0.0, health_component.max_health)
 			
-	var hud = get_tree().get_first_node_in_group("hud")
-	if hud and hud.has_method("update_boss_health"):
-		hud.update_boss_health(0.0)
+	if get_tree():
+		for h in get_tree().get_nodes_in_group("hud"):
+			if h and h.has_method("update_boss_health"):
+				h.update_boss_health(0.0)
 		
 	var save_mgr = get_node_or_null("/root/SaveManager")
 	if save_mgr:

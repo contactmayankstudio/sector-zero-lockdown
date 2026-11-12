@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_vq2qs"]
+
+[resource]
+script = ExtResource("1_vq2qs")
+weapon_id = "vaccinator_energy"
+display_name = "Vaccinator Beam Rifle"
+base_damage = 65.0
+headshot_multiplier = 1.9
+base_fire_rate = 0.08
+base_mag_size = 40
+base_reserve_ammo = 200
+base_reload_time = 2.8
+spread = 0.010
+recoil = 1.05
+range = 90.0
+pellet_count = 1
+is_automatic = true
+muzzle_fx = "standard"
+sound_set = "rifle"
+unlock_price = 105000
+upgrade_cost_damage = 380
+upgrade_cost_mag = 380
+upgrade_cost_reload = 380
+upgrade_cost_accuracy = 380

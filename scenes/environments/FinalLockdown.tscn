@@ -7,22 +7,24 @@
 [ext_resource type="PackedScene" path="res://scenes/weapons/ImpactEffect.tscn" id="5_ie01"]
 [ext_resource type="PackedScene" path="res://scenes/weapons/BloodEffect.tscn" id="6_be01"]
 [ext_resource type="PackedScene" path="res://scenes/UI/ResultUI.tscn" id="7_r001"]
-[ext_resource type="Material" path="res://resources/materials/mat_airport_floor.tres" id="8_mflr"]
+[ext_resource type="Material" uid="uid://mat_dirt_pbr_real" path="res://resources/materials/mat_dirt.tres" id="8_mflr"]
 [ext_resource type="ArrayMesh" path="res://models/environment/airport/terminal_pillar.obj" id="9_mpil"]
 [ext_resource type="AudioStream" path="res://audio/ambience/sfx_ambience_airport.wav" id="10_samb"]
 [ext_resource type="PackedScene" path="res://assets/3d/environments/boss_arena.glb" id="11_glb_boss"]
 [ext_resource type="PackedScene" path="res://scenes/environments/AtmosphereEnhancer.tscn" id="12_atmo"]
 [ext_resource type="PackedScene" path="res://scenes/objects/ExplosiveBarrel.tscn" id="13_barrel"]
 
+[ext_resource type="Environment" path="res://resources/materials/env_apocalyptic_hdri.tres" id="14_env"]
+
 [sub_resource type="NavigationMesh" id="NavigationMesh_lck"]
 vertices = PackedVector3Array(-22, 0, -22, -22, 0, 22, 22, 0, 22, 22, 0, -22)
 polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3)]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flr"]
-size = Vector3(44, 0.2, 44)
+size = Vector3(120, 0.2, 120)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_flr"]
-size = Vector2(44, 44)
+size = Vector2(120, 120)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_day"]
 sky_top_color = Color(0.35, 0.58, 0.88, 1)
@@ -55,7 +57,7 @@ fog_density = 0.002
 [node name="FinalLockdown" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_lck")
+environment = ExtResource("14_env")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866, -0.287, 0.409, 0, 0.819, 0.574, -0.5, -0.497, 0.709, 0, 20, 0)

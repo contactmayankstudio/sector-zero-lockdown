@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "6-3"
+display_name = "6-3 ICU CORRIDOR"
+description = "Hold the intensive care corridor while medical data terminal downloads records."
+objective_type = 0
+target_count = 51
+wave_count = 3
+reward_cash = 550
+unlock_requirement_id = "6-2"
+scene_path = "res://scenes/environments/AirportServiceRoad.tscn"
+location_name = "Sector 06 - Quarantine Medical Center - ICU Corridor"
+difficulty_stars = 2
+recommended_loadout = "M4A1 Sentinel / Remington 870"
+spawn_config = [{"type": "normal", "weight": 0.6200000000000001}, {"type": "fast", "weight": 0.32}, {"type": "heavy", "weight": 0.14}]
+waves = [{"wave_num": 1, "groups": [{"enemy_type": "normal", "count": 12, "spawn_direction": "front", "delay": 0.8}]}, {"wave_num": 2, "groups": [{"enemy_type": "normal", "count": 12, "spawn_direction": "front", "delay": 0.7}, {"enemy_type": "fast", "count": 6, "spawn_direction": "left", "delay": 0.9}]}, {"wave_num": 3, "groups": [{"enemy_type": "normal", "count": 14, "spawn_direction": "back", "delay": 0.7}, {"enemy_type": "fast", "count": 7, "spawn_direction": "right", "delay": 0.8}]}]
+is_endless = false

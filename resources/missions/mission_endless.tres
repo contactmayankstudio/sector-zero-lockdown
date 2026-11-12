@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "mission_endless"
+display_name = "Dead Target: Quarantine Defense"
+description = "Sector lockdown active. Defend the fortified quarantine barricade against infinite escalating waves of infected hostiles!"
+objective_type = 1
+target_count = 999
+wave_count = 999
+reward_cash = 2500
+unlock_requirement_id = ""
+scene_path = "res://scenes/environments/DeadTargetQuarantine.tscn"
+location_name = "Quarantine Checkpoint 04 - Dead Target"
+difficulty_stars = 5
+recommended_loadout = "NG7 Heavy LMG / M4A1 Tactical / AWP"
+spawn_config = [{"type": "normal", "weight": 0.5}, {"type": "fast", "weight": 0.3}, {"type": "heavy", "weight": 0.2}]
+waves = []
+is_endless = true
+endless_base_count = 6
+endless_scale_per_wave = 2

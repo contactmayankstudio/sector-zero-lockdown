@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "9-7"
+display_name = "9-7 MUTANT WARLORD BOSS"
+description = "Heavily armored reanimated commander leading military mutant battalion."
+objective_type = 2
+target_count = 1
+wave_count = 3
+reward_cash = 1060
+unlock_requirement_id = "9-6"
+scene_path = "res://scenes/environments/FinalLockdown.tscn"
+location_name = "Sector 09 - Perimeter Fortification - Mutant Warlord Boss"
+difficulty_stars = 3
+recommended_loadout = "AK-47 Vanguard / AWP Arctic Warfare"
+spawn_config = [{"type": "normal", "weight": 0.53}, {"type": "fast", "weight": 0.38}, {"type": "heavy", "weight": 0.185}]
+waves = [{"wave_num": 1, "groups": [{"enemy_type": "normal", "count": 9, "spawn_direction": "front", "delay": 0.7}, {"enemy_type": "fast", "count": 5, "spawn_direction": "left", "delay": 0.9}]}, {"wave_num": 2, "groups": [{"enemy_type": "normal", "count": 10, "spawn_direction": "back", "delay": 0.7}, {"enemy_type": "fast", "count": 6, "spawn_direction": "right", "delay": 0.8}, {"enemy_type": "heavy", "count": 2, "spawn_direction": "front", "delay": 1.2}]}, {"wave_num": 3, "groups": [{"enemy_type": "boss", "count": 1, "spawn_direction": "front", "delay": 0.4}, {"enemy_type": "normal", "count": 5, "spawn_direction": "left", "delay": 1.0}, {"enemy_type": "fast", "count": 3, "spawn_direction": "right", "delay": 1.2}]}]
+is_endless = false

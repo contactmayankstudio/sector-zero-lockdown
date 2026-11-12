@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "7-7"
+display_name = "7-7 GALLERIA TITAN BOSS"
+description = "Enormous hulking apex predator dominating the central shopping square. Destroy."
+objective_type = 2
+target_count = 1
+wave_count = 3
+reward_cash = 860
+unlock_requirement_id = "7-6"
+scene_path = "res://scenes/environments/UrbanStreet.tscn"
+location_name = "Sector 07 - Commercial Metro Galleria - Galleria Titan Boss"
+difficulty_stars = 3
+recommended_loadout = "MP5 Tactical / Remington 870"
+spawn_config = [{"type": "normal", "weight": 0.5900000000000001}, {"type": "fast", "weight": 0.34}, {"type": "heavy", "weight": 0.155}]
+waves = [{"wave_num": 1, "groups": [{"enemy_type": "normal", "count": 8, "spawn_direction": "front", "delay": 0.7}, {"enemy_type": "fast", "count": 4, "spawn_direction": "left", "delay": 0.9}]}, {"wave_num": 2, "groups": [{"enemy_type": "normal", "count": 9, "spawn_direction": "back", "delay": 0.7}, {"enemy_type": "fast", "count": 5, "spawn_direction": "right", "delay": 0.8}, {"enemy_type": "heavy", "count": 2, "spawn_direction": "front", "delay": 1.2}]}, {"wave_num": 3, "groups": [{"enemy_type": "boss", "count": 1, "spawn_direction": "front", "delay": 0.4}, {"enemy_type": "normal", "count": 5, "spawn_direction": "left", "delay": 1.0}, {"enemy_type": "fast", "count": 3, "spawn_direction": "right", "delay": 1.2}]}]
+is_endless = false

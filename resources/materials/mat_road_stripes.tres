@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://mat_road_yellow_stripes"]
+
+[resource]
+resource_name = "mat_road_yellow_stripes"
+albedo_color = Color(0.98, 0.80, 0.12, 1.0)
+roughness = 0.5
+cull_mode = 2

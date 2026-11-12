@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://railway001station"]
+[gd_scene load_steps=22 format=3 uid="uid://railway001station"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_p001"]
 [ext_resource type="Script" path="res://scripts/GameManager.gd" id="2_g001"]
@@ -7,16 +7,18 @@
 [ext_resource type="PackedScene" path="res://scenes/weapons/ImpactEffect.tscn" id="5_ie01"]
 [ext_resource type="PackedScene" path="res://scenes/weapons/BloodEffect.tscn" id="6_be01"]
 [ext_resource type="PackedScene" path="res://scenes/UI/ResultUI.tscn" id="7_r001"]
-[ext_resource type="Material" path="res://resources/materials/mat_station_platform.tres" id="8_mplat"]
+[ext_resource type="Material" uid="uid://mat_dirt_pbr_real" path="res://resources/materials/mat_dirt.tres" id="8_dirt"]
 [ext_resource type="ArrayMesh" path="res://models/environment/station/train_tracks.obj" id="9_mtrk"]
 [ext_resource type="ArrayMesh" path="res://models/environment/station/station_bench.obj" id="10_mbch"]
 [ext_resource type="AudioStream" path="res://audio/ambience/sfx_ambience_metro.wav" id="11_samb"]
-[ext_resource type="PackedScene" path="res://assets/3d/environments/railway_station.glb" id="12_glb_stn"]
 [ext_resource type="PackedScene" path="res://scenes/environments/AtmosphereEnhancer.tscn" id="13_atmo"]
 [ext_resource type="PackedScene" path="res://scenes/objects/ExplosiveBarrel.tscn" id="14_barrel"]
+[ext_resource type="Environment" path="res://resources/materials/env_apocalyptic_hdri.tres" id="15_env"]
+[ext_resource type="Material" uid="uid://mat_brick_wall_pbr" path="res://resources/materials/mat_brick_wall.tres" id="16_brick"]
+[ext_resource type="Material" uid="uid://mat_concrete_wall_pbr" path="res://resources/materials/mat_concrete_wall.tres" id="17_cwall"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_stn"]
-vertices = PackedVector3Array(-16, 0, -16, -16, 0, 16, 16, 0, 16, 16, 0, -16)
+vertices = PackedVector3Array(-15, 0, -15, -15, 0, 15, 15, 0, 15, 15, 0, -15)
 polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3)]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flr"]
@@ -25,51 +27,31 @@ size = Vector3(32, 0.2, 32)
 [sub_resource type="PlaneMesh" id="PlaneMesh_flr"]
 size = Vector2(32, 32)
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_day"]
-sky_top_color = Color(0.05, 0.08, 0.15, 1)
-sky_horizon_color = Color(0.1, 0.15, 0.25, 1)
-ground_bottom_color = Color(0.02, 0.03, 0.05, 1)
-ground_horizon_color = Color(0.08, 0.1, 0.15, 1)
-sun_angle_max = 30.0
+[sub_resource type="BoxMesh" id="BoxMesh_wall_z"]
+material = ExtResource("16_brick")
+size = Vector3(34, 6, 0.8)
 
-[sub_resource type="Sky" id="Sky_day"]
-sky_material = SubResource("ProceduralSkyMaterial_day")
-
-[sub_resource type="Environment" id="Environment_stn"]
-background_mode = 2
-sky = SubResource("Sky_day")
-ambient_light_source = 3
-ambient_light_color = Color(0.72, 0.78, 0.88, 1)
-ambient_light_energy = 0.9
-tonemap_mode = 3
-tonemap_white = 1.6
-ssao_enabled = false
-ssao_radius = 1.2
-ssao_intensity = 1.5
-glow_enabled = false
-glow_intensity = 1.0
-glow_bloom = 0.1
-fog_enabled = false
-fog_light_color = Color(0.1, 0.12, 0.18, 1)
-fog_density = 0.002
+[sub_resource type="BoxMesh" id="BoxMesh_wall_x"]
+material = ExtResource("17_cwall")
+size = Vector3(0.8, 6, 34)
 
 [node name="RailwayStation" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_stn")
+environment = ExtResource("15_env")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866, -0.287, 0.409, 0, 0.819, 0.574, -0.5, -0.497, 0.709, 0, 20, 0)
-light_color = Color(1.0, 0.97, 0.90, 1)
-light_energy = 1.2
+light_color = Color(0.82, 0.88, 1.0, 1)
+light_energy = 1.15
 shadow_enabled = true
 shadow_bias = 0.04
 
 [node name="PlatformLight" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
 light_color = Color(0.95, 0.97, 1, 1)
-light_energy = 0.9
-omni_range = 16.0
+light_energy = 1.2
+omni_range = 18.0
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_stn")
@@ -81,9 +63,25 @@ shape = SubResource("BoxShape3D_flr")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/Ground"]
 mesh = SubResource("PlaneMesh_flr")
-surface_material_override/0 = ExtResource("8_mplat")
+surface_material_override/0 = ExtResource("8_dirt")
 
 [node name="Props" type="Node3D" parent="."]
+
+[node name="WallBack" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 16)
+mesh = SubResource("BoxMesh_wall_z")
+
+[node name="WallFront" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -16)
+mesh = SubResource("BoxMesh_wall_z")
+
+[node name="WallLeft" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 3, 0)
+mesh = SubResource("BoxMesh_wall_x")
+
+[node name="WallRight" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 3, 0)
+mesh = SubResource("BoxMesh_wall_x")
 
 [node name="Tracks1" type="MeshInstance3D" parent="Props"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
@@ -142,5 +140,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0, 0, -7.0)
 
 [node name="ExplosiveBarrel2" parent="." instance=ExtResource("14_barrel")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -8.5)
-
-

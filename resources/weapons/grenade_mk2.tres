@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_pj0sk"]
+
+[resource]
+script = ExtResource("1_pj0sk")
+weapon_id = "grenade_mk2"
+display_name = "MK2 Frag Grenade"
+base_damage = 350.0
+headshot_multiplier = 2.0
+base_fire_rate = 1.0
+base_mag_size = 1
+base_reserve_ammo = 10
+base_reload_time = 1.5
+spread = 0.05
+recoil = 0.2
+range = 80.0
+pellet_count = 1
+is_automatic = false
+muzzle_fx = "standard"
+sound_set = "rifle"
+unlock_price = 12000
+upgrade_cost_damage = 200
+upgrade_cost_mag = 200
+upgrade_cost_reload = 200
+upgrade_cost_accuracy = 200

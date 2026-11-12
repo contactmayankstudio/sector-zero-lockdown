@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_vq2qs"]
+
+[resource]
+script = ExtResource("1_vq2qs")
+weapon_id = "arcade_gun"
+display_name = "Retro Arcade Blaster"
+base_damage = 46.0
+headshot_multiplier = 2.0
+base_fire_rate = 0.16
+base_mag_size = 18
+base_reserve_ammo = 108
+base_reload_time = 1.8
+spread = 0.015
+recoil = 0.85
+range = 60.0
+pellet_count = 1
+is_automatic = false
+muzzle_fx = "standard"
+sound_set = "pistol"
+unlock_price = 72000
+upgrade_cost_damage = 250
+upgrade_cost_mag = 250
+upgrade_cost_reload = 250
+upgrade_cost_accuracy = 250

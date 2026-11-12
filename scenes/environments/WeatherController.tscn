@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://weather_controller_001"]
+
+[ext_resource type="Script" path="res://scenes/environments/WeatherController.gd" id="1_weather"]
+
+[node name="WeatherController" type="Node3D"]
+script = ExtResource("1_weather")

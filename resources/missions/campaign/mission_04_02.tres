@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "4-2"
+display_name = "4-2 FREIGHT CARGO"
+description = "Narrow gaps between container cars. Watch flanks as infected emerge from blindspots."
+objective_type = 0
+target_count = 43
+wave_count = 3
+reward_cash = 375
+unlock_requirement_id = "4-1"
+scene_path = "res://scenes/environments/UrbanStreet.tscn"
+location_name = "Sector 04 - Freight Rail Yard - Freight Cargo"
+difficulty_stars = 2
+recommended_loadout = "AK-47 Vanguard / Remington 870"
+spawn_config = [{"type": "normal", "weight": 0.68}, {"type": "fast", "weight": 0.28}, {"type": "heavy", "weight": 0.11}]
+waves = [{"wave_num": 1, "groups": [{"enemy_type": "normal", "count": 10, "spawn_direction": "front", "delay": 0.8}]}, {"wave_num": 2, "groups": [{"enemy_type": "normal", "count": 10, "spawn_direction": "left", "delay": 0.7}, {"enemy_type": "fast", "count": 5, "spawn_direction": "right", "delay": 0.9}]}, {"wave_num": 3, "groups": [{"enemy_type": "normal", "count": 12, "spawn_direction": "back", "delay": 0.7}, {"enemy_type": "fast", "count": 6, "spawn_direction": "front", "delay": 0.8}]}]
+is_endless = false

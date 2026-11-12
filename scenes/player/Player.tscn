@@ -104,6 +104,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
 current = true
 fov = 72.0
 
+[node name="TacticalFlashlight" type="SpotLight3D" parent="Camera3D"]
+visible = false
+light_color = Color(1, 0.98, 0.94, 1)
+light_energy = 3.0
+shadow_enabled = false
+spot_range = 40.0
+spot_attenuation = 1.0
+spot_angle = 32.0
+
 [node name="FPSArms" type="Node3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, -0.18, -0.42)
 

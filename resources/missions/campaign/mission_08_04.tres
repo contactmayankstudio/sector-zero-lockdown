@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "8-4"
+display_name = "8-4 GAS STATION"
+description = "Explosive fuel station forecourt crawling with aggressive infected."
+objective_type = 0
+target_count = 59
+wave_count = 3
+reward_cash = 725
+unlock_requirement_id = "8-3"
+scene_path = "res://scenes/environments/DarkIndustrial.tscn"
+location_name = "Sector 08 - Neon Downtown Core - Gas Station"
+difficulty_stars = 3
+recommended_loadout = "AK-47 Vanguard / AWP Arctic Warfare"
+spawn_config = [{"type": "normal", "weight": 0.56}, {"type": "fast", "weight": 0.36}, {"type": "heavy", "weight": 0.16999999999999998}]
+waves = [{"wave_num": 1, "groups": [{"enemy_type": "normal", "count": 14, "spawn_direction": "front", "delay": 0.8}]}, {"wave_num": 2, "groups": [{"enemy_type": "normal", "count": 14, "spawn_direction": "left", "delay": 0.7}, {"enemy_type": "fast", "count": 7, "spawn_direction": "right", "delay": 0.9}]}, {"wave_num": 3, "groups": [{"enemy_type": "normal", "count": 16, "spawn_direction": "back", "delay": 0.7}, {"enemy_type": "fast", "count": 8, "spawn_direction": "front", "delay": 0.8}]}]
+is_endless = false

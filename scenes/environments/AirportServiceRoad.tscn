@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/weapons/ImpactEffect.tscn" id="5_ie01"]
 [ext_resource type="PackedScene" path="res://scenes/weapons/BloodEffect.tscn" id="6_be01"]
 [ext_resource type="PackedScene" path="res://scenes/UI/ResultUI.tscn" id="7_r001"]
-[ext_resource type="Material" path="res://resources/materials/mat_asphalt.tres" id="8_masph"]
+[ext_resource type="Material" uid="uid://street_ground_asphalt_01" path="res://resources/materials/mat_asphalt.tres" id="8_masph"]
 [ext_resource type="AudioStream" path="res://audio/ambience/sfx_ambience_airport.wav" id="9_samb"]
 [ext_resource type="PackedScene" path="res://assets/3d/environments/airport_terminal_section.glb" id="10_gsec"]
 [ext_resource type="PackedScene" path="res://scenes/environments/props/ConcreteBarrierA.scn" id="11_barr"]
@@ -18,15 +18,17 @@
 [ext_resource type="PackedScene" path="res://scenes/environments/props/RoadSignWorks.scn" id="17_sign_w"]
 [ext_resource type="PackedScene" path="res://scenes/objects/ExplosiveBarrel.tscn" id="18_barrel"]
 
+[ext_resource type="Environment" path="res://resources/materials/env_apocalyptic_hdri.tres" id="19_env"]
+
 [sub_resource type="NavigationMesh" id="NavigationMesh_road"]
 vertices = PackedVector3Array(-30, 0, -30, -30, 0, 30, 30, 0, 30, 30, 0, -30)
 polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3)]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flr"]
-size = Vector3(60, 0.2, 60)
+size = Vector3(250, 0.2, 250)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_flr"]
-size = Vector2(60, 60)
+size = Vector2(250, 250)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dusk"]
 sky_top_color = Color(0.20, 0.35, 0.65, 1)
@@ -54,7 +56,7 @@ fog_enabled = false
 [node name="AirportServiceRoad" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_road")
+environment = ExtResource("19_env")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866, -0.354, 0.354, 0, 0.707, 0.707, -0.5, -0.612, 0.612, 0, 22, 0)

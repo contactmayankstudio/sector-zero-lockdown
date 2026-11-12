@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "11-1"
+display_name = "11-1 SCAFFOLDING MAZE"
+description = "Multi-tiered construction site perimeter crawling with aggressive climbers."
+objective_type = 0
+target_count = 51
+wave_count = 3
+reward_cash = 920
+unlock_requirement_id = "10-7"
+scene_path = "res://scenes/environments/DarkIndustrial.tscn"
+location_name = "Sector 11 - Skyscraper Megastructure - Scaffolding Maze"
+difficulty_stars = 4
+recommended_loadout = "M4A1 Sentinel / AWP Arctic Warfare"
+spawn_config = [{"type": "normal", "weight": 0.4700000000000001}, {"type": "fast", "weight": 0.4}, {"type": "heavy", "weight": 0.2}]
+waves = [{"wave_num": 1, "groups": [{"enemy_type": "normal", "count": 12, "spawn_direction": "front", "delay": 0.8}]}, {"wave_num": 2, "groups": [{"enemy_type": "normal", "count": 12, "spawn_direction": "front", "delay": 0.7}, {"enemy_type": "fast", "count": 6, "spawn_direction": "left", "delay": 0.9}]}, {"wave_num": 3, "groups": [{"enemy_type": "normal", "count": 14, "spawn_direction": "back", "delay": 0.7}, {"enemy_type": "fast", "count": 7, "spawn_direction": "right", "delay": 0.8}]}]
+is_endless = false

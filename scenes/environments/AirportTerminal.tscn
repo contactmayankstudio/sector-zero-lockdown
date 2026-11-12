@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://airport001terminal"]
+[gd_scene load_steps=30 format=3 uid="uid://airport001terminal"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_p001"]
 [ext_resource type="Script" path="res://scripts/GameManager.gd" id="2_g001"]
@@ -21,6 +21,9 @@
 [ext_resource type="PackedScene" path="res://scenes/environments/props/RoadSignClosed.scn" id="20_sign_c"]
 [ext_resource type="PackedScene" path="res://scenes/environments/props/TrafficCone.scn" id="21_cone"]
 [ext_resource type="PackedScene" path="res://scenes/objects/ExplosiveBarrel.tscn" id="22_barrel"]
+[ext_resource type="Environment" path="res://resources/materials/env_apocalyptic_hdri.tres" id="23_env"]
+[ext_resource type="Material" uid="uid://mat_brick_wall_pbr" path="res://resources/materials/mat_brick_wall.tres" id="24_brick"]
+[ext_resource type="Material" uid="uid://mat_concrete_wall_pbr" path="res://resources/materials/mat_concrete_wall.tres" id="25_cwall"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_air"]
 vertices = PackedVector3Array(-18, 0, -18, -18, 0, 18, 18, 0, 18, 18, 0, -18)
@@ -32,34 +35,18 @@ size = Vector3(36, 0.2, 36)
 [sub_resource type="PlaneMesh" id="PlaneMesh_flr"]
 size = Vector2(36, 36)
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_day"]
-sky_top_color = Color(0.25, 0.45, 0.72, 1)
-sky_horizon_color = Color(0.55, 0.68, 0.85, 1)
-ground_bottom_color = Color(0.2, 0.22, 0.26, 1)
-ground_horizon_color = Color(0.38, 0.45, 0.52, 1)
-sun_angle_max = 30.0
+[sub_resource type="BoxMesh" id="BoxMesh_wall_z"]
+material = ExtResource("24_brick")
+size = Vector3(38, 8, 1.0)
 
-[sub_resource type="Sky" id="Sky_day"]
-sky_material = SubResource("ProceduralSkyMaterial_day")
-
-[sub_resource type="Environment" id="Environment_air"]
-background_mode = 2
-sky = SubResource("Sky_day")
-ambient_light_source = 3
-ambient_light_color = Color(0.72, 0.78, 0.88, 1)
-ambient_light_energy = 0.95
-tonemap_mode = 3
-tonemap_white = 1.6
-ssao_enabled = false
-ssao_radius = 1.2
-ssao_intensity = 1.5
-glow_enabled = false
-fog_enabled = false
+[sub_resource type="BoxMesh" id="BoxMesh_wall_x"]
+material = ExtResource("25_cwall")
+size = Vector3(1.0, 8, 38)
 
 [node name="AirportTerminal" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_air")
+environment = ExtResource("23_env")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866, -0.287, 0.409, 0, 0.819, 0.574, -0.5, -0.497, 0.709, 0, 20, 0)
@@ -157,6 +144,22 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, -6.5)
 
 [node name="BarricadeCone" parent="Props" instance=ExtResource("21_cone")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -6.5)
+
+[node name="WallBack" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 18)
+mesh = SubResource("BoxMesh_wall_z")
+
+[node name="WallFront" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -18)
+mesh = SubResource("BoxMesh_wall_z")
+
+[node name="WallLeft" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 4, 0)
+mesh = SubResource("BoxMesh_wall_x")
+
+[node name="WallRight" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 4, 0)
+mesh = SubResource("BoxMesh_wall_x")
 
 [node name="Player" parent="." instance=ExtResource("1_p001")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)

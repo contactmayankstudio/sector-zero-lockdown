@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_vq2qs"]
+
+[resource]
+script = ExtResource("1_vq2qs")
+weapon_id = "prowl_blaster"
+display_name = "Prowl Cyber Blaster"
+base_damage = 50.0
+headshot_multiplier = 2.0
+base_fire_rate = 0.14
+base_mag_size = 20
+base_reserve_ammo = 120
+base_reload_time = 1.6
+spread = 0.018
+recoil = 0.95
+range = 65.0
+pellet_count = 1
+is_automatic = false
+muzzle_fx = "standard"
+sound_set = "pistol"
+unlock_price = 88000
+upgrade_cost_damage = 260
+upgrade_cost_mag = 260
+upgrade_cost_reload = 260
+upgrade_cost_accuracy = 260

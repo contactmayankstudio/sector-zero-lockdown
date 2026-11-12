@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_vq2qs"]
+
+[resource]
+script = ExtResource("1_vq2qs")
+weapon_id = "retro_ray_gun"
+display_name = "Alien Disintegrator"
+base_damage = 105.0
+headshot_multiplier = 2.2
+base_fire_rate = 0.32
+base_mag_size = 16
+base_reserve_ammo = 80
+base_reload_time = 2.4
+spread = 0.008
+recoil = 1.2
+range = 85.0
+pellet_count = 1
+is_automatic = false
+muzzle_fx = "standard"
+sound_set = "pistol"
+unlock_price = 130000
+upgrade_cost_damage = 320
+upgrade_cost_mag = 320
+upgrade_cost_reload = 320
+upgrade_cost_accuracy = 320

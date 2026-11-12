@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "6-6"
+display_name = "6-6 ROOF HELIPAD"
+description = "Survive rooftop helicopter landing pad siege during heavy storm."
+objective_type = 0
+target_count = 64
+wave_count = 3
+reward_cash = 595
+unlock_requirement_id = "6-5"
+scene_path = "res://scenes/environments/UrbanStreet.tscn"
+location_name = "Sector 06 - Quarantine Medical Center - Roof Helipad"
+difficulty_stars = 2
+recommended_loadout = "M4A1 Sentinel / Remington 870"
+spawn_config = [{"type": "normal", "weight": 0.6200000000000001}, {"type": "fast", "weight": 0.32}, {"type": "heavy", "weight": 0.14}]
+waves = [{"wave_num": 1, "groups": [{"enemy_type": "normal", "count": 15, "spawn_direction": "front", "delay": 0.8}]}, {"wave_num": 2, "groups": [{"enemy_type": "normal", "count": 15, "spawn_direction": "left", "delay": 0.7}, {"enemy_type": "fast", "count": 8, "spawn_direction": "right", "delay": 0.9}]}, {"wave_num": 3, "groups": [{"enemy_type": "normal", "count": 17, "spawn_direction": "back", "delay": 0.7}, {"enemy_type": "fast", "count": 9, "spawn_direction": "front", "delay": 0.8}]}]
+is_endless = false

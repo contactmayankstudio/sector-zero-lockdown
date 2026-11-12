@@ -1,0 +1,26 @@
+[gd_resource type="Environment" load_steps=3 format=3 uid="uid://env_sunset_desert_01"]
+
+[ext_resource type="Sky" path="res://resources/materials/mat_photorealistic_sky.tres" id="1_sky"]
+
+[resource]
+background_mode = 2
+sky = ExtResource("1_sky")
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.84, 0.98, 1.0)
+ambient_light_sky_contribution = 0.88
+ambient_light_energy = 1.20
+tonemap_mode = 3
+tonemap_exposure = 1.16
+tonemap_white = 1.0
+glow_enabled = true
+glow_intensity = 0.40
+glow_bloom = 0.12
+glow_hdr_threshold = 1.0
+fog_enabled = true
+fog_light_color = Color(0.72, 0.84, 0.98, 1.0)
+fog_density = 0.0004
+fog_aerial_perspective = 0.35
+fog_sky_affect = 0.08
+adjustment_enabled = true
+adjustment_contrast = 1.14
+adjustment_saturation = 1.22

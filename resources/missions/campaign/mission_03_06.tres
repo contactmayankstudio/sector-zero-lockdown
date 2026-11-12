@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "3-6"
+display_name = "3-6 MAINTENANCE SHED"
+description = "Survive heavy ambush inside the train repair warehouse."
+objective_type = 0
+target_count = 56
+wave_count = 3
+reward_cash = 355
+unlock_requirement_id = "3-5"
+scene_path = "res://scenes/environments/AirportServiceRoad.tscn"
+location_name = "Sector 03 - Metro Concourse - Maintenance Shed"
+difficulty_stars = 1
+recommended_loadout = "MP5 Tactical / AK-47 Vanguard"
+spawn_config = [{"type": "normal", "weight": 0.7100000000000001}, {"type": "fast", "weight": 0.26}, {"type": "heavy", "weight": 0.095}]
+waves = [{"wave_num": 1, "groups": [{"enemy_type": "normal", "count": 13, "spawn_direction": "front", "delay": 0.8}]}, {"wave_num": 2, "groups": [{"enemy_type": "normal", "count": 13, "spawn_direction": "left", "delay": 0.7}, {"enemy_type": "fast", "count": 7, "spawn_direction": "right", "delay": 0.9}]}, {"wave_num": 3, "groups": [{"enemy_type": "normal", "count": 15, "spawn_direction": "back", "delay": 0.7}, {"enemy_type": "fast", "count": 8, "spawn_direction": "front", "delay": 0.8}]}]
+is_endless = false

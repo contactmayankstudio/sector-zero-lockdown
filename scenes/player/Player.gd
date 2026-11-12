@@ -21,7 +21,7 @@ var is_gameplay_ready: bool = false
 @export var is_stationary: bool = false # Free movement enabled (WASD + virtual joystick)
 @export var acceleration: float = 24.0
 @export var deceleration: float = 32.0
-@export var move_limit: float = 12.0
+@export var move_limit: float = 0.0 # 0.0 = unlimited open world free roam
 @export var sway_amount: float = 0.04
 @export var bob_speed: float = 8.5
 @export var bob_amount: float = 0.022
@@ -37,12 +37,25 @@ var camera_kick: float = 0.0
 
 var max_health: float = 250.0
 var current_health: float = 250.0
+var max_armor: float = 150.0
+var current_armor: float = 150.0
 var is_dead: bool = false
+var is_respawning: bool = false
+var invulnerability_timer: float = 0.0
 var is_firing: bool = false
 var is_aiming: bool = false
 var is_tactical_reloading: bool = false
 var damage_cooldown: float = 0.0
 @export var auto_pilot: bool = false # AI Combat Pilot (Plays the game automatically)
+
+var combat_soldier: Node3D = null
+var soldier_anim: AnimationPlayer = null
+var soldier_weapon_attach: BoneAttachment3D = null
+var soldier_held_weapon: Node3D = null
+var soldier_walk_timer: float = 0.0
+var soldier_recoil_kick: float = 0.0
+@export var is_third_person: bool = false
+var is_crouching: bool = false
 
 var weapon_prefab: PackedScene = preload("res://scenes/weapons/Weapon.tscn")
 var weapon_configs = [
@@ -50,8 +63,8 @@ var weapon_configs = [
 		"id": "negev_ng7", 
 		"path": "res://resources/weapons/negev_ng7.tres", 
 		"model": "res://scenes/weapons/models/negev_ng7.scn",
-		"offset": Vector3(0.01, -0.06, -0.04),
-		"rot": Vector3(0.0, -89.0, 0.0),
+		"offset": Vector3(-0.02, -0.06, -0.04),
+		"rot": Vector3(0.0, 0.0, 90.0),
 		"scale": Vector3(0.048, 0.048, 0.048)
 	},
 
@@ -59,8 +72,8 @@ var weapon_configs = [
 		"id": "akx_scifi", 
 		"path": "res://resources/weapons/akx_scifi.tres", 
 		"model": "res://scenes/weapons/models/akx_scifi.scn",
-		"offset": Vector3(-0.05, -0.22, 0.18),
-		"rot": Vector3(1.5, 181.5, 0.0),
+		"offset": Vector3(-0.04, -0.16, -0.15),
+		"rot": Vector3(0.0, 180.0, 0.0),
 		"scale": Vector3(0.85, 0.85, 0.85)
 	},
 
@@ -69,7 +82,7 @@ var weapon_configs = [
 		"path": "res://resources/weapons/car_smg.tres", 
 		"model": "res://scenes/weapons/models/car_smg.scn",
 		"offset": Vector3(-0.03, -0.15, 0.05),
-		"rot": Vector3(94.0, 0.0, 0.0),
+		"rot": Vector3(0.0, 180.0, 0.0),
 		"scale": Vector3(1.0, 1.0, 1.0)
 	},
 	{
@@ -84,32 +97,32 @@ var weapon_configs = [
 		"id": "primordium_vandal", 
 		"path": "res://resources/weapons/primordium_vandal.tres", 
 		"model": "res://scenes/weapons/models/primordium_vandal.scn",
-		"offset": Vector3(-0.03, 0.02, -0.05),
-		"rot": Vector3(1.0, 1.5, 0.0),
+		"offset": Vector3(-0.03, 0.0, -0.05),
+		"rot": Vector3(0.0, 180.0, 0.0),
 		"scale": Vector3(0.85, 0.85, 0.85)
 	},
 	{
 		"id": "prowler_smg", 
 		"path": "res://resources/weapons/prowler_smg.tres", 
 		"model": "res://scenes/weapons/models/prowler_smg.scn",
-		"offset": Vector3(-0.04, -0.18, 0.0),
-		"rot": Vector3(1.0, 1.5, 0.0),
+		"offset": Vector3(-0.04, -0.22, -0.20),
+		"rot": Vector3(0.0, 180.0, 0.0),
 		"scale": Vector3(0.038, 0.038, 0.038)
 	},
 	{
 		"id": "ray_gun_cod", 
 		"path": "res://resources/weapons/ray_gun_cod.tres", 
 		"model": "res://scenes/weapons/models/ray_gun_cod.scn",
-		"offset": Vector3(-0.02, -0.04, -0.14),
-		"rot": Vector3(1.0, 1.5, 0.0),
-		"scale": Vector3(0.10, 0.10, 0.10)
+		"offset": Vector3(-0.03, -0.06, -0.25),
+		"rot": Vector3(0.0, 180.0, 0.0),
+		"scale": Vector3(0.18, 0.18, 0.18)
 	},
 	{
 		"id": "rocket_launcher", 
 		"path": "res://resources/weapons/rocket_launcher.tres", 
 		"model": "res://scenes/weapons/models/rocket_launcher.scn",
 		"offset": Vector3(-0.04, 0.02, -0.18),
-		"rot": Vector3(0.0, -88.5, 0.0),
+		"rot": Vector3(0.0, 90.0, 0.0),
 		"scale": Vector3(0.75, 0.75, 0.75)
 	},
 	{
@@ -117,7 +130,7 @@ var weapon_configs = [
 		"path": "res://resources/weapons/pestilence_handgun.tres", 
 		"model": "res://scenes/weapons/models/pestilence_handgun.scn",
 		"offset": Vector3(-0.04, -0.01, 0.02),
-		"rot": Vector3(0.0, -88.5, 0.0),
+		"rot": Vector3(0.0, -90.0, 0.0),
 		"scale": Vector3(0.008, 0.008, 0.008)
 	},
 	{
@@ -125,7 +138,7 @@ var weapon_configs = [
 		"path": "res://resources/weapons/arcade_gun.tres", 
 		"model": "res://scenes/weapons/models/arcade_gun.scn",
 		"offset": Vector3(-0.05, -0.02, 0.0),
-		"rot": Vector3(0.0, -88.5, 0.0),
+		"rot": Vector3(0.0, 90.0, 0.0),
 		"scale": Vector3(0.09, 0.09, 0.09)
 	},
 	{
@@ -140,24 +153,24 @@ var weapon_configs = [
 		"id": "prowl_blaster", 
 		"path": "res://resources/weapons/prowl_blaster.tres", 
 		"model": "res://scenes/weapons/models/prowl_blaster.scn",
-		"offset": Vector3(-0.04, 0.02, 0.0),
-		"rot": Vector3(90.0, 0.0, 0.0),
+		"offset": Vector3(-0.04, -0.15, -0.10),
+		"rot": Vector3(-90.0, 0.0, 0.0),
 		"scale": Vector3(42.0, 42.0, 42.0)
 	},
 	{
 		"id": "vaccinator_energy", 
 		"path": "res://resources/weapons/vaccinator_energy.tres", 
 		"model": "res://scenes/weapons/models/vaccinator_energy.scn",
-		"offset": Vector3(-0.02, -0.05, 0.0),
-		"basis": Basis(Vector3(-1.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, -1.0)),
+		"offset": Vector3(-0.02, -0.08, -0.10),
+		"rot": Vector3(0.0, 0.0, 90.0),
 		"scale": Vector3(0.0093, 0.0093, 0.0093)
 	},
 	{
 		"id": "axon_cannon", 
 		"path": "res://resources/weapons/axon_cannon.tres", 
 		"model": "res://scenes/weapons/models/axon_cannon.scn",
-		"offset": Vector3(-0.04, -0.26, 0.0),
-		"rot": Vector3(6.0, 87.0, -6.0),
+		"offset": Vector3(-0.04, -0.15, -0.10),
+		"rot": Vector3(0.0, 90.0, 0.0),
 		"scale": Vector3(2.4, 2.4, 2.4)
 	}
 ]
@@ -222,6 +235,7 @@ func _ready():
 			
 	is_gameplay_ready = true
 	gameplay_ready.emit()
+	_init_adrenaline_effects()
 	print("[%d ms] [PLAYER] Gameplay & Arsenal Ready! (Weapons: %d)" % [Time.get_ticks_msec(), weapons.size()])
 
 func _extract_mesh_from_scene(packed_scene: PackedScene) -> Mesh:
@@ -235,14 +249,195 @@ func _extract_mesh_from_scene(packed_scene: PackedScene) -> Mesh:
 	return result_mesh
 
 func _init_character_models():
-	if has_node("PlayerBody/MeshInstance3D"):
-		var soldier_res = load("res://assets/3d/characters/player_soldier.glb")
-		if soldier_res is PackedScene:
-			var sm = _extract_mesh_from_scene(soldier_res)
-			if sm:
-				$PlayerBody/MeshInstance3D.mesh = sm
-				$PlayerBody/MeshInstance3D.material_override = null
-		$PlayerBody/MeshInstance3D.visible = false
+	if has_node("PlayerBody"):
+		# Hide old static low-poly placeholder mesh
+		if has_node("PlayerBody/MeshInstance3D"):
+			$PlayerBody/MeshInstance3D.visible = false
+
+		# Remove any prior instance
+		if combat_soldier and is_instance_valid(combat_soldier):
+			combat_soldier.queue_free()
+
+		var soldier_scene = load("res://scenes/characters/RealSoldier.scn")
+		if not soldier_scene:
+			soldier_scene = load("res://scenes/characters/RealSoldier.tscn")
+
+		if soldier_scene is PackedScene:
+			combat_soldier = soldier_scene.instantiate()
+			combat_soldier.name = "CombatSoldier"
+			combat_soldier.scale = Vector3(1.0, 1.0, 1.0)
+			combat_soldier.position = Vector3(0.0, 0.0, 0.0)
+			combat_soldier.rotation_degrees = Vector3(0.0, 0.0, 0.0)
+			$PlayerBody.add_child(combat_soldier)
+
+			soldier_anim = combat_soldier.find_child("AnimationPlayer", true, false)
+			if soldier_anim:
+				var start_anim = "Idle"
+				soldier_anim.play(start_anim)
+
+			# 3rd-Person Gun Muzzle Flash Dynamic Light (Warm Gunpowder Glow)
+			var sm_light = OmniLight3D.new()
+			sm_light.name = "SoldierMuzzleLight"
+			sm_light.position = Vector3(0.0, 0.40, 0.72)
+			sm_light.light_color = Color(1.0, 0.86, 0.45)
+			sm_light.light_energy = 5.5
+			sm_light.omni_range = 7.5
+			sm_light.visible = false
+			combat_soldier.add_child(sm_light)
+
+			# 3rd-Person Gun Muzzle Flash Quad
+			var sm_flash = MeshInstance3D.new()
+			sm_flash.name = "SoldierMuzzleFlash"
+			sm_flash.position = Vector3(0.0, 0.40, 0.75)
+			var qmesh = QuadMesh.new()
+			qmesh.size = Vector2(0.38, 0.38)
+			var fmat = StandardMaterial3D.new()
+			fmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			fmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			fmat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+			fmat.albedo_color = Color(1.0, 0.92, 0.45, 0.95)
+			sm_flash.mesh = qmesh
+			sm_flash.material_override = fmat
+			sm_flash.visible = false
+			combat_soldier.add_child(sm_flash)
+
+			# If model has skeleton and no built-in gun, attach rifle
+			var skel: Skeleton3D = combat_soldier.find_child("Skeleton3D", true, false)
+			if skel:
+				var hand_idx = skel.find_bone("mixamorig_RightHand")
+				if hand_idx != -1:
+					soldier_weapon_attach = BoneAttachment3D.new()
+					soldier_weapon_attach.name = "WeaponAttach"
+					soldier_weapon_attach.bone_name = "mixamorig_RightHand"
+					skel.add_child(soldier_weapon_attach)
+
+					var wep_scene = load("res://scenes/weapons/models/akx_scifi.scn")
+					if wep_scene is PackedScene:
+						soldier_held_weapon = wep_scene.instantiate()
+						soldier_held_weapon.name = "HeldRifle"
+						soldier_held_weapon.scale = Vector3(65.0, 65.0, 65.0)
+						soldier_held_weapon.position = Vector3(0.0, 4.0, 8.0)
+						soldier_held_weapon.rotation_degrees = Vector3(90.0, 0.0, -90.0)
+						soldier_weapon_attach.add_child(soldier_held_weapon)
+
+			_update_camera_mode_visuals()
+
+func toggle_camera_perspective():
+	is_third_person = not is_third_person
+	_update_camera_mode_visuals()
+	print("[PLAYER] Camera perspective switched! Third-Person: ", is_third_person)
+
+func _update_camera_mode_visuals():
+	if not camera:
+		return
+	if is_third_person:
+		# Over-the-shoulder 3rd person GTA 5 camera
+		camera.position = Vector3(0.42, 1.55, 2.2)
+		if fps_arms:
+			fps_arms.visible = false
+		if weapon_manager:
+			weapon_manager.visible = false
+		if has_node("PlayerBody"):
+			$PlayerBody.visible = true
+			if has_node("PlayerBody/MeshInstance3D"):
+				$PlayerBody/MeshInstance3D.visible = false
+		if combat_soldier:
+			combat_soldier.visible = true
+			_set_soldier_shadow_mode(GeometryInstance3D.SHADOW_CASTING_SETTING_ON)
+		if soldier_held_weapon:
+			soldier_held_weapon.visible = true
+	else:
+		# First-person FPS camera
+		camera.position = Vector3(0.0, 1.65, 0.0)
+		if fps_arms:
+			fps_arms.visible = true
+		if weapon_manager:
+			weapon_manager.visible = true
+		if has_node("PlayerBody"):
+			$PlayerBody.visible = false
+		if combat_soldier:
+			combat_soldier.visible = false
+			_set_soldier_shadow_mode(GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY)
+		if soldier_held_weapon:
+			soldier_held_weapon.visible = false
+
+func _set_soldier_shadow_mode(mode: GeometryInstance3D.ShadowCastingSetting):
+	if not combat_soldier:
+		return
+	var meshes = combat_soldier.find_children("*", "MeshInstance3D", true, false)
+	for m in meshes:
+		m.cast_shadow = mode
+	if soldier_held_weapon:
+		var wep_meshes = soldier_held_weapon.find_children("*", "MeshInstance3D", true, false)
+		for wm in wep_meshes:
+			wm.cast_shadow = mode
+
+func _update_soldier_animations(delta: float):
+	if not combat_soldier or not is_instance_valid(combat_soldier):
+		return
+	if is_dead:
+		return
+
+	# Smoothly recover recoil kickback
+	soldier_recoil_kick = move_toward(soldier_recoil_kick, 0.0, delta * 12.0)
+
+	var h_speed = Vector2(velocity.x, velocity.z).length()
+	var is_sprinting = Input.is_physical_key_pressed(KEY_SHIFT) or (InputMap.has_action("sprint") and Input.is_action_pressed("sprint"))
+
+	if soldier_anim and is_instance_valid(soldier_anim):
+		if h_speed > 4.5 or (h_speed > 2.0 and is_sprinting):
+			if soldier_anim.current_animation != "Run":
+				soldier_anim.play("Run", 0.15)
+		elif h_speed > 0.25:
+			if soldier_anim.current_animation != "Walk":
+				soldier_anim.play("Walk", 0.15)
+		else:
+			var target_idle = "Idle"
+			if soldier_anim.current_animation != target_idle:
+				soldier_anim.play(target_idle, 0.25)
+	else:
+		# Dynamic tactical combat movement bob and sway for posed mesh
+		if h_speed > 0.25:
+			var step_rate = 14.0 if is_sprinting else 9.5
+			soldier_walk_timer += delta * step_rate
+			var bob_y = sin(soldier_walk_timer) * 0.025
+			var sway_z = cos(soldier_walk_timer * 0.5) * 2.0
+			combat_soldier.position = Vector3(0.0, 0.0 + bob_y, soldier_recoil_kick)
+			combat_soldier.rotation_degrees = Vector3(0.0, 0.0, sway_z)
+		else:
+			soldier_walk_timer += delta * 2.2
+			var breath_y = sin(soldier_walk_timer) * 0.005
+			combat_soldier.position = Vector3(0.0, 0.0 + breath_y, soldier_recoil_kick)
+			combat_soldier.rotation_degrees = Vector3(0.0, 0.0, 0.0)
+
+	# Visor subtle breathing pulse
+	if combat_soldier and is_instance_valid(combat_soldier):
+		var visor = combat_soldier.get_node_or_null("VisorGlowLight")
+		if visor and visor is OmniLight3D:
+			visor.light_energy = 0.80 + sin(Time.get_ticks_msec() * 0.004) * 0.20
+
+func _flash_soldier_muzzle() -> void:
+	if not combat_soldier or not is_instance_valid(combat_soldier):
+		return
+	var m_light = combat_soldier.get_node_or_null("SoldierMuzzleLight")
+	var m_flash = combat_soldier.get_node_or_null("SoldierMuzzleFlash")
+	if m_light:
+		m_light.visible = true
+	if m_flash:
+		m_flash.visible = true
+		m_flash.rotation.z = randf_range(0.0, TAU)
+		var s = randf_range(0.85, 1.25)
+		m_flash.scale = Vector3(s, s, s)
+
+	var tree = get_tree()
+	if tree:
+		var t = tree.create_timer(0.045)
+		t.timeout.connect(func():
+			if m_light and is_instance_valid(m_light):
+				m_light.visible = false
+			if m_flash and is_instance_valid(m_flash):
+				m_flash.visible = false
+		)
 
 	if fps_arms:
 		var arms_res = load("res://scenes/weapons/models/fps_arms.tscn")
@@ -271,20 +466,34 @@ func _init_weapons():
 
 	var save_mgr = _get_autoload("SaveManager")
 	var unlocked_ids: Array = []
+	var starter_weapons = ["negev_ng7", "akx_scifi", "car_smg", "pestilence_handgun"]
 	if save_mgr and save_mgr.has_method("is_weapon_unlocked"):
 		for cfg in weapon_configs:
-			if save_mgr.is_weapon_unlocked(cfg.id) or cfg.id == "negev_ng7":
+			if save_mgr.is_weapon_unlocked(cfg.id) or cfg.id in starter_weapons:
 				unlocked_ids.append(cfg.id)
 	elif save_mgr and save_mgr.data.has("unlocked_weapons"):
 		unlocked_ids = save_mgr.data.unlocked_weapons.duplicate()
+		for sw in starter_weapons:
+			if not sw in unlocked_ids:
+				unlocked_ids.append(sw)
 	else:
-		unlocked_ids = ["negev_ng7"]
+		unlocked_ids = starter_weapons.duplicate()
 
-	if not "negev_ng7" in unlocked_ids:
-		unlocked_ids.append("negev_ng7")
+	for sw in starter_weapons:
+		if not sw in unlocked_ids:
+			unlocked_ids.append(sw)
 
-	# We will dynamically build the list from unlocked IDs
-	var all_possible_weapons = weapon_configs.duplicate()
+	# Prioritize starter military weapons at the front of weapons list
+	var ordered_cfgs = []
+	for sw_id in starter_weapons:
+		for cfg in weapon_configs:
+			if cfg.id == sw_id:
+				ordered_cfgs.append(cfg)
+				break
+	for cfg in weapon_configs:
+		if not cfg in ordered_cfgs and cfg.id in unlocked_ids:
+			ordered_cfgs.append(cfg)
+	var all_possible_weapons = ordered_cfgs
 
 	for cfg in all_possible_weapons:
 		if not cfg.id in unlocked_ids:
@@ -369,6 +578,7 @@ func _ensure_weapon_model(w: Node):
 	if not w_anims.is_empty():
 		var w_ap: AnimationPlayer = w_anims[0]
 		w.fired.connect(func(_id):
+			soldier_recoil_kick = 0.045
 			if w_ap.has_animation("SHOOT"):
 				w_ap.stop()
 				w_ap.play("SHOOT")
@@ -505,9 +715,10 @@ func rotate_camera(rot_x: float, rot_y: float):
 	var target_delta = dir_norm * effective_len * current_sens
 	
 	# Exponential smoothing filter to prevent sharp discrete jumps
-	_smooth_look = _smooth_look.lerp(target_delta, 0.65) if _smooth_look.length_squared() > 0.001 else target_delta
+	_smooth_look = _smooth_look.lerp(target_delta, 0.55) if _smooth_look.length_squared() > 0.001 else target_delta
 	
-	var pitch_mult = -1.0 if invert_y else 1.0
+	# Touch drag UP -> look UP; Touch drag DOWN -> look DOWN!
+	var pitch_mult = 1.0 if invert_y else -1.0
 	rotate_y(deg_to_rad(-_smooth_look.x))
 	camera.rotate_x(deg_to_rad(_smooth_look.y * pitch_mult))
 	camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(min_pitch), deg_to_rad(max_pitch))
@@ -527,12 +738,7 @@ func _input(event):
 	if is_dead or get_tree().paused: return
 
 	if event is InputEventKey:
-		if event.keycode == KEY_SPACE:
-			if event.pressed and not event.echo:
-				start_fire()
-			elif not event.pressed:
-				stop_fire()
-		elif event.keycode == KEY_G and event.pressed and not event.echo:
+		if event.keycode == KEY_G and event.pressed and not event.echo:
 			throw_grenade()
 		elif event.pressed:
 			if event.keycode == KEY_1:
@@ -541,6 +747,8 @@ func _input(event):
 				switch_to_weapon(1)
 			elif event.keycode == KEY_3:
 				switch_to_weapon(2)
+			elif event.keycode == KEY_4:
+				switch_to_weapon(3)
 			elif event.keycode == KEY_R:
 				_trigger_reload()
 			elif event.keycode == KEY_E and not weapons.is_empty():
@@ -550,15 +758,30 @@ func _input(event):
 			elif event.keycode == KEY_B:
 				auto_pilot = not auto_pilot
 				print("[PLAYER] AI Auto-Pilot toggled: ", auto_pilot)
+			elif event.keycode == KEY_V:
+				toggle_camera_perspective()
+			elif event.keycode == KEY_C:
+				toggle_crouch()
+			elif event.keycode == KEY_X:
+				toggle_adrenaline_slowmo()
 
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				start_fire()
+			else:
+				stop_fire()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			is_aiming = event.pressed
 		elif event.pressed and not weapons.is_empty():
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 				switch_to_weapon((current_weapon_index + 1) % weapons.size())
 			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 				switch_to_weapon((current_weapon_index - 1 + weapons.size()) % weapons.size())
+
+func toggle_crouch():
+	is_crouching = not is_crouching
+	print("[PLAYER] Crouch toggled: ", is_crouching)
 
 func start_fire():
 	is_firing = true
@@ -577,6 +800,8 @@ func _trigger_shoot():
 			apply_shake(0.032 * kick_factor)
 			apply_kick(-0.48 * kick_factor)
 			_recoil_arms(kick_factor)
+			_flash_soldier_muzzle()
+			soldier_recoil_kick = 0.055 * kick_factor
 			_update_hud()
 			if weapon.current_ammo <= 0 and not weapon.is_reloading:
 				_trigger_reload()
@@ -738,9 +963,89 @@ func _handle_auto_pilot(delta):
 	else:
 		virtual_move = Vector2.ZERO
 
+# -----------------------------------------------------------------------------
+# GTA 5 Bullet-Time Adrenaline Ability ([C] Key / Special Ability)
+# -----------------------------------------------------------------------------
+var is_in_slowmo: bool = false
+var slowmo_duration: float = 4.0
+var slowmo_timer: float = 0.0
+var slowmo_cooldown: float = 0.0
+var slowmo_max_cooldown: float = 8.0
+var slowmo_audio_player: AudioStreamPlayer = null
+
+func _init_adrenaline_effects() -> void:
+	if not slowmo_audio_player:
+		slowmo_audio_player = AudioStreamPlayer.new()
+		slowmo_audio_player.name = "SlowmoAudioPlayer"
+		slowmo_audio_player.bus = "SFX"
+		add_child(slowmo_audio_player)
+
+func toggle_adrenaline_slowmo() -> void:
+	if is_dead: return
+	if is_in_slowmo:
+		_exit_adrenaline_slowmo()
+	elif slowmo_cooldown <= 0.0:
+		_enter_adrenaline_slowmo()
+	else:
+		print("[ADRENALINE] Slow-mo cooling down: %.1fs remaining" % slowmo_cooldown)
+
+func _enter_adrenaline_slowmo() -> void:
+	is_in_slowmo = true
+	slowmo_timer = slowmo_duration
+	Engine.time_scale = 0.35
+	
+	if slowmo_audio_player:
+		var snd = load("res://audio/ui/sfx_slowmo_enter.wav")
+		if snd:
+			slowmo_audio_player.stream = snd
+			slowmo_audio_player.play()
+			
+	var tree = get_tree()
+	if tree:
+		var hud = tree.get_first_node_in_group("hud")
+		if hud and hud.has_node("Control/DamageOverlay"):
+			var d = hud.get_node("Control/DamageOverlay") as ColorRect
+			d.color = Color(0.12, 0.70, 1.0, 0.22) # Cyber cyan adrenaline glow
+			
+	print("[GTA 5 ADRENALINE] Bullet-Time SLOW MOTION ACTIVE! (0.35x Speed)")
+
+func _exit_adrenaline_slowmo() -> void:
+	if not is_in_slowmo: return
+	is_in_slowmo = false
+	Engine.time_scale = 1.0
+	slowmo_cooldown = slowmo_max_cooldown
+	
+	if slowmo_audio_player:
+		var snd = load("res://audio/ui/sfx_slowmo_exit.wav")
+		if snd:
+			slowmo_audio_player.stream = snd
+			slowmo_audio_player.play()
+			
+	var tree = get_tree()
+	if tree:
+		var hud = tree.get_first_node_in_group("hud")
+		if hud and hud.has_node("Control/DamageOverlay"):
+			var d = hud.get_node("Control/DamageOverlay") as ColorRect
+			d.color = Color(0.8, 0.0, 0.0, 0.0)
+			
+	print("[GTA 5 ADRENALINE] Bullet-Time Ended. Cooldown: 8s.")
+
 func _physics_process(delta):
 	if is_dead: return
 	time += delta
+	
+	# Update GTA 5 Adrenaline Slow-Mo Timer & Cooldown
+	var unscaled_dt = delta / max(0.01, Engine.time_scale)
+	if is_in_slowmo:
+		slowmo_timer -= unscaled_dt
+		if slowmo_timer <= 0.0:
+			_exit_adrenaline_slowmo()
+	elif slowmo_cooldown > 0.0:
+		slowmo_cooldown = max(0.0, slowmo_cooldown - unscaled_dt)
+
+	if invulnerability_timer > 0.0:
+		invulnerability_timer -= delta
+
 	if damage_cooldown > 0.0:
 		damage_cooldown -= delta
 	elif current_health < max_health:
@@ -779,7 +1084,12 @@ func _physics_process(delta):
 			move_input = move_input.normalized()
 		var move_dir = (global_transform.basis * move_input)
 		move_dir.y = 0.0
-		var target_vel = move_dir * move_speed
+		var speed_mult = 1.0
+		if is_crouching:
+			speed_mult = 0.52
+		elif Input.is_physical_key_pressed(KEY_SHIFT) or (InputMap.has_action("sprint") and Input.is_action_pressed("sprint")):
+			speed_mult = 1.75
+		var target_vel = move_dir * (move_speed * speed_mult)
 		# Smooth acceleration
 		velocity.x = move_toward(velocity.x, target_vel.x, acceleration * delta)
 		velocity.z = move_toward(velocity.z, target_vel.z, acceleration * delta)
@@ -789,7 +1099,7 @@ func _physics_process(delta):
 		if step_timer <= 0.0:
 			if sfx_footstep:
 				sfx_footstep.play()
-			step_timer = 0.42
+			step_timer = 0.55 if is_crouching else (0.30 if speed_mult > 1.2 else 0.42)
 			
 		if anim_player and anim_player.current_animation != "walk":
 			anim_player.play("walk")
@@ -800,11 +1110,40 @@ func _physics_process(delta):
 		if anim_player and anim_player.current_animation != "idle":
 			anim_player.play("idle")
 			
-	move_and_slide()
+	# Smooth Crouch Height Adjustment
+	var target_capsule_h = 1.1 if is_crouching else 1.8
+	var target_capsule_y = 0.55 if is_crouching else 0.90
+	var col_shape = get_node_or_null("CollisionShape3D")
+	if col_shape and col_shape.shape is CapsuleShape3D:
+		col_shape.shape.height = lerp(col_shape.shape.height, target_capsule_h, 10.0 * delta)
+		col_shape.position.y = lerp(col_shape.position.y, target_capsule_y, 10.0 * delta)
 	
-	# Boundary Clamping
-	global_position.x = clamp(global_position.x, -move_limit, move_limit)
-	global_position.z = clamp(global_position.z, -move_limit, move_limit)
+	if camera:
+		var target_cam_y = (1.05 if is_crouching else 1.55) if is_third_person else (0.95 if is_crouching else 1.65)
+		camera.position.y = lerp(camera.position.y, target_cam_y, 10.0 * delta)
+			
+	# Natural gravity and ground handling
+	if not is_on_floor():
+		velocity.y -= 19.6 * delta
+	else:
+		if velocity.y < 0.0:
+			velocity.y = 0.0
+		# Jump with Space
+		if Input.is_physical_key_pressed(KEY_SPACE) or (InputMap.has_action("jump") and Input.is_action_just_pressed("jump")):
+			velocity.y = 6.2
+			
+	move_and_slide()
+	_update_soldier_animations(delta)
+	
+	# Void safety net (prevent player from falling through world)
+	if global_position.y < -12.0:
+		global_position.y = 1.5
+		velocity = Vector3.ZERO
+	
+	# Boundary Clamping (Disabled if move_limit <= 0.0 for open-world free roaming)
+	if move_limit > 0.0:
+		global_position.x = clamp(global_position.x, -move_limit, move_limit)
+		global_position.z = clamp(global_position.z, -move_limit, move_limit)
 	
 	# Dynamic ADS FOV zoom
 	var target_fov = 52.0 if is_aiming else 75.0
@@ -870,18 +1209,41 @@ func _update_hud():
 				next_name = next_w.weapon_data.display_name
 		hud.update_ammo(weapon.current_ammo, weapon.max_ammo, weapon.weapon_data.display_name, next_name)
 	hud.update_health(current_health, max_health)
+	if hud.has_method("update_armor"):
+		hud.update_armor(current_armor, max_armor)
 	var save_mgr = _get_autoload("SaveManager")
 	if save_mgr and save_mgr.data.has("cash"):
 		hud.update_cash(save_mgr.data.cash)
 
-func take_damage(amount: float, source_pos: Vector3 = Vector3.ZERO):
-	if is_dead: return
+func give_armor(amount: float) -> void:
+	max_armor = max(max_armor, 200.0)
+	current_armor = min(max_armor, current_armor + amount)
+	_update_hud()
+
+func take_damage(amount: float, source_pos: Variant = Vector3.ZERO, _arg3: Variant = null, _arg4: Variant = null):
+	if is_dead or is_respawning or invulnerability_timer > 0.0: return
 	if damage_cooldown > 0.0 and amount < current_health: return
-	damage_cooldown = 0.60
-	current_health = max(0.0, current_health - amount)
+	damage_cooldown = 0.50
+	
+	var src_vector: Vector3 = Vector3.ZERO
+	if source_pos is Vector3:
+		src_vector = source_pos
+	elif _arg3 is Vector3:
+		src_vector = _arg3
+	elif _arg4 is Vector3:
+		src_vector = _arg4
+	
+	# PUBG / GTA 5 Armor Absorption: Armor absorbs 70% of damage
+	var actual_damage = amount
+	if current_armor > 0.0:
+		var absorbed = min(current_armor, amount * 0.70)
+		current_armor -= absorbed
+		actual_damage -= absorbed
+		
+	current_health = max(0.0, current_health - actual_damage)
 	apply_shake(0.08)
 	if hud and hud.has_method("trigger_damage_effect"):
-		hud.trigger_damage_effect(clamp(amount / 25.0, 0.8, 2.0), source_pos)
+		hud.trigger_damage_effect(clamp(amount / 25.0, 0.8, 2.0), src_vector)
 	_update_hud()
 	
 	var event_bus = _get_autoload("EventBus")
@@ -899,8 +1261,62 @@ func take_damage(amount: float, source_pos: Vector3 = Vector3.ZERO):
 		if mission_mgr and mission_mgr.current_mission:
 			mission_mgr.finish_mission(false)
 		else:
-			if hud:
-				hud.update_objective("OUTCOME", "You were overrun")
+			_trigger_wasted_respawn()
+
+func _trigger_wasted_respawn() -> void:
+	if is_respawning: return
+	is_respawning = true
+	print("[GTA 5] Player down! Triggering WASTED sequence...")
+	
+	# Slow motion for cinematic GTA 5 effect
+	Engine.time_scale = 0.25
+	
+	if hud and hud.has_method("show_wasted_screen"):
+		hud.show_wasted_screen()
+	elif hud:
+		hud.update_objective("★ WASTED ★", "RESPAWNING...")
+		
+	var tree = get_tree()
+	if tree:
+		var t = tree.create_timer(2.2, true, false, true)
+		await t.timeout
+		
+	Engine.time_scale = 1.0
+	global_position = Vector3(0.0, 1.0, 0.0)
+	velocity = Vector3.ZERO
+	current_health = max_health
+	current_armor = max_armor
+	is_dead = false
+	is_respawning = false
+	invulnerability_timer = 4.0
+	
+	# Shockwave impulse pushing nearby zombies away from spawn
+	var tree_nodes = get_tree().get_nodes_in_group("enemies")
+	for e in tree_nodes:
+		if e and is_instance_valid(e) and "global_position" in e:
+			var d = global_position.distance_to(e.global_position)
+			if d < 14.0:
+				var push_dir = (e.global_position - global_position).normalized()
+				push_dir.y = 0.3
+				if "velocity" in e:
+					e.velocity += push_dir * 22.0
+	
+	for w in weapons:
+		if "current_ammo" in w and "max_ammo" in w:
+			w.current_ammo = w.max_ammo
+			
+	if hud and hud.has_method("hide_wasted_screen"):
+		hud.hide_wasted_screen()
+	if hud and hud.has_method("show_center_notification"):
+		hud.show_center_notification("★ RESPAWNED — READY FOR COMBAT ★")
+	elif hud:
+		hud.update_objective("OPEN WORLD VALLEY", "HIGHWAY PATROL & COMBAT")
+		
+	if anim_player and anim_player.has_animation("idle"):
+		anim_player.play("idle")
+		
+	_update_hud()
+	print("[GTA 5] Player respawned cleanly with full health & armor!")
 
 func _on_mission_completed(_m):
 	var audio_mgr = _get_autoload("AudioManager")

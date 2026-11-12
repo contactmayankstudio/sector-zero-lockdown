@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_akujt"]
+
+[resource]
+script = ExtResource("1_akujt")
+weapon_id = "car_smg"
+display_name = "Frontier SMG-9"
+base_damage = 32.0
+headshot_multiplier = 2.0
+base_fire_rate = 0.07
+base_mag_size = 27
+base_reserve_ammo = 216
+base_reload_time = 2.2
+spread = 0.03
+recoil = 0.85
+range = 80.0
+pellet_count = 1
+is_automatic = true
+muzzle_fx = "standard"
+sound_set = "rifle"
+unlock_price = 22500
+upgrade_cost_damage = 200
+upgrade_cost_mag = 200
+upgrade_cost_reload = 200
+upgrade_cost_accuracy = 200

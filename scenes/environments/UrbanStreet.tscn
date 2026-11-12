@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/weapons/ImpactEffect.tscn" id="6_ie01"]
 [ext_resource type="PackedScene" path="res://scenes/weapons/BloodEffect.tscn" id="7_be01"]
 [ext_resource type="PackedScene" path="res://scenes/UI/ResultUI.tscn" id="8_r001"]
-[ext_resource type="Material" path="res://resources/materials/mat_asphalt.tres" id="9_masph"]
+[ext_resource type="Material" uid="uid://street_ground_asphalt_01" path="res://resources/materials/mat_asphalt.tres" id="9_masph"]
 [ext_resource type="AudioStream" path="res://audio/ambience/sfx_ambience_airport.wav" id="10_samb"]
 [ext_resource type="PackedScene" path="res://scenes/environments/props/StraightRoadSection.scn" id="11_road"]
 [ext_resource type="PackedScene" path="res://scenes/environments/props/ConcreteBarrierA.scn" id="12_barr_a"]
@@ -19,45 +19,33 @@
 [ext_resource type="PackedScene" path="res://scenes/environments/props/PoliceCarProp.scn" id="17_car"]
 [ext_resource type="PackedScene" path="res://scenes/environments/AtmosphereEnhancer.tscn" id="18_atmo"]
 [ext_resource type="PackedScene" path="res://scenes/objects/ExplosiveBarrel.tscn" id="19_barrel"]
+[ext_resource type="Environment" path="res://resources/materials/env_apocalyptic_hdri.tres" id="20_env"]
+[ext_resource type="Material" uid="uid://mat_brick_wall_pbr" path="res://resources/materials/mat_brick_wall.tres" id="21_brick"]
+[ext_resource type="Material" uid="uid://mat_concrete_wall_pbr" path="res://resources/materials/mat_concrete_wall.tres" id="22_cwall"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_urban"]
 vertices = PackedVector3Array(-24, 0, -24, -24, 0, 24, 24, 0, 24, 24, 0, -24)
 polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3)]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flr"]
-size = Vector3(48, 0.2, 48)
+size = Vector3(100, 0.2, 100)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_flr"]
-size = Vector2(48, 48)
+size = Vector2(100, 100)
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_night"]
-sky_top_color = Color(0.20, 0.35, 0.65, 1)
-sky_horizon_color = Color(0.48, 0.60, 0.78, 1)
-ground_bottom_color = Color(0.18, 0.20, 0.24, 1)
-ground_horizon_color = Color(0.35, 0.42, 0.50, 1)
-sun_angle_max = 25.0
+[sub_resource type="BoxMesh" id="BoxMesh_wall_z"]
+material = ExtResource("21_brick")
+size = Vector3(50, 8, 1.0)
 
-[sub_resource type="Sky" id="Sky_night"]
-sky_material = SubResource("ProceduralSkyMaterial_night")
-
-[sub_resource type="Environment" id="Environment_urban"]
-background_mode = 2
-sky = SubResource("Sky_night")
-ambient_light_source = 3
-ambient_light_color = Color(0.65, 0.75, 0.88, 1)
-ambient_light_energy = 0.9
-tonemap_mode = 3
-tonemap_white = 1.6
-glow_enabled = false
-glow_intensity = 1.1
-glow_bloom = 0.12
-fog_enabled = false
+[sub_resource type="BoxMesh" id="BoxMesh_wall_x"]
+material = ExtResource("22_cwall")
+size = Vector3(1.0, 8, 50)
 
 [node name="UrbanStreet" type="Node3D"]
 script = ExtResource("1_script")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_urban")
+environment = ExtResource("20_env")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866, -0.354, 0.354, 0, 0.707, 0.707, -0.5, -0.612, 0.612, 0, 22, 0)
@@ -136,6 +124,22 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 7)
 
 [node name="PoliceCar" parent="Props" instance=ExtResource("17_car")]
 transform = Transform3D(0.94, 0, 0.34, 0, 1, 0, -0.34, 0, 0.94, -8.5, 0, -4.5)
+
+[node name="WallBack" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 24)
+mesh = SubResource("BoxMesh_wall_z")
+
+[node name="WallFront" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -24)
+mesh = SubResource("BoxMesh_wall_z")
+
+[node name="WallLeft" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 4, 0)
+mesh = SubResource("BoxMesh_wall_x")
+
+[node name="WallRight" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 4, 0)
+mesh = SubResource("BoxMesh_wall_x")
 
 [node name="Player" parent="." instance=ExtResource("2_p001")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.099, 0)

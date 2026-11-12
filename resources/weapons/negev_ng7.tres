@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_vq2qs"]
+
+[resource]
+script = ExtResource("1_vq2qs")
+weapon_id = "negev_ng7"
+display_name = "NG7 Heavy LMG"
+base_damage = 44.0
+headshot_multiplier = 2.0
+base_fire_rate = 0.08
+base_mag_size = 150
+base_reserve_ammo = 450
+base_reload_time = 4.5
+spread = 0.04
+recoil = 1.25
+range = 80.0
+pellet_count = 1
+is_automatic = true
+muzzle_fx = "standard"
+sound_set = "rifle"
+unlock_price = 0
+upgrade_cost_damage = 200
+upgrade_cost_mag = 200
+upgrade_cost_reload = 200
+upgrade_cost_accuracy = 200

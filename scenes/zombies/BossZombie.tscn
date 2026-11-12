@@ -21,13 +21,14 @@ size = Vector3(1.1, 0.9, 0.7)
 size = Vector3(1.0, 1.0, 0.7)
 
 [node name="BossZombie" type="CharacterBody3D" groups=["zombies"]]
+transform = Transform3D(2.3, 0, 0, 0, 2.3, 0, 0, 0, 2.3, 0, 0, 0)
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1_script")
 move_speed = 1.25
 attack_range = 3.6
-attack_damage = 35.0
-reward_on_kill = 300
+attack_damage = 38.0
+reward_on_kill = 5000
 archetype = "boss"
 attack_interval = 1.8
 
@@ -46,7 +47,7 @@ target_desired_distance = 0.6
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("2_health")
-max_health = 950.0
+max_health = 35000.0
 
 [node name="SfxGrowl" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("5_roar")

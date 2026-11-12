@@ -1,6 +1,7 @@
 extends Node3D
 
 const BlastVFX = preload("res://scripts/Objects/BlastVFX.gd")
+const WeaponData = preload("res://scripts/Weapons/WeaponData.gd")
 
 @onready var raycast: RayCast3D = $RayCast3D
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
@@ -12,7 +13,7 @@ const BlastVFX = preload("res://scripts/Objects/BlastVFX.gd")
 @onready var sfx_reload = $SfxReload
 @onready var impact_pool = get_tree().get_first_node_in_group("impact_pool") if (is_inside_tree() and get_tree()) else null
 
-@export var weapon_data: WeaponData
+@export var weapon_data: Resource
 @export var recoil_rotation: float = 5.0
 
 var damage: float
@@ -303,7 +304,20 @@ func _fire_projectiles():
 		var ray_target = ray_origin + (ray_dir * ray_range)
 		
 		var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_target)
-		query.exclude = [self, get_parent()]
+		var excludes: Array[RID] = []
+		var p_node: Node = get_parent()
+		while p_node:
+			if p_node is CollisionObject3D:
+				excludes.append(p_node.get_rid())
+			for child in p_node.get_children():
+				if child is CollisionObject3D:
+					excludes.append(child.get_rid())
+			p_node = p_node.get_parent()
+		if is_inside_tree():
+			var pl_node = get_tree().get_first_node_in_group("player")
+			if pl_node is CollisionObject3D:
+				excludes.append(pl_node.get_rid())
+		query.exclude = excludes
 		query.collide_with_areas = true
 		query.collide_with_bodies = true
 		
@@ -318,13 +332,13 @@ func _fire_projectiles():
 			var impact_type = "concrete"
 			
 			# Check HitZone first
-			if hit_collider is HitZone:
+			if hit_collider and (hit_collider.has_method("take_hit") or hit_collider.is_in_group("hitzones")):
 				var res = hit_collider.take_hit(damage_per_pellet, ray_dir)
 				total_hit_enemy = true
-				if res.is_headshot:
+				if res and res.get("is_headshot", false):
 					had_headshot = true
 				impact_type = "blood"
-			elif hit_collider and (hit_collider is ExplosiveBarrel or hit_collider.is_in_group("explosives")):
+			elif hit_collider and (hit_collider.is_in_group("explosives") or hit_collider.has_method("take_damage")):
 				hit_collider.take_damage(damage_per_pellet, false, ray_dir)
 				impact_type = "concrete"
 			elif hit_collider and hit_collider.has_method("take_damage"):
@@ -353,7 +367,7 @@ func _fire_projectiles():
 			var norm = target_ray.get_collision_normal()
 			end_pt = pt
 			var impact_type = "concrete"
-			if col and (col is ExplosiveBarrel or col.is_in_group("explosives")):
+			if col and (col.is_in_group("explosives") or col.has_method("take_damage")):
 				col.take_damage(damage, false, base_forward)
 				impact_type = "concrete"
 			elif col and col.has_method("take_damage"):

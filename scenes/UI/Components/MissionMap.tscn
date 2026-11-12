@@ -1,0 +1,141 @@
+[gd_scene load_steps=5 format=3 uid="uid://missionmapcomp01"]
+
+[ext_resource type="Script" path="res://scripts/UI/Components/MissionMap.gd" id="1_map01"]
+[ext_resource type="PackedScene" path="res://scenes/UI/Components/MissionInfoPanel.tscn" id="2_mip01"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+bg_color = Color(0.0823529, 0.12549, 0.168627, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.705882, 0.847059, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_watermark"]
+bg_color = Color(0.04, 0.06, 0.08, 0.6)
+border_width_left = 2
+border_color = Color(0, 0.65, 0.85, 0.5)
+corner_radius_top_left = 2
+corner_radius_bottom_left = 2
+
+[node name="MissionMap" type="Control"]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_map01")
+
+[node name="BackgroundDark" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0470588, 0.0588235, 0.0784314, 1)
+
+[node name="MapCanvas" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 1450.0
+offset_bottom = 750.0
+mouse_filter = 2
+
+[node name="RouteLayer" type="Control" parent="MapCanvas"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NodeContainer" type="Control" parent="MapCanvas"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Watermark" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -65.0
+offset_right = 360.0
+offset_bottom = -25.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_watermark")
+
+[node name="Margin" type="MarginContainer" parent="Watermark"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 4
+
+[node name="Label" type="Label" parent="Watermark/Margin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.55, 0.7, 0.75)
+theme_override_font_sizes/font_size = 11
+text = "THEATER GRID: SECTOR ZERO LOCKDOWN // 44.02° N, 122.18° W
+STATUS: ACTIVE INFECTION QUARANTINE"
+
+[node name="ZoomControls" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -110.0
+offset_top = -65.0
+offset_right = -24.0
+offset_bottom = -25.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ZoomInBtn" type="Button" parent="ZoomControls"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_font_sizes/font_size = 18
+text = "+"
+
+[node name="ZoomOutBtn" type="Button" parent="ZoomControls"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_font_sizes/font_size = 18
+text = "-"
+
+[node name="MissionInfoPanel" parent="." instance=ExtResource("2_mip01")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -470.0
+offset_top = -145.0
+offset_right = -30.0
+offset_bottom = 145.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[connection signal="pressed" from="ZoomControls/ZoomInBtn" to="." method="zoom_in"]
+[connection signal="pressed" from="ZoomControls/ZoomOutBtn" to="." method="zoom_out"]

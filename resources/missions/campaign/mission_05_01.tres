@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MissionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MissionData.gd" id="1_m1s2d"]
+
+[resource]
+script = ExtResource("1_m1s2d")
+mission_id = "5-1"
+display_name = "5-1 WAREHOUSE GATE"
+description = "Industrial perimeter gate breached by infected factory workers."
+objective_type = 0
+target_count = 38
+wave_count = 3
+reward_cash = 440
+unlock_requirement_id = "4-7"
+scene_path = "res://scenes/environments/AirportServiceRoad.tscn"
+location_name = "Sector 05 - Manufacturing Grid - Warehouse Gate"
+difficulty_stars = 2
+recommended_loadout = "AK-47 Vanguard / Desert Eagle .50"
+spawn_config = [{"type": "normal", "weight": 0.65}, {"type": "fast", "weight": 0.30000000000000004}, {"type": "heavy", "weight": 0.125}]
+waves = [{"wave_num": 1, "groups": [{"enemy_type": "normal", "count": 9, "spawn_direction": "front", "delay": 0.8}]}, {"wave_num": 2, "groups": [{"enemy_type": "normal", "count": 9, "spawn_direction": "front", "delay": 0.7}, {"enemy_type": "fast", "count": 4, "spawn_direction": "left", "delay": 0.9}]}, {"wave_num": 3, "groups": [{"enemy_type": "normal", "count": 11, "spawn_direction": "back", "delay": 0.7}, {"enemy_type": "fast", "count": 5, "spawn_direction": "right", "delay": 0.8}]}]
+is_endless = false

@@ -1,6 +1,14 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3]
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://mat_zombie_fast_pbr"]
+
 [ext_resource type="Texture2D" path="res://textures/pbr/tex_zombie_fast.png" id="1_tex"]
+
 [resource]
+resource_name = "mat_zombie_fast"
 albedo_texture = ExtResource("1_tex")
-metallic = 0.05
-roughness = 0.60
+metallic = 0.0
+roughness = 0.50
+metallic_specular = 0.40
+rim_enabled = true
+rim = 0.6
+rim_tint = 0.35
+texture_filter = 5

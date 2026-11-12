@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8pubgairdrop01"]
+
+[ext_resource type="Script" path="res://scripts/Objects/PubgAirdrop.gd" id="1_airdrop_script"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_crate"]
+size = Vector3(1.6, 1.4, 1.6)
+
+[node name="PubgAirdrop" type="CharacterBody3D" groups=["airdrops"]]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_airdrop_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_crate")

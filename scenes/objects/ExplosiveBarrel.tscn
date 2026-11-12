@@ -1,0 +1,147 @@
+[gd_scene load_steps=13 format=3 uid="uid://c8explosivebarrel01"]
+
+[ext_resource type="Script" path="res://scripts/Objects/ExplosiveBarrel.gd" id="1_eb01"]
+[ext_resource type="AudioStream" path="res://audio/weapons/sfx_grenade_explosion.ogg" id="2_sfx_boom"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_barrel"]
+height = 1.1
+radius = 0.45
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_barrel"]
+albedo_color = Color(0.88, 0.12, 0.1, 1)
+metallic = 0.65
+roughness = 0.35
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_body"]
+material = SubResource("StandardMaterial3D_barrel")
+top_radius = 0.42
+bottom_radius = 0.42
+height = 1.1
+radial_segments = 24
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ring"]
+albedo_color = Color(0.12, 0.12, 0.14, 1)
+metallic = 0.85
+roughness = 0.25
+
+[sub_resource type="TorusMesh" id="TorusMesh_ring"]
+material = SubResource("StandardMaterial3D_ring")
+inner_radius = 0.41
+outer_radius = 0.44
+rings = 16
+ring_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hazard"]
+albedo_color = Color(0.95, 0.75, 0.1, 1)
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hazard"]
+material = SubResource("StandardMaterial3D_hazard")
+top_radius = 0.425
+bottom_radius = 0.425
+height = 0.18
+radial_segments = 24
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fire"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.45, 0.1, 0.95)
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_fire"]
+material = SubResource("StandardMaterial3D_fire")
+size = Vector2(0.65, 0.65)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_smoke"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.18, 0.18, 0.18, 0.75)
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_smoke"]
+material = SubResource("StandardMaterial3D_smoke")
+size = Vector2(0.9, 0.9)
+
+[node name="ExplosiveBarrel" type="Area3D" groups=["explosives"]]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_eb01")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+shape = SubResource("CylinderShape3D_barrel")
+
+[node name="BarrelMesh" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="BarrelMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+mesh = SubResource("CylinderMesh_body")
+
+[node name="HazardStripe" type="MeshInstance3D" parent="BarrelMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+mesh = SubResource("CylinderMesh_hazard")
+
+[node name="RingTop" type="MeshInstance3D" parent="BarrelMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("TorusMesh_ring")
+
+[node name="RingBottom" type="MeshInstance3D" parent="BarrelMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+mesh = SubResource("TorusMesh_ring")
+
+[node name="ExplosionParticles" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+emitting = false
+amount = 52
+lifetime = 0.9
+one_shot = true
+explosiveness = 0.95
+mesh = SubResource("QuadMesh_fire")
+emission_shape = 1
+emission_sphere_radius = 0.4
+direction = Vector3(0, 1, 0)
+spread = 80.0
+gravity = Vector3(0, 2, 0)
+initial_velocity_min = 6.0
+initial_velocity_max = 14.0
+scale_amount_min = 0.6
+scale_amount_max = 1.8
+
+[node name="SmokeParticles" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+emitting = false
+amount = 28
+lifetime = 1.6
+one_shot = true
+explosiveness = 0.85
+mesh = SubResource("QuadMesh_smoke")
+emission_shape = 1
+emission_sphere_radius = 0.5
+direction = Vector3(0, 1, 0)
+spread = 60.0
+gravity = Vector3(0, 3, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 5.5
+scale_amount_min = 0.8
+scale_amount_max = 2.4
+
+[node name="BlastLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+visible = false
+light_color = Color(1, 0.6, 0.15, 1)
+light_energy = 0.0
+omni_range = 18.0
+
+[node name="SfxExplosion" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_sfx_boom")
+unit_size = 16.0
+volume_db = 8.0
+max_distance = 35.0
+bus = &"SFX"

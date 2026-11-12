@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_vq2qs"]
+
+[resource]
+script = ExtResource("1_vq2qs")
+weapon_id = "ray_gun_cod"
+display_name = "Wonder Ray Gun"
+base_damage = 110.0
+headshot_multiplier = 1.8
+base_fire_rate = 0.28
+base_mag_size = 20
+base_reserve_ammo = 100
+base_reload_time = 2.5
+spread = 0.01
+recoil = 1.4
+range = 80.0
+pellet_count = 1
+is_automatic = false
+muzzle_fx = "standard"
+sound_set = "pistol"
+unlock_price = 160000
+upgrade_cost_damage = 300
+upgrade_cost_mag = 300
+upgrade_cost_reload = 300
+upgrade_cost_accuracy = 300

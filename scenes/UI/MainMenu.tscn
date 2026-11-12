@@ -140,22 +140,38 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_constants/separation = 12
 
+[node name="OpenWorldRow" type="HBoxContainer" parent="CenterContainer/VBox/ActionStack"]
+layout_mode = 2
+alignment = 1
+
+[node name="GTAOpenWorldButton" parent="CenterContainer/VBox/ActionStack/OpenWorldRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(880, 68)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "🌟 GTA 5 OPEN WORLD (FREE ROAM & DRIVE)"
+
 [node name="PlayRow" type="HBoxContainer" parent="CenterContainer/VBox/ActionStack"]
 layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 16
 
-[node name="SurvivalButton" parent="CenterContainer/VBox/ActionStack/PlayRow" instance=ExtResource("2_btn")]
-custom_minimum_size = Vector2(360, 76)
+[node name="HighwayCarButton" parent="CenterContainer/VBox/ActionStack/PlayRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(285, 76)
 layout_mode = 2
-theme_override_font_sizes/font_size = 23
-text = "ENDLESS SURVIVAL"
+theme_override_font_sizes/font_size = 16
+text = "🚗 ZOMBIE HIGHWAY"
 
 [node name="StartButton" parent="CenterContainer/VBox/ActionStack/PlayRow" instance=ExtResource("2_btn")]
-custom_minimum_size = Vector2(360, 76)
+custom_minimum_size = Vector2(285, 76)
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "CAMPAIGN"
+theme_override_font_sizes/font_size = 17
+text = "🎯 84 MISSIONS"
+
+[node name="SurvivalButton" parent="CenterContainer/VBox/ActionStack/PlayRow" instance=ExtResource("2_btn")]
+custom_minimum_size = Vector2(285, 76)
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "🔥 ENDLESS SURVIVAL"
 
 [node name="UtilityRow" type="HBoxContainer" parent="CenterContainer/VBox/ActionStack"]
 layout_mode = 2
@@ -208,6 +224,8 @@ grow_vertical = 0
 text = "v1.0.0"
 horizontal_alignment = 2
 
+[connection signal="pressed" from="CenterContainer/VBox/ActionStack/OpenWorldRow/GTAOpenWorldButton" to="." method="_on_gta_open_world_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/ActionStack/PlayRow/HighwayCarButton" to="." method="_on_highway_car_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBox/ActionStack/PlayRow/SurvivalButton" to="." method="_on_survival_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBox/ActionStack/PlayRow/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBox/ActionStack/UtilityRow/UpgradesButton" to="." method="_on_upgrades_button_pressed"]

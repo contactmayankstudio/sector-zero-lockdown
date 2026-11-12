@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://e2e001overhaul"]
+
+[ext_resource type="Script" path="res://scenes/test/test_realistic_overhaul_e2e.gd" id="1_test_e2e"]
+
+[node name="TestRealisticOverhaul" type="Node"]
+script = ExtResource("1_test_e2e")

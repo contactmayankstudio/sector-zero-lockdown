@@ -1,0 +1,137 @@
+[gd_scene load_steps=5 format=3 uid="uid://missioninfopanel01"]
+
+[ext_resource type="Script" path="res://scripts/UI/Components/MissionInfoPanel.gd" id="1_mip01"]
+[ext_resource type="PackedScene" path="res://scenes/UI/Components/TacticalButton.tscn" id="2_tac01"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_infobox"]
+bg_color = Color(0.0666667, 0.0862745, 0.113725, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.18, 0.5, 0.75, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close"]
+bg_color = Color(0.18, 0.22, 0.28, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="MissionInfoPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(440, 290)
+offset_right = 440.0
+offset_bottom = 290.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_infobox")
+script = ExtResource("1_mip01")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderHBox" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MissionNumLabel" type="Label" parent="Margin/VBox/HeaderHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0, 0.8, 1.0, 1)
+theme_override_font_sizes/font_size = 12
+text = "MISSION 01"
+
+[node name="TitleLabel" type="Label" parent="Margin/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1.0, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 17
+text = "FIRST CONTACT"
+clip_text = true
+
+[node name="CloseBtn" type="Button" parent="Margin/VBox/HeaderHBox"]
+custom_minimum_size = Vector2(30, 26)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_close")
+theme_override_font_sizes/font_size = 14
+text = "✕"
+
+[node name="HSeparator" type="HSeparator" parent="Margin/VBox"]
+layout_mode = 2
+
+[node name="InfoGrid" type="VBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="LocationLabel" type="Label" parent="Margin/VBox/InfoGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 0.95)
+theme_override_font_sizes/font_size = 12
+text = "📍 LOCATION: Concourse A"
+clip_text = true
+
+[node name="ObjectiveLabel" type="Label" parent="Margin/VBox/InfoGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 12
+text = "🎯 OBJECTIVE: Eliminate 15 infected across 3 waves"
+clip_text = true
+
+[node name="IntelLabel" type="Label" parent="Margin/VBox/InfoGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.55, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+text = "☣ ENEMY INTEL: Normal Infected, Fast Runners"
+clip_text = true
+
+[node name="ThreatLabel" type="Label" parent="Margin/VBox/InfoGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1.0, 0.75, 0.2, 1)
+theme_override_font_sizes/font_size = 12
+text = "⭐ DIFFICULTY: ★☆☆☆☆"
+
+[node name="BestResultLabel" type="Label" parent="Margin/VBox/InfoGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+text = "🏆 RECORD: Not Completed"
+
+[node name="RewardLabel" type="Label" parent="Margin/VBox/InfoGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1.0, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 13
+text = "💰 REWARD: 500 CASH"
+
+[node name="EquippedLabel" type="Label" parent="Margin/VBox/InfoGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.85, 1.0, 1)
+theme_override_font_sizes/font_size = 12
+text = "🔫 EQUIPPED: M4A1 SENTINEL"
+clip_text = true
+
+[node name="ActionHBox" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DeployButton" parent="Margin/VBox/ActionHBox" instance=ExtResource("2_tac01")]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 44)
+text = "▶ START MISSION"
+
+[node name="ArmoryButton" parent="Margin/VBox/ActionHBox" instance=ExtResource("2_tac01")]
+custom_minimum_size = Vector2(110, 44)
+layout_mode = 2
+text = "🔫 WEAPONS"

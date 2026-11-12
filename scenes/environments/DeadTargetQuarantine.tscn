@@ -1,0 +1,328 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/environments/DeadTargetQuarantine.gd" id="1_f1825"]
+[ext_resource type="Environment" path="res://resources/materials/env_dead_target.tres" id="2_57iyn"]
+[ext_resource type="Material" path="res://resources/materials/mat_real_mud_ground.tres" id="3_vguem"]
+[ext_resource type="Material" path="res://resources/materials/mat_real_grass_earth.tres" id="4_a5vd4"]
+[ext_resource type="Material" path="res://resources/materials/mat_real_broken_brick_wall.tres" id="5_c52wh"]
+[ext_resource type="Material" path="res://resources/materials/mat_real_concrete_block_wall.tres" id="6_704ue"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/ConcreteBarrierA.scn" id="7_av4hm"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/ConcreteBarrierB.scn" id="8_a3gf3"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/RoadSignClosed.scn" id="9_h0rgr"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/RoadSignWorks.scn" id="10_h1fwu"]
+[ext_resource type="PackedScene" path="res://scenes/environments/props/TrafficCone.scn" id="11_e5j3s"]
+[ext_resource type="PackedScene" path="res://assets/3d/vehicles/police.glb" id="12_i3n6b"]
+[ext_resource type="PackedScene" path="res://scenes/objects/ExplosiveBarrel.tscn" id="13_m801p"]
+[ext_resource type="Script" path="res://scripts/Objects/ExplosiveBarrel.gd" id="14_hs2nt"]
+[ext_resource type="PackedScene" path="res://scenes/environments/AtmosphereEnhancer.tscn" id="15_xgekn"]
+[ext_resource type="Script" path="res://scripts/World/AtmosphereEnhancer.gd" id="16_mc4dp"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="17_6jd41"]
+[ext_resource type="Script" path="res://scenes/player/Player.gd" id="18_0m4le"]
+[ext_resource type="Script" path="res://scripts/GameManager.gd" id="19_iosc0"]
+[ext_resource type="PackedScene" path="res://scenes/zombies/Zombie.tscn" id="20_mcrhf"]
+[ext_resource type="Script" path="res://scripts/ImpactPool.gd" id="21_pwri1"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/BloodEffect.tscn" id="22_o4pqc"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/ImpactEffect.tscn" id="23_85nvv"]
+[ext_resource type="PackedScene" path="res://scenes/UI/ResultUI.tscn" id="24_t8xx6"]
+[ext_resource type="Script" path="res://scripts/ResultUI.gd" id="25_3cp2k"]
+[ext_resource type="AudioStream" path="res://audio/ambience/sfx_horror_drone.tres" id="26_jcwpq"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_br766"]
+vertices = PackedVector3Array(-7.5, 0, -36, -7.5, 0, 6, 7.5, 0, 6, 7.5, 0, -36)
+polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3)]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_66sww"]
+size = Vector3(16, 0.2, 44)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_83lu4"]
+size = Vector2(11, 44)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_iurev"]
+size = Vector2(2.5, 44)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_vhvvb"]
+size = Vector2(2.5, 44)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uao1g"]
+size = Vector3(1, 7, 44)
+
+[sub_resource type="BoxMesh" id="BoxMesh_iw8w6"]
+material = ExtResource("5_c52wh")
+size = Vector3(1, 7, 44)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_eo77m"]
+size = Vector3(1, 7, 44)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qjfwl"]
+material = ExtResource("6_704ue")
+size = Vector3(1, 7, 44)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dao04"]
+size = Vector3(16, 7, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ywkhq"]
+material = ExtResource("6_704ue")
+size = Vector3(16, 7, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ejpga"]
+size = Vector3(16, 7, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_g3oc0"]
+material = ExtResource("5_c52wh")
+size = Vector3(16, 7, 1)
+
+[node name="DeadTargetQuarantine" type="Node3D" unique_id=723488711]
+script = ExtResource("1_f1825")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1457837297]
+environment = ExtResource("2_57iyn")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=7443774]
+transform = Transform3D(0.81915206, -0.4055798, 0.4055798, 0, 0.70710677, 0.70710677, -0.57357645, -0.579228, 0.579228, 0, 0, 0)
+light_color = Color(0.68, 0.78, 0.92, 1)
+light_energy = 1.05
+shadow_enabled = true
+shadow_bias = 0.04
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1442872006]
+navigation_mesh = SubResource("NavigationMesh_br766")
+
+[node name="Ground" type="StaticBody3D" parent="NavigationRegion3D" unique_id=1853384446]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Ground" unique_id=897729415]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -15)
+shape = SubResource("BoxShape3D_66sww")
+
+[node name="GroundMudCenter" type="MeshInstance3D" parent="NavigationRegion3D/Ground" unique_id=838543016]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
+mesh = SubResource("PlaneMesh_83lu4")
+surface_material_override/0 = ExtResource("3_vguem")
+
+[node name="GroundGrassLeft" type="MeshInstance3D" parent="NavigationRegion3D/Ground" unique_id=685730462]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.25, 0.005, -15)
+mesh = SubResource("PlaneMesh_iurev")
+surface_material_override/0 = ExtResource("4_a5vd4")
+
+[node name="GroundGrassRight" type="MeshInstance3D" parent="NavigationRegion3D/Ground" unique_id=257741055]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 0.005, -15)
+mesh = SubResource("PlaneMesh_vhvvb")
+surface_material_override/0 = ExtResource("4_a5vd4")
+
+[node name="Props" type="Node3D" parent="." unique_id=536383834]
+
+[node name="WallLeft" type="StaticBody3D" parent="Props" unique_id=965509076]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 3.5, -15)
+
+[node name="Col" type="CollisionShape3D" parent="Props/WallLeft" unique_id=1007951630]
+shape = SubResource("BoxShape3D_uao1g")
+
+[node name="Mesh" type="MeshInstance3D" parent="Props/WallLeft" unique_id=18937857]
+mesh = SubResource("BoxMesh_iw8w6")
+
+[node name="WallRight" type="StaticBody3D" parent="Props" unique_id=1072968395]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 3.5, -15)
+
+[node name="Col" type="CollisionShape3D" parent="Props/WallRight" unique_id=1888145072]
+shape = SubResource("BoxShape3D_eo77m")
+
+[node name="Mesh" type="MeshInstance3D" parent="Props/WallRight" unique_id=2129642413]
+mesh = SubResource("BoxMesh_qjfwl")
+
+[node name="WallBack" type="StaticBody3D" parent="Props" unique_id=1200736256]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 6)
+
+[node name="Col" type="CollisionShape3D" parent="Props/WallBack" unique_id=336719351]
+shape = SubResource("BoxShape3D_dao04")
+
+[node name="Mesh" type="MeshInstance3D" parent="Props/WallBack" unique_id=507976571]
+mesh = SubResource("BoxMesh_ywkhq")
+
+[node name="WallFront" type="StaticBody3D" parent="Props" unique_id=1684620446]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -36)
+
+[node name="Col" type="CollisionShape3D" parent="Props/WallFront" unique_id=59784698]
+shape = SubResource("BoxShape3D_ejpga")
+
+[node name="Mesh" type="MeshInstance3D" parent="Props/WallFront" unique_id=976904035]
+mesh = SubResource("BoxMesh_g3oc0")
+
+[node name="BarrierLeft" type="StaticBody3D" parent="Props" unique_id=1930413931 instance=ExtResource("7_av4hm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 0, -2.4)
+
+[node name="BarrierRight" type="StaticBody3D" parent="Props" unique_id=804551336 instance=ExtResource("7_av4hm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0, -2.4)
+
+[node name="BarrierCenterLeft" type="StaticBody3D" parent="Props" unique_id=1730106676 instance=ExtResource("8_a3gf3")]
+transform = Transform3D(0.9848077, 0, 0.17364818, 0, 1, 0, -0.17364818, 0, 0.9848077, -1.1, 0, -2)
+
+[node name="BarrierCenterRight" type="StaticBody3D" parent="Props" unique_id=2084740836 instance=ExtResource("8_a3gf3")]
+transform = Transform3D(0.9848077, 0, -0.17364818, 0, 1, 0, 0.17364818, 0, 0.9848077, 1.1, 0, -2)
+
+[node name="RoadSignClosed" type="StaticBody3D" parent="Props" unique_id=1901015360 instance=ExtResource("9_h0rgr")]
+transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, -4.8, 0, -2.2)
+
+[node name="RoadSignWorks" type="StaticBody3D" parent="Props" unique_id=1852016066 instance=ExtResource("10_h1fwu")]
+transform = Transform3D(0.9659258, 0, -0.25881904, 0, 1, 0, 0.25881904, 0, 0.9659258, 4.8, 0, -2.2)
+
+[node name="Cone1" type="StaticBody3D" parent="Props" unique_id=187555066 instance=ExtResource("11_e5j3s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0, -1.8)
+
+[node name="Cone2" type="StaticBody3D" parent="Props" unique_id=379285912 instance=ExtResource("11_e5j3s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, -1.8)
+
+[node name="PoliceCar" type="Node3D" parent="Props" unique_id=1489775709 instance=ExtResource("12_i3n6b")]
+transform = Transform3D(0.9135454, 0, 0.40673664, 0, 1, 0, -0.40673664, 0, 0.9135454, -5.2, 0, -0.6)
+
+[node name="PoliceLights" type="Node3D" parent="Props" unique_id=1898801572]
+transform = Transform3D(0.9135454, 0, 0.40673664, 0, 1, 0, -0.40673664, 0, 0.9135454, -5.2, 0, -0.6)
+
+[node name="Headlights" type="SpotLight3D" parent="Props/PoliceLights" unique_id=842085726]
+transform = Transform3D(-1, 7.619397e-09, -8.709011e-08, 0, 0.9961947, 0.08715574, 8.742278e-08, 0.08715574, -0.9961947, 0, 0.8, -2.2)
+light_color = Color(1, 0.95, 0.85, 1)
+light_energy = 2.8
+spot_range = 32.0
+spot_angle = 38.0
+
+[node name="RedFlasher" type="OmniLight3D" parent="Props/PoliceLights" unique_id=213264314]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 1.45, 0.1)
+light_color = Color(1, 0.1, 0.1, 1)
+light_energy = 2.5
+omni_range = 8.0
+
+[node name="BlueFlasher" type="OmniLight3D" parent="Props/PoliceLights" unique_id=419841379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 1.45, 0.1)
+light_color = Color(0.1, 0.35, 1, 1)
+light_energy = 2.5
+omni_range = 8.0
+
+[node name="BarrierMid" type="StaticBody3D" parent="Props" unique_id=614409228 instance=ExtResource("7_av4hm")]
+transform = Transform3D(0.81915206, 0, 0.57357645, 0, 1, 0, -0.57357645, 0, 0.81915206, 2.8, 0, -14)
+
+[node name="Streetlamp1" type="Node3D" parent="Props" unique_id=408627401]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, -11)
+
+[node name="Light" type="OmniLight3D" parent="Props/Streetlamp1" unique_id=390158694]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0)
+light_color = Color(1, 0.82, 0.55, 1)
+light_energy = 2.0
+omni_range = 14.0
+
+[node name="Streetlamp2" type="Node3D" parent="Props" unique_id=424520303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -22)
+
+[node name="Light" type="OmniLight3D" parent="Props/Streetlamp2" unique_id=287181982]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0)
+light_color = Color(0.7, 0.85, 1, 1)
+light_energy = 1.8
+omni_range = 15.0
+
+[node name="Floodlights" type="Node3D" parent="Props"]
+
+[node name="FloodlightCheckpoint" type="SpotLight3D" parent="Props/Floodlights"]
+transform = Transform3D(-1, 0, 0, 0, 0.819152, 0.573576, 0, 0.573576, -0.819152, 0, 5, -1)
+rotation_degrees = Vector3(-35, 180, 0)
+light_color = Color(0.9, 0.95, 1, 1)
+light_energy = 3.2
+spot_range = 25.0
+spot_angle = 45.0
+
+[node name="FloodlightMid" type="SpotLight3D" parent="Props/Floodlights"]
+transform = Transform3D(0.5735764, 0.409576, -0.7094065, 0, 0.8660254, 0.5, 0.819152, -0.2867882, 0.4967318, -5.5, 4.8, -18)
+rotation_degrees = Vector3(-30, -55, 0)
+light_color = Color(0.92, 0.96, 1, 1)
+light_energy = 2.8
+spot_range = 28.0
+spot_angle = 42.0
+
+[node name="FloodlightFar" type="SpotLight3D" parent="Props/Floodlights"]
+transform = Transform3D(1, 0, 0, 0, 0.9063078, 0.4226183, 0, -0.4226183, 0.9063078, 0, 5.2, -35)
+rotation_degrees = Vector3(-25, 0, 0)
+light_color = Color(0.95, 0.98, 1, 1)
+light_energy = 3.0
+spot_range = 30.0
+spot_angle = 45.0
+
+[node name="ExplosiveBarrel1" type="Area3D" parent="." unique_id=501645312 groups=["explosives"] instance=ExtResource("13_m801p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 0, -8.5)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("14_hs2nt")
+
+[node name="ExplosiveBarrel2" type="Area3D" parent="." unique_id=981239215 groups=["explosives"] instance=ExtResource("13_m801p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4, 0, -13)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("14_hs2nt")
+
+[node name="ExplosiveBarrel3" type="Area3D" parent="." unique_id=669361134 groups=["explosives"] instance=ExtResource("13_m801p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0, -19)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("14_hs2nt")
+
+[node name="ExplosiveBarrel4" type="Area3D" parent="." unique_id=793471712 groups=["explosives"] instance=ExtResource("13_m801p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -26)
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("14_hs2nt")
+
+[node name="AtmosphereEnhancer" type="Node3D" parent="." unique_id=471829571 instance=ExtResource("15_xgekn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+script = ExtResource("16_mc4dp")
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=2107291519 groups=["player"] instance=ExtResource("17_6jd41")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+script = ExtResource("18_0m4le")
+
+[node name="ZombieSpawner" type="Node3D" parent="." unique_id=903342974 node_paths=PackedStringArray("spawn_points")]
+script = ExtResource("19_iosc0")
+zombie_scene = ExtResource("20_mcrhf")
+spawn_points = [NodePath("SpawnFrontCenter"), NodePath("SpawnFrontLeft"), NodePath("SpawnFrontRight"), NodePath("SpawnMidLeft"), NodePath("SpawnMidRight"), NodePath("SpawnFarCenter"), NodePath("SpawnFarLeft"), NodePath("SpawnFarRight")]
+wave_delay = 4.5
+
+[node name="SpawnFrontCenter" type="Node3D" parent="ZombieSpawner" unique_id=1980093209]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -9)
+
+[node name="SpawnFrontLeft" type="Node3D" parent="ZombieSpawner" unique_id=561747966]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0.1, -9.5)
+
+[node name="SpawnFrontRight" type="Node3D" parent="ZombieSpawner" unique_id=2007337159]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0.1, -9.5)
+
+[node name="SpawnMidLeft" type="Node3D" parent="ZombieSpawner" unique_id=1954463360]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.1, -16)
+
+[node name="SpawnMidRight" type="Node3D" parent="ZombieSpawner" unique_id=43175782]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.1, -16)
+
+[node name="SpawnFarCenter" type="Node3D" parent="ZombieSpawner" unique_id=1025925600]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -26)
+
+[node name="SpawnFarLeft" type="Node3D" parent="ZombieSpawner" unique_id=2146678305]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.1, -25)
+
+[node name="SpawnFarRight" type="Node3D" parent="ZombieSpawner" unique_id=1952346346]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.1, -25)
+
+[node name="ImpactPool" type="Node3D" parent="." unique_id=1344125520]
+script = ExtResource("21_pwri1")
+impact_scenes = {
+"blood": ExtResource("22_o4pqc"),
+"concrete": ExtResource("23_85nvv")
+}
+
+[node name="ResultUI" type="Control" parent="." unique_id=851202713 instance=ExtResource("24_t8xx6")]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("25_3cp2k")
+
+[node name="AmbiencePlayer" type="AudioStreamPlayer" parent="." unique_id=1719965628]
+process_mode = 3
+stream = ExtResource("26_jcwpq")
+volume_db = -4.0
+autoplay = true

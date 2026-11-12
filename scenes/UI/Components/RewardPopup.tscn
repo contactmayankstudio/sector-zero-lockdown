@@ -1,0 +1,104 @@
+[gd_scene load_steps=6 format=3 uid="uid://rewardpopupcomp01"]
+
+[ext_resource type="Script" path="res://scripts/UI/Components/RewardPopup.gd" id="1_rwp01"]
+[ext_resource type="Texture2D" path="res://assets/ui/icon_credit_chip.svg" id="2_chip01"]
+[ext_resource type="PackedScene" path="res://scenes/UI/Components/PrimaryButton.tscn" id="3_btn01"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dimmer"]
+bg_color = Color(0.02, 0.03, 0.05, 0.78)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_box"]
+bg_color = Color(0.08, 0.11, 0.15, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.18, 0.55, 0.85, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 12
+
+[node name="RewardPopup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_rwp01")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dimmer")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(400, 260)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_box")
+
+[node name="Margin" type="MarginContainer" parent="Center/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="Center/PanelContainer/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="HeaderTag" type="Label" parent="Center/PanelContainer/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 0.85)
+theme_override_font_sizes/font_size = 12
+text = "// TACTICAL DISPATCH REWARD"
+horizontal_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Center/PanelContainer/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 22
+text = "SECTOR BOUNTY SECURED"
+horizontal_alignment = 1
+
+[node name="AmountHBox" type="HBoxContainer" parent="Center/PanelContainer/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="IconRect" type="TextureRect" parent="Center/PanelContainer/Margin/VBox/AmountHBox"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("2_chip01")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AmountLabel" type="Label" parent="Center/PanelContainer/Margin/VBox/AmountHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 32
+text = "+500 CASH"
+vertical_alignment = 1
+
+[node name="ClaimButton" parent="Center/PanelContainer/Margin/VBox" instance=ExtResource("3_btn01")]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(220, 50)
+text = "CLAIM REWARD"

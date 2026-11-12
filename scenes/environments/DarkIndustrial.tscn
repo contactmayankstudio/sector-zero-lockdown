@@ -7,22 +7,34 @@
 [ext_resource type="PackedScene" path="res://scenes/weapons/ImpactEffect.tscn" id="5_ie01"]
 [ext_resource type="PackedScene" path="res://scenes/weapons/BloodEffect.tscn" id="6_be01"]
 [ext_resource type="PackedScene" path="res://scenes/UI/ResultUI.tscn" id="7_r001"]
-[ext_resource type="Material" path="res://resources/materials/mat_industrial_road.tres" id="8_masph"]
+[ext_resource type="Material" uid="uid://mat_industrial_road_dirt" path="res://resources/materials/mat_industrial_road.tres" id="8_masph"]
 [ext_resource type="ArrayMesh" path="res://models/environment/industrial/dumpster.obj" id="9_mdump"]
 [ext_resource type="ArrayMesh" path="res://models/environment/industrial/street_lamp.obj" id="10_mlamp"]
 [ext_resource type="PackedScene" path="res://assets/3d/environments/industrial_street.glb" id="11_glb_ind"]
 [ext_resource type="PackedScene" path="res://scenes/environments/AtmosphereEnhancer.tscn" id="12_atmo"]
 [ext_resource type="PackedScene" path="res://scenes/objects/ExplosiveBarrel.tscn" id="13_barrel"]
 
+[ext_resource type="Environment" path="res://resources/materials/env_apocalyptic_hdri.tres" id="14_env"]
+[ext_resource type="Material" uid="uid://mat_brick_wall_pbr" path="res://resources/materials/mat_brick_wall.tres" id="15_brick"]
+[ext_resource type="Material" uid="uid://mat_concrete_wall_pbr" path="res://resources/materials/mat_concrete_wall.tres" id="16_cwall"]
+
 [sub_resource type="NavigationMesh" id="NavigationMesh_ind"]
 vertices = PackedVector3Array(-20, 0, -20, -20, 0, 20, 20, 0, 20, 20, 0, -20)
 polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3)]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flr"]
-size = Vector3(40, 0.2, 40)
+size = Vector3(100, 0.2, 100)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_flr"]
-size = Vector2(40, 40)
+size = Vector2(100, 100)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_z"]
+material = ExtResource("15_brick")
+size = Vector3(42, 8, 1.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_x"]
+material = ExtResource("16_cwall")
+size = Vector3(1.0, 8, 42)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_day"]
 sky_top_color = Color(0.35, 0.58, 0.88, 1)
@@ -55,7 +67,7 @@ fog_density = 0.002
 [node name="DarkIndustrial" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_ind")
+environment = ExtResource("14_env")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866, -0.287, 0.409, 0, 0.819, 0.574, -0.5, -0.497, 0.709, 0, 20, 0)
@@ -99,6 +111,22 @@ mesh = ExtResource("9_mdump")
 [node name="Dumpster2" type="MeshInstance3D" parent="Props"]
 transform = Transform3D(0.866, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866, 5, 0, 3)
 mesh = ExtResource("9_mdump")
+
+[node name="WallBack" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 20)
+mesh = SubResource("BoxMesh_wall_z")
+
+[node name="WallFront" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -20)
+mesh = SubResource("BoxMesh_wall_z")
+
+[node name="WallLeft" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4, 0)
+mesh = SubResource("BoxMesh_wall_x")
+
+[node name="WallRight" type="MeshInstance3D" parent="Props"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 4, 0)
+mesh = SubResource("BoxMesh_wall_x")
 
 [node name="Player" parent="." instance=ExtResource("1_p001")]
 

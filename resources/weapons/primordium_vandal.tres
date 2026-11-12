@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_vq2qs"]
+
+[resource]
+script = ExtResource("1_vq2qs")
+weapon_id = "primordium_vandal"
+display_name = "Primordium Vandal"
+base_damage = 52.0
+headshot_multiplier = 2.5
+base_fire_rate = 0.11
+base_mag_size = 25
+base_reserve_ammo = 150
+base_reload_time = 2.2
+spread = 0.015
+recoil = 1.1
+range = 100.0
+pellet_count = 1
+is_automatic = true
+muzzle_fx = "standard"
+sound_set = "rifle"
+unlock_price = 58000
+upgrade_cost_damage = 250
+upgrade_cost_mag = 250
+upgrade_cost_reload = 250
+upgrade_cost_accuracy = 250

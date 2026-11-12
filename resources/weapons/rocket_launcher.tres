@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WeaponData.gd" id="1_vq2qs"]
+
+[resource]
+script = ExtResource("1_vq2qs")
+weapon_id = "rocket_launcher"
+display_name = "Titan Rocket Launcher"
+base_damage = 380.0
+headshot_multiplier = 1.2
+base_fire_rate = 1.2
+base_mag_size = 1
+base_reserve_ammo = 15
+base_reload_time = 3.5
+spread = 0.005
+recoil = 2.5
+range = 120.0
+pellet_count = 1
+is_automatic = false
+muzzle_fx = "standard"
+sound_set = "shotgun"
+unlock_price = 250000
+upgrade_cost_damage = 400
+upgrade_cost_mag = 400
+upgrade_cost_reload = 400
+upgrade_cost_accuracy = 400

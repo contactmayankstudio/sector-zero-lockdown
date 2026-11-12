@@ -1,0 +1,11 @@
+[gd_resource type="Sky" load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://textures/sky/approaching_storm_1k.hdr" id="1_storm"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_storm"]
+panorama = ExtResource("1_storm")
+energy_multiplier = 0.85
+
+[resource]
+sky_material = SubResource("PanoramaSkyMaterial_storm")
+radiance_size = 2

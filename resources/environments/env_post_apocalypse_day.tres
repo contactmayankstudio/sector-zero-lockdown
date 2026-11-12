@@ -1,0 +1,35 @@
+[gd_resource type="Environment" load_steps=3 format=3 uid="uid://env_post_apocalypse_day"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_gritty"]
+sky_top_color = Color(0.22, 0.38, 0.58, 1)
+sky_horizon_color = Color(0.72, 0.58, 0.42, 1)
+sky_curve = 0.15
+ground_bottom_color = Color(0.12, 0.13, 0.15, 1)
+ground_horizon_color = Color(0.35, 0.32, 0.28, 1)
+ground_curve = 0.18
+sun_angle_max = 30.0
+sun_curve = 0.15
+
+[sub_resource type="Sky" id="Sky_gritty"]
+sky_material = SubResource("ProceduralSkyMaterial_gritty")
+
+[resource]
+background_mode = 2
+sky = SubResource("Sky_gritty")
+ambient_light_source = 2
+ambient_light_color = Color(0.55, 0.58, 0.64, 1)
+ambient_light_energy = 0.8
+tonemap_mode = 2
+tonemap_exposure = 1.05
+tonemap_white = 1.0
+ssao_enabled = false
+ssil_enabled = false
+glow_enabled = false
+fog_enabled = true
+fog_mode = 0
+fog_light_color = Color(0.35, 0.32, 0.28, 1)
+fog_light_energy = 0.7
+fog_sun_scatter = 0.0
+fog_density = 0.002
+fog_aerial_perspective = 0.0
+fog_sky_affect = 0.15
