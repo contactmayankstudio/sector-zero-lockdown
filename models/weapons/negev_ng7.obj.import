@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://hsjnsu2pxwgx"
+path="res://.godot/imported/negev_ng7.obj-435377bd9311afc6b10cf816ef75b5a6.mesh"
+
+[deps]
+
+files=["res://.godot/imported/negev_ng7.obj-435377bd9311afc6b10cf816ef75b5a6.mesh"]
+
+source_file="res://models/weapons/negev_ng7.obj"
+dest_files=["res://.godot/imported/negev_ng7.obj-435377bd9311afc6b10cf816ef75b5a6.mesh", "res://.godot/imported/negev_ng7.obj-435377bd9311afc6b10cf816ef75b5a6.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

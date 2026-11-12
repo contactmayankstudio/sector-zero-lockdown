@@ -1,0 +1,167 @@
+# Blender MTL File: 'None'
+# Material Count: 15
+
+newmtl att_ammo_762n
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/att_ammo_762n_baseColor.png
+
+newmtl att_ammo_762n_link
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/att_ammo_762n_link_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_ammobox_762n_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_ammobox_762n_v0_part_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_ammobox_762n_v0_part
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_ammobox_762n_v0_part_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_barrel_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_barrel_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_bipod_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_bipod_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_brake_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_brake_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_cover_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_cover_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_lower_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_lower_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_pstlgrip_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_pstlgrip_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_rail_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_rail_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_sidegrip_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_sidegrip_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_sights_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_sights_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_stock_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_stock_v0_baseColor.png
+
+newmtl wpn_p17_lm_ngolf7_upper_v0
+Ns 28.800007
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/am/targetkill/assets/3d/weapons/negev_ng7/textures/wpn_p17_lm_ngolf7_upper_v0_baseColor.png
