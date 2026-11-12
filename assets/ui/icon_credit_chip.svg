@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="chipBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141c24"/>
+      <stop offset="100%" stop-color="#090d12"/>
+    </linearGradient>
+    <linearGradient id="goldPad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd54f"/>
+      <stop offset="50%" stop-color="#ffb300"/>
+      <stop offset="100%" stop-color="#ff8f00"/>
+    </linearGradient>
+    <linearGradient id="cyanBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#007799"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Card Outline / Base -->
+  <polygon points="12,4 52,4 60,12 60,52 52,60 12,60 4,52 4,12" fill="url(#chipBg)" stroke="url(#cyanBorder)" stroke-width="2.5"/>
+
+  <!-- Inner Tech Border -->
+  <polygon points="14,8 50,8 56,14 56,50 50,56 14,56 8,50 8,14" fill="none" stroke="#00e5ff" stroke-opacity="0.3" stroke-width="1"/>
+
+  <!-- Corner Tech Accents -->
+  <line x1="8" y1="14" x2="14" y2="8" stroke="#ffb300" stroke-width="2"/>
+  <line x1="56" y1="14" x2="50" y2="8" stroke="#ffb300" stroke-width="2"/>
+  <line x1="8" y1="50" x2="14" y2="56" stroke="#ffb300" stroke-width="2"/>
+  <line x1="56" y1="50" x2="50" y2="56" stroke="#ffb300" stroke-width="2"/>
+
+  <!-- Central Microchip Contact Gold Plate -->
+  <rect x="20" y="20" width="24" height="24" rx="4" fill="url(#goldPad)" stroke="#ffe082" stroke-width="1.5"/>
+
+  <!-- Contact Segments Divider Grid -->
+  <line x1="32" y1="20" x2="32" y2="44" stroke="#bf360c" stroke-width="1.2"/>
+  <line x1="20" y1="32" x2="44" y2="32" stroke="#bf360c" stroke-width="1.2"/>
+  <circle cx="32" cy="32" r="2.5" fill="#263238"/>
+
+  <!-- Circuit Traces Leading In -->
+  <path d="M4,24 L14,24 L20,28" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M4,40 L14,40 L20,36" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M60,24 L50,24 L44,28" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M60,40 L50,40 L44,36" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Telemetry LED Pips -->
+  <circle cx="12" cy="18" r="1.5" fill="#00e5ff"/>
+  <circle cx="52" cy="18" r="1.5" fill="#00e5ff"/>
+  <circle cx="12" cy="46" r="1.5" fill="#00e5ff"/>
+  <circle cx="52" cy="46" r="1.5" fill="#00e5ff"/>
+</svg>

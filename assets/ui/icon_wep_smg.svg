@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="wepGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#00838f"/>
+    </linearGradient>
+  </defs>
+  <!-- Tactical SMG Silhouette -->
+  <path d="M10,28 L18,26 L30,26 L32,24 L48,24 L50,28 L42,29 L38,33 L32,46 L26,46 L30,33 L24,33 L22,42 L16,42 L18,33 L10,33 Z" fill="url(#wepGrad)" opacity="0.95"/>
+</svg>

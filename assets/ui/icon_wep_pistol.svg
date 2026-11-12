@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="wepGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#00838f"/>
+    </linearGradient>
+  </defs>
+  <!-- Tactical Pistol Silhouette -->
+  <path d="M12,24 L48,24 L48,28 L50,28 L50,33 L45,33 L45,36 L36,36 L32,48 L22,48 L26,36 L16,36 L12,32 Z" fill="url(#wepGrad)" opacity="0.95"/>
+  <rect x="22" y="27" width="16" height="3" rx="1" fill="#102027" opacity="0.6"/>
+  <circle cx="27" cy="40" r="1.5" fill="#00e5ff"/>
+</svg>

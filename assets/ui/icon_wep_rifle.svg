@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="wepGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#00838f"/>
+    </linearGradient>
+  </defs>
+  <!-- Tactical Assault Rifle Silhouette -->
+  <path d="M4,28 L14,24 L22,24 L25,22 L46,22 L48,20 L58,20 L60,24 L52,26 L46,26 L44,30 L35,30 L32,44 L25,44 L28,32 L22,32 L20,40 L16,40 L17,32 L10,32 L4,34 Z" fill="url(#wepGrad)" opacity="0.95"/>
+  <rect x="26" y="25" width="14" height="2.5" fill="#102027" opacity="0.6"/>
+</svg>

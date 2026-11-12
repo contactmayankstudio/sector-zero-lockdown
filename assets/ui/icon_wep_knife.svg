@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#b0bec5"/>
+      <stop offset="100%" stop-color="#78909c"/>
+    </linearGradient>
+    <linearGradient id="gripGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#006064"/>
+    </linearGradient>
+  </defs>
+  <!-- Combat Tanto Knife -->
+  <path d="M12,48 L22,38 L24,40 L14,50 Z" fill="url(#gripGrad)"/>
+  <rect x="21" y="37" width="5" height="5" transform="rotate(45 23.5 39.5)" fill="#ffd54f"/>
+  <path d="M25,37 L46,16 L52,18 L50,24 L31,43 Z" fill="url(#bladeGrad)"/>
+</svg>
