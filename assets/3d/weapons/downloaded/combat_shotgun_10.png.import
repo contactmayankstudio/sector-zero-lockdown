@@ -1,0 +1,37 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://cod4diyr6bue6"
+path="res://.godot/imported/combat_shotgun_10.png-c619cf46c3261e6431a844636edaf810.ctex"
+metadata={
+"vram_texture": false
+}
+generator_parameters={
+"md5": "b9f915506e62546a454b31130027327f"
+}
+
+[deps]
+
+source_file="res://assets/3d/weapons/downloaded/combat_shotgun_10.png"
+dest_files=["res://.godot/imported/combat_shotgun_10.png-c619cf46c3261e6431a844636edaf810.ctex"]
+
+[params]
+
+compress/mode=0
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=1024
+detect_3d/compress_to=1
