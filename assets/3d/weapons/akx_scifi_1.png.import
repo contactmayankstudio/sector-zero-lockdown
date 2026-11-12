@@ -1,0 +1,37 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://dwpfgv5f7bwkc"
+path="res://.godot/imported/akx_scifi_1.png-c3c970c6a7bc6bcdd229d35bfa52e04f.ctex"
+metadata={
+"vram_texture": false
+}
+generator_parameters={
+"md5": "f7bede0f8ab1fb74e5b0545e14c1ff20"
+}
+
+[deps]
+
+source_file="res://assets/3d/weapons/akx_scifi_1.png"
+dest_files=["res://.godot/imported/akx_scifi_1.png-c3c970c6a7bc6bcdd229d35bfa52e04f.ctex"]
+
+[params]
+
+compress/mode=0
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=1024
+detect_3d/compress_to=1

@@ -1,0 +1,37 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://bl3uqfqvnefgo"
+path="res://.godot/imported/negev_ng7_wpn_p17_lm_ngolf7_bipod_v0_baseColor.png-06e62986fbcb0b8726d28e03eae7ff98.ctex"
+metadata={
+"vram_texture": false
+}
+generator_parameters={
+"md5": "4613514ed4f5c1947ef9895687aca3ed"
+}
+
+[deps]
+
+source_file="res://assets/3d/weapons/negev_ng7_wpn_p17_lm_ngolf7_bipod_v0_baseColor.png"
+dest_files=["res://.godot/imported/negev_ng7_wpn_p17_lm_ngolf7_bipod_v0_baseColor.png-06e62986fbcb0b8726d28e03eae7ff98.ctex"]
+
+[params]
+
+compress/mode=0
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=1024
+detect_3d/compress_to=1
