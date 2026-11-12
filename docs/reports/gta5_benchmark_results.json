@@ -1,0 +1,182 @@
+{
+	"benchmark_version": "Phase 8 AAA Graphics Optimization 9-Scenario",
+	"elapsed_gameplay_seconds": 108.450291,
+	"fps": {
+		"average": 20.7283906688642,
+		"calculation_formula": "Average = total_frames / elapsed_gameplay_sec; 1% Low = mean(sorted_fps[0..0.01*N])",
+		"maximum": 63.2231143706139,
+		"median": 30.2133059399359,
+		"minimum": 2.85714285714286,
+		"one_percent_low": 2.85714285714286,
+		"one_percent_low_harmonic": 2.85714285714286
+	},
+	"frame_time_ms": {
+		"average": 48.2430120106761,
+		"maximum": 350.0,
+		"minimum": 15.817,
+		"one_percent_worst_average": 350.0,
+		"spike_analysis": "Screenshot PNG disk write measured separately and excluded from gameplay frame deltas."
+	},
+	"hardware_target": "Low-End PC 4GB RAM (AMD Kabini APU)",
+	"memory": {
+		"process_peak_rss_hwm_mb": 678.51953125,
+		"process_rss_average_mb": 277.941738142238,
+		"process_rss_final_mb": 220.3671875,
+		"process_rss_initial_mb": 583.484375,
+		"ram_budget_4gb_percent": 16.5654182434082,
+		"static_engine_ram_peak_mb": 104.499268531799,
+		"system_available_ram_mb": 53.828125,
+		"system_total_ram_mb": 3367.6015625,
+		"texture_gpu_vram_peak_mb": 438.697132110596
+	},
+	"render_pipeline": {
+		"draw_calls_average": 291,
+		"draw_calls_peak": 502,
+		"objects_average": 490,
+		"objects_peak": 731,
+		"primitives_average": 177958,
+		"primitives_peak": 373664
+	},
+	"resolution": "1280x720",
+	"scenarios": {
+		"Downtown City": {
+			"average_fps": 14.2756963987647,
+			"average_frame_time_ms": 70.0491220930233,
+			"draw_calls_avg": 399,
+			"duration_sec": 12.048449,
+			"frames_sampled": 172,
+			"median_fps": 19.5878711901591,
+			"min_fps": 2.85714285714286,
+			"process_rss_mb": 350.125
+		},
+		"Forest": {
+			"average_fps": 35.6471409452139,
+			"average_frame_time_ms": 28.0527406542056,
+			"draw_calls_avg": 170,
+			"duration_sec": 12.006573,
+			"frames_sampled": 428,
+			"median_fps": 37.9578667678876,
+			"min_fps": 4.09031413612565,
+			"process_rss_mb": 248.15234375
+		},
+		"Highway Driving": {
+			"average_fps": 8.91474999541765,
+			"average_frame_time_ms": 112.173644859813,
+			"draw_calls_avg": 325,
+			"duration_sec": 12.00258,
+			"frames_sampled": 107,
+			"median_fps": 14.1620993896135,
+			"min_fps": 2.85714285714286,
+			"process_rss_mb": 273.33984375
+		},
+		"Mountain Road": {
+			"average_fps": 28.1892170008419,
+			"average_frame_time_ms": 35.4745575221239,
+			"draw_calls_avg": 377,
+			"duration_sec": 12.025875,
+			"frames_sampled": 339,
+			"median_fps": 30.6297476108797,
+			"min_fps": 3.00602708430403,
+			"process_rss_mb": 248.55078125
+		},
+		"Night Showcase": {
+			"average_fps": 27.3749335804233,
+			"average_frame_time_ms": 36.5297689969605,
+			"draw_calls_avg": 279,
+			"duration_sec": 12.018294,
+			"frames_sampled": 329,
+			"median_fps": 33.9052010578423,
+			"min_fps": 2.85714285714286,
+			"process_rss_mb": 242.30078125
+		},
+		"Nine-Chunk Streaming": {
+			"average_fps": 24.3129428785725,
+			"average_frame_time_ms": 41.1303561643836,
+			"draw_calls_avg": 271,
+			"duration_sec": 12.010064,
+			"frames_sampled": 292,
+			"median_fps": 31.5915840020219,
+			"min_fps": 2.85714285714286,
+			"process_rss_mb": 220.3671875
+		},
+		"Nitro Driving": {
+			"average_fps": 6.88674319359523,
+			"average_frame_time_ms": 145.206518072289,
+			"draw_calls_avg": 303,
+			"duration_sec": 12.052141,
+			"frames_sampled": 83,
+			"median_fps": 6.88747925146876,
+			"min_fps": 2.85714285714286,
+			"process_rss_mb": 270.1796875
+		},
+		"Residential Street": {
+			"average_fps": 16.1383841484465,
+			"average_frame_time_ms": 61.9640721649484,
+			"draw_calls_avg": 496,
+			"duration_sec": 12.02103,
+			"frames_sampled": 194,
+			"median_fps": 19.7702694687729,
+			"min_fps": 2.85714285714286,
+			"process_rss_mb": 410.140625
+		},
+		"Zombie Combat": {
+			"average_fps": 24.7854004207811,
+			"average_frame_time_ms": 40.3463322368421,
+			"draw_calls_avg": 191,
+			"duration_sec": 12.265285,
+			"frames_sampled": 304,
+			"median_fps": 29.1053029862041,
+			"min_fps": 2.85714285714286,
+			"process_rss_mb": 224.375
+		}
+	},
+	"screenshot_overhead": [
+		{
+			"disk_overhead_ms": 2900.862,
+			"path": "/home/am/phase8_residential_street.png",
+			"scenario": "Residential Street (Day)"
+		},
+		{
+			"disk_overhead_ms": 1717.477,
+			"path": "/home/am/phase8_downtown_city.png",
+			"scenario": "Downtown City (Day)"
+		},
+		{
+			"disk_overhead_ms": 1168.884,
+			"path": "/home/am/phase8_highway_driving.png",
+			"scenario": "Highway Driving (Cruise)"
+		},
+		{
+			"disk_overhead_ms": 1874.148,
+			"path": "/home/am/phase8_nitro_driving.png",
+			"scenario": "Nitro Driving (230 KM/H Boost)"
+		},
+		{
+			"disk_overhead_ms": 1406.953,
+			"path": "/home/am/phase8_forest.png",
+			"scenario": "Countryside Forest (Day)"
+		},
+		{
+			"disk_overhead_ms": 1087.161,
+			"path": "/home/am/phase8_mountain_road.png",
+			"scenario": "Mountain Road (Day)"
+		},
+		{
+			"disk_overhead_ms": 303.167,
+			"path": "/home/am/phase8_night_showcase.png",
+			"scenario": "Night Showcase (Streetlights & Headlights)"
+		},
+		{
+			"disk_overhead_ms": 1188.981,
+			"path": "/home/am/phase8_zombie_combat.png",
+			"scenario": "Zombie Combat & Arsenal"
+		},
+		{
+			"disk_overhead_ms": 1249.86,
+			"path": "/home/am/phase8_nine_chunk_streaming.png",
+			"scenario": "9-Chunk World Streaming"
+		}
+	],
+	"timestamp_iso": "2026-11-12 10:08:06",
+	"total_frames_rendered": 2248
+}

@@ -6,6 +6,7 @@ var pools = {}
 @export var pool_size: int = 16
 
 var audio_concrete = preload("res://audio/impacts/sfx_impact_concrete.wav")
+var audio_flesh = preload("res://audio/impacts/sfx_impact_flesh.wav")
 
 const AUDIO_POOL_SIZE: int = 8
 var _audio_pool: Array[AudioStreamPlayer3D] = []
@@ -73,6 +74,6 @@ func _play_impact_audio(type: String, pos: Vector3):
 	if _audio_pool.is_empty(): return
 	var p = _audio_pool[_audio_pool_idx]
 	_audio_pool_idx = (_audio_pool_idx + 1) % AUDIO_POOL_SIZE
-	p.stream = audio_concrete
+	p.stream = preload("res://audio/impacts/sfx_impact_flesh.wav") if type == "blood" else audio_concrete
 	p.global_position = pos
 	p.play()

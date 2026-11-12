@@ -75,11 +75,11 @@ var archetype_data = {
 	"boss": {
 		"mesh": "res://assets/3d/zombies/zombie_boss.glb",
 		"material": "res://resources/materials/mat_zombie_boss.tres",
-		"hp": 320.0,
-		"speed": 1.2,
-		"damage": 20.0,
-		"scale": Vector3(1.45, 1.45, 1.45),
-		"reward": 100
+		"hp": 35000.0,
+		"speed": 1.15,
+		"damage": 35.0,
+		"scale": Vector3(1.5, 1.5, 1.5),
+		"reward": 5000
 	}
 }
 
@@ -180,6 +180,25 @@ func take_damage(amount: float, is_headshot: bool = false, hit_dir: Vector3 = Ve
 		return
 	last_hit_was_headshot = is_headshot
 	last_hit_cash_multiplier = clampf(cash_multiplier, 0.0, 1.0)
+	
+	var final_amount = amount
+	if archetype == "boss":
+		# Mutated carapace armor: Body shots take 15% damage, Headshots take 35%
+		if is_headshot:
+			final_amount = amount * 0.35
+		else:
+			final_amount = amount * 0.15
+		final_amount = min(final_amount, 350.0)
+		health_component.take_damage(final_amount)
+		if is_dead:
+			return
+		# Boss poise: only massive explosive or heavy hits stagger
+		if final_amount > 180.0 and (active_anim_player and active_anim_player.has_animation("stagger")):
+			_play_anim("stagger")
+			ai_state = AIState.STAGGER
+			stagger_timer = 0.25
+		return
+
 	health_component.take_damage(amount)
 	if is_dead:
 		return

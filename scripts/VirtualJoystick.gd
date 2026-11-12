@@ -1,5 +1,5 @@
 extends Control
-class_name VirtualJoystick
+class_name SectorVirtualJoystick
 
 signal movement_changed(vector: Vector2)
 
@@ -66,6 +66,12 @@ func _input(event: InputEvent):
 			_update_joystick(local_pos)
 		elif event is InputEventScreenTouch and (not event.pressed or event.is_canceled()) and event.index == touch_index:
 			_reset_joystick()
+	elif is_active:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+			_reset_joystick()
+		elif event is InputEventMouseMotion and is_active:
+			var local_pos = get_global_transform().affine_inverse() * event.position
+			_update_joystick(local_pos)
 
 func _update_joystick(pos: Vector2):
 	var diff = pos - joystick_center

@@ -1,0 +1,25 @@
+@tool
+extends SceneTree
+func _init():
+	var st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	st.add_vertex(Vector3(0, 0, 0))
+	st.add_vertex(Vector3(1, 0, 0))
+	st.add_vertex(Vector3(0, 0, 1))
+	st.add_index(0); st.add_index(2); st.add_index(1)
+	st.generate_normals()
+	var m = st.commit()
+	var arr = m.surface_get_arrays(0)
+	print("Order 0,2,1 normal: ", arr[Mesh.ARRAY_NORMAL][0])
+
+	var st2 = SurfaceTool.new()
+	st2.begin(Mesh.PRIMITIVE_TRIANGLES)
+	st2.add_vertex(Vector3(0, 0, 0))
+	st2.add_vertex(Vector3(1, 0, 0))
+	st2.add_vertex(Vector3(0, 0, 1))
+	st2.add_index(0); st2.add_index(1); st2.add_index(2)
+	st2.generate_normals()
+	var m2 = st2.commit()
+	var arr2 = m2.surface_get_arrays(0)
+	print("Order 0,1,2 normal: ", arr2[Mesh.ARRAY_NORMAL][0])
+	quit(0)

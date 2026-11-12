@@ -1,0 +1,26 @@
+[gd_scene load_steps=7 format=3 uid="uid://gta_open_world_main_scene"]
+
+[ext_resource type="Script" path="res://scenes/world/GTAOpenWorld.gd" id="1_ow001"]
+[ext_resource type="Script" path="res://scripts/World/SkyController.gd" id="2_sc001"]
+[ext_resource type="Script" path="res://scripts/World/ChunkManager.gd" id="3_cm001"]
+[ext_resource type="Script" path="res://scripts/World/VehicleSpawner.gd" id="4_vs001"]
+[ext_resource type="Script" path="res://scripts/World/NPCSystem.gd" id="5_ns001"]
+[ext_resource type="Script" path="res://scripts/World/OpenWorldHUD.gd" id="6_hd001"]
+
+[node name="GTAOpenWorld" type="Node3D"]
+script = ExtResource("1_ow001")
+
+[node name="SkyController" type="Node3D" parent="."]
+script = ExtResource("2_sc001")
+
+[node name="ChunkManager" type="Node3D" parent="."]
+script = ExtResource("3_cm001")
+
+[node name="VehicleSpawner" type="Node3D" parent="."]
+script = ExtResource("4_vs001")
+
+[node name="NPCSystem" type="Node3D" parent="."]
+script = ExtResource("5_ns001")
+
+[node name="OpenWorldHUD" type="CanvasLayer" parent="."]
+script = ExtResource("6_hd001")

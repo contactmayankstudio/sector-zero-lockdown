@@ -1,5 +1,7 @@
 extends Node
 
+const MissionData = preload("res://scripts/MissionData.gd")
+
 signal mission_started(mission: MissionData)
 signal mission_completed(mission: MissionData)
 signal mission_failed(mission: MissionData)

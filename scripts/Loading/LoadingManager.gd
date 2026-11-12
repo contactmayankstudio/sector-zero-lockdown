@@ -1,6 +1,7 @@
 extends Node
 
 const ErrorHandler = preload("res://scripts/Core/ErrorHandler.gd")
+const MissionData = preload("res://scripts/MissionData.gd")
 
 signal loading_started(scene_path: String)
 signal loading_progress(ratio: float)

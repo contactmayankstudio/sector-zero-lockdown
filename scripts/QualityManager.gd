@@ -7,18 +7,23 @@ enum Profile { ANDROID_LEGACY = 0, ANDROID_BALANCED = 1, ANDROID_HIGH = 2 }
 
 var current_quality: int = Quality.MEDIUM
 var capabilities: Dictionary = {}
+var is_low_spec: bool = false
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().node_added.connect(_on_node_added)
 	capabilities = detect_device_capabilities()
+	is_low_spec = capabilities.get("is_low_spec", false)
 	
 	var save_mgr = get_node_or_null("/root/SaveManager")
 	var chosen = capabilities.recommended_profile
 	if save_mgr and save_mgr.data.has("selected_quality"):
 		chosen = save_mgr.data.selected_quality
-	elif OS.get_name() == "Android":
+	else:
 		chosen = Profile.ANDROID_LEGACY
+		
+	if save_mgr:
+		save_mgr.data["selected_quality"] = chosen
 		
 	apply_quality(chosen)
 	print("[%d ms] [BOOT:04] QualityManager ready (Device: %s, Profile: %s, Vulkan: %s)" % [
@@ -54,13 +59,11 @@ func detect_device_capabilities() -> Dictionary:
 	
 	var is_low_spec = false
 	var adapter_lower = info["adapter_name"].to_lower()
-	if not info["is_vulkan"] or OS.get_name() == "Android":
+	if OS.get_name() == "Android" or adapter_lower.contains("kabini") or adapter_lower.contains("radeon hd") or adapter_lower.contains("llvmpipe") or not info["is_vulkan"]:
 		is_low_spec = true
-	if adapter_lower.contains("kabini") or adapter_lower.contains("intel") or adapter_lower.contains("mali") or adapter_lower.contains("llvmpipe") or adapter_lower.contains("virgl"):
-		is_low_spec = true
-	if OS.get_processor_count() <= 2:
-		is_low_spec = true
-		
+	info["is_low_spec"] = is_low_spec
+	self.is_low_spec = is_low_spec
+	
 	var recommended = Profile.ANDROID_LEGACY if is_low_spec else Profile.ANDROID_BALANCED
 	info["recommended_profile"] = recommended
 	return info
@@ -94,10 +97,17 @@ func setup_legacy_profile():
 		vp.msaa_3d = Viewport.MSAA_DISABLED
 		vp.screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
 		vp.use_hdr_2d = false
-		vp.scaling_3d_scale = 0.75
-		vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
+		if current_quality == Profile.ANDROID_LEGACY or is_low_spec:
+			vp.scaling_3d_scale = 0.82
+			vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
+		elif OS.get_name() == "Android":
+			vp.scaling_3d_scale = 0.75
+			vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
+		else:
+			vp.scaling_3d_scale = 1.0
 	_update_environment(false, false, false)
-	_strip_shadows_and_particles()
+	if OS.get_name() == "Android":
+		_strip_shadows_and_particles()
 
 func _strip_shadows_and_particles():
 	if not is_inside_tree() or not get_tree() or not get_tree().root:
@@ -113,15 +123,16 @@ func _strip_shadows_and_particles():
 func setup_balanced_profile():
 	var vp = get_viewport()
 	if vp:
-		vp.msaa_3d = Viewport.MSAA_2X
 		if RenderingServer.get_rendering_device() != null:
+			vp.msaa_3d = Viewport.MSAA_2X
 			vp.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
 		else:
+			vp.msaa_3d = Viewport.MSAA_DISABLED
 			vp.screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
-		vp.use_hdr_2d = true
-		vp.scaling_3d_scale = 0.85
+		vp.use_hdr_2d = false
+		vp.scaling_3d_scale = 1.0
 		vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
-	_update_environment(true, false, true)
+	_update_environment(false, false, true)
 
 func setup_high_profile():
 	var vp = get_viewport()

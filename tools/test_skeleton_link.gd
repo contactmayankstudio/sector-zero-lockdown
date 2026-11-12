@@ -1,0 +1,15 @@
+extends SceneTree
+func _init():
+    var scn = load("res://scenes/characters/RealSoldier.scn")
+    var inst = scn.instantiate()
+    var mesh_inst = inst.find_child("vanguard_Mesh", true, false)
+    var visor_inst = inst.find_child("vanguard_visor", true, false)
+    print("Before:")
+    print("  mesh_inst.skeleton: '", mesh_inst.skeleton, "'")
+    print("  visor_inst.skeleton: '", visor_inst.skeleton, "'")
+    mesh_inst.skeleton = NodePath("..")
+    visor_inst.skeleton = NodePath("..")
+    print("After setting to NodePath('..'):")
+    print("  mesh_inst resolves: ", mesh_inst.get_node_or_null(mesh_inst.skeleton))
+    print("  visor_inst resolves: ", visor_inst.get_node_or_null(visor_inst.skeleton))
+    quit(0)

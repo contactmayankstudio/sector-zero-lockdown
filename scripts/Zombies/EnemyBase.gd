@@ -59,7 +59,7 @@ var health_bar_3d: EnemyHealthBar3D = null
 
 var archetype_data = {
 	"normal": {
-		"mesh": "res://scenes/zombies/models/zombie_scary.scn",
+		"mesh": "res://scenes/zombies/models/RealZombieOffice.scn",
 		"material": "res://resources/materials/mat_zombie_normal.tres",
 		"hp": 50.0,
 		"speed": 1.55,
@@ -70,7 +70,7 @@ var archetype_data = {
 		"attack_interval": 1.5
 	},
 	"realistic": {
-		"mesh": "res://scenes/zombies/models/zombie_scary.scn",
+		"mesh": "res://scenes/zombies/models/RealZombieBiker.scn",
 		"material": "res://resources/materials/mat_zombie_normal.tres",
 		"hp": 60.0,
 		"speed": 1.65,
@@ -81,10 +81,10 @@ var archetype_data = {
 		"attack_interval": 1.55
 	},
 	"fast": {
-		"mesh": "res://scenes/zombies/models/zombie_scary.scn",
+		"mesh": "res://scenes/zombies/models/RealZombieBiker.scn",
 		"material": "res://resources/materials/mat_zombie_fast.tres",
 		"hp": 35.0,
-		"speed": 2.1,
+		"speed": 2.3,
 		"damage": 6.0,
 		"scale": Vector3(0.95, 0.95, 0.95),
 		"reward": 10,
@@ -92,18 +92,18 @@ var archetype_data = {
 		"attack_interval": 1.45
 	},
 	"heavy": {
-		"mesh": "res://scenes/zombies/models/RealButcherBoss.scn",
+		"mesh": "res://scenes/zombies/models/RealTitanBrute.scn",
 		"material": "res://resources/materials/mat_zombie_heavy.tres",
 		"hp": 220.0,
 		"speed": 1.0,
 		"damage": 15.0,
-		"scale": Vector3(1.05, 1.05, 1.05),
+		"scale": Vector3(1.3, 1.3, 1.3),
 		"reward": 20,
 		"attack_range": 1.8,
 		"attack_interval": 2.0
 	},
 	"special": {
-		"mesh": "res://scenes/zombies/models/zombie_scary.scn",
+		"mesh": "res://scenes/zombies/models/RealZombieBiker.scn",
 		"material": "res://resources/materials/mat_zombie_normal.tres",
 		"hp": 50.0,
 		"speed": 1.6,
@@ -114,7 +114,7 @@ var archetype_data = {
 		"attack_interval": 2.0
 	},
 	"spitter": {
-		"mesh": "res://scenes/zombies/models/zombie_scary.scn",
+		"mesh": "res://scenes/zombies/models/RealZombieOffice.scn",
 		"material": "res://resources/materials/mat_zombie_normal.tres",
 		"hp": 50.0,
 		"speed": 1.45,
@@ -125,7 +125,7 @@ var archetype_data = {
 		"attack_interval": 2.6
 	},
 	"dog": {
-		"mesh": "res://scenes/zombies/models/RealInfectedHound.scn",
+		"mesh": "res://scenes/zombies/models/infected_dog.tscn",
 		"material": "res://resources/materials/mat_zombie_fast.tres",
 		"hp": 60.0,
 		"speed": 2.8,
@@ -138,16 +138,16 @@ var archetype_data = {
 	"boss": {
 		"mesh": "res://scenes/zombies/models/RealTitanBrute.scn",
 		"material": "res://resources/materials/mat_zombie_boss.tres",
-		"hp": 750.0,
-		"speed": 1.1,
-		"damage": 25.0,
-		"scale": Vector3(2.0, 2.0, 2.0),
-		"reward": 150,
+		"hp": 35000.0,
+		"speed": 1.15,
+		"damage": 35.0,
+		"scale": Vector3(2.3, 2.3, 2.3),
+		"reward": 5000,
 		"attack_range": 2.7,
 		"attack_interval": 2.2
 	},
 	"rat": {
-		"mesh": "res://scenes/zombies/models/RealVelociraptor.scn",
+		"mesh": "res://scenes/zombies/models/infected_dog.tscn",
 		"material": "res://resources/materials/mat_zombie_fast.tres",
 		"hp": 15.0,
 		"speed": 2.6,
@@ -158,7 +158,7 @@ var archetype_data = {
 		"attack_interval": 0.8
 	},
 	"rats": {
-		"mesh": "res://scenes/zombies/models/RealVelociraptor.scn",
+		"mesh": "res://scenes/zombies/models/infected_dog.tscn",
 		"material": "res://resources/materials/mat_zombie_fast.tres",
 		"hp": 15.0,
 		"speed": 2.6,
@@ -267,41 +267,79 @@ func _setup_eye_glow():
 		_shared_eye_mat = StandardMaterial3D.new()
 		_shared_eye_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		_shared_eye_mat.albedo_color = Color(1.0, 0.12, 0.06, 1.0)
+		_shared_eye_mat.emission_enabled = true
+		_shared_eye_mat.emission = Color(1.0, 0.08, 0.02, 1.0)
+		_shared_eye_mat.emission_energy_multiplier = 5.0
 		_shared_eye_mat.no_depth_test = false
 		
 	if not _shared_eye_mesh:
 		_shared_eye_mesh = SphereMesh.new()
-		_shared_eye_mesh.radius = 0.016
-		_shared_eye_mesh.height = 0.032
+		_shared_eye_mesh.radius = 0.038
+		_shared_eye_mesh.height = 0.076
 		
-	var left_eye = MeshInstance3D.new()
-	left_eye.mesh = _shared_eye_mesh
-	left_eye.material_override = _shared_eye_mat
-	left_eye.position = Vector3(-eye_dist, head_y, eye_z)
-	eyes.add_child(left_eye)
-	
-	var right_eye = MeshInstance3D.new()
-	right_eye.mesh = _shared_eye_mesh
-	right_eye.material_override = _shared_eye_mat
-	right_eye.position = Vector3(eye_dist, head_y, eye_z)
-	eyes.add_child(right_eye)
-	
-	# Sinister red point light illuminating face subtly
+	# Sinister glowing eyes illuminating face
 	var eye_light = OmniLight3D.new()
-	eye_light.light_color = Color(1.0, 0.28, 0.12)
-	eye_light.light_energy = 0.35
-	eye_light.omni_range = 1.6
-	eye_light.position = Vector3(0, head_y, eye_z - 0.08)
+	eye_light.light_color = Color(1.0, 0.25, 0.1)
+	eye_light.light_energy = 0.20
+	eye_light.omni_range = 0.9
+	eye_light.shadow_enabled = false
+	eye_light.position = Vector3(0, head_y, eye_z - 0.05)
 	eyes.add_child(eye_light)
-	
-	# Body fill illumination so torso, limbs, skin, and clothes are clearly visible
-	var body_fill = OmniLight3D.new()
-	body_fill.name = "BodyFill"
-	body_fill.light_color = Color(0.92, 0.95, 1.0)
-	body_fill.light_energy = 0.65
-	body_fill.omni_range = 3.2
-	body_fill.position = Vector3(0, head_y * 0.55, 0.25)
-	eyes.add_child(body_fill)
+
+	# Bone Attachment: If a Skeleton3D exists, attach EyeGlow via a BoneAttachment3D on bone "Head"
+	var skel: Skeleton3D = skeleton if skeleton else (find_child("Skeleton3D", true, false) as Skeleton3D)
+	var bone_attached = false
+	if skel:
+		var bone_idx = skel.find_bone("Head")
+		if bone_idx == -1:
+			bone_idx = skel.find_bone("mixamorig_Head")
+		if bone_idx == -1:
+			for b_i in range(skel.get_bone_count()):
+				var b_name = skel.get_bone_name(b_i)
+				if "Head" in b_name or "head" in b_name:
+					bone_idx = b_i
+					break
+		if bone_idx != -1:
+			var bone_attach = BoneAttachment3D.new()
+			bone_attach.name = "HeadBoneAttachment"
+			bone_attach.bone_name = skel.get_bone_name(bone_idx)
+			skel.add_child(bone_attach)
+			var bone_eyes = Node3D.new()
+			bone_eyes.name = "EyeGlow"
+			var b_left_eye = MeshInstance3D.new()
+			b_left_eye.name = "LeftEye"
+			b_left_eye.mesh = _shared_eye_mesh
+			b_left_eye.material_override = _shared_eye_mat
+			b_left_eye.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			b_left_eye.position = Vector3(-eye_dist, 0.08, 0.12)
+			bone_eyes.add_child(b_left_eye)
+			var b_right_eye = MeshInstance3D.new()
+			b_right_eye.name = "RightEye"
+			b_right_eye.mesh = _shared_eye_mesh
+			b_right_eye.material_override = _shared_eye_mat
+			b_right_eye.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			b_right_eye.position = Vector3(eye_dist, 0.08, 0.12)
+			bone_eyes.add_child(b_right_eye)
+			bone_attach.add_child(bone_eyes)
+			bone_attached = true
+
+	# Fallback static eye meshes: only add unattached root eye meshes when no bone attachment is possible
+	if not bone_attached:
+		var left_eye = MeshInstance3D.new()
+		left_eye.name = "LeftEye"
+		left_eye.mesh = _shared_eye_mesh
+		left_eye.material_override = _shared_eye_mat
+		left_eye.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		left_eye.position = Vector3(-eye_dist, head_y, eye_z)
+		eyes.add_child(left_eye)
+		
+		var right_eye = MeshInstance3D.new()
+		right_eye.name = "RightEye"
+		right_eye.mesh = _shared_eye_mesh
+		right_eye.material_override = _shared_eye_mat
+		right_eye.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		right_eye.position = Vector3(eye_dist, head_y, eye_z)
+		eyes.add_child(right_eye)
 
 func _load_audio(base_path: String, fallback_path: String = "") -> AudioStream:
 	var clean_path = base_path.trim_suffix(".wav").trim_suffix(".tres")
@@ -361,24 +399,25 @@ static func _get_archetype_material(base_mat: StandardMaterial3D, arch: String, 
 	if _cached_materials.has(key):
 		return _cached_materials[key]
 	var mat = base_mat.duplicate() as StandardMaterial3D
-	match arch:
-		"boss":
-			mat.albedo_color = Color(0.92, 0.55, 0.55, 1.0)
-		"fast":
-			mat.albedo_color = Color(0.85, 0.95, 0.85, 1.0)
-		"heavy":
-			mat.albedo_color = Color(0.85, 0.80, 0.75, 1.0)
-		"spitter", "special":
-			mat.albedo_color = Color(0.45, 1.0, 0.5, 1.0)
-		_:
-			match outfit:
-				0: mat.albedo_color = Color(0.98, 0.90, 0.85, 1.0)
-				1: mat.albedo_color = Color(0.88, 0.92, 0.98, 1.0)
+	
+	# Only vary clothing colors, never overwrite skin, eyes, teeth, blood, metal, or glow
+	var res_name = base_mat.resource_name.to_lower()
+	if "shirt" in res_name or "jacket" in res_name:
+		match outfit:
+			0: mat.albedo_color = Color(0.72, 0.28, 0.28, 1.0) # Damaged Red
+			1: mat.albedo_color = Color(0.28, 0.42, 0.62, 1.0) # Dark Navy
+			2: mat.albedo_color = Color(0.36, 0.40, 0.35, 1.0) # Urban Olive
+	elif "jeans" in res_name or "pants" in res_name or "shorts" in res_name:
+		match outfit:
+			0: mat.albedo_color = Color(0.22, 0.26, 0.34, 1.0) # Dark Denim
+			1: mat.albedo_color = Color(0.32, 0.29, 0.25, 1.0) # Khaki
+			2: mat.albedo_color = Color(0.18, 0.18, 0.18, 1.0) # Shadow Black
+			
 	mat.rim_enabled = true
-	mat.rim = 0.85
-	mat.rim_tint = 0.5
-	mat.roughness = 0.65
-	mat.metallic = 0.0
+	mat.rim = 0.95
+	mat.rim_tint = 0.55
+	mat.metallic_specular = 0.35
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	_cached_materials[key] = mat
 	return mat
 
@@ -389,20 +428,10 @@ func _apply_archetype():
 	if cfg.has("fly_height"): fly_height = cfg.fly_height
 	
 	var target_mesh = cfg.mesh
-	if archetype in ["normal", "realistic"]:
-		var humanoid_models = [
-			"res://scenes/zombies/models/zombie_scary.scn",
-			"res://scenes/zombies/models/RealZombieOffice.scn",
-			"res://scenes/zombies/models/RealZombieBiker.scn",
-			"res://scenes/zombies/models/RealZombie6ft.scn"
-		]
-		target_mesh = humanoid_models.pick_random()
-	elif archetype == "fast":
-		var fast_models = [
-			"res://scenes/zombies/models/zombie_scary.scn",
-			"res://scenes/zombies/models/RealZombieOffice.scn"
-		]
-		target_mesh = fast_models.pick_random()
+	if archetype == "dog":
+		target_mesh = "res://scenes/zombies/models/infected_dog.tscn"
+	elif archetype == "boss":
+		target_mesh = "res://scenes/zombies/models/RealTitanBrute.scn"
 	
 	var res: Resource = null
 	if target_mesh != "" and ResourceLoader.exists(target_mesh):
@@ -416,9 +445,8 @@ func _apply_archetype():
 	# Keep a model fallback so enemies never silently become the placeholder mesh.
 	if not (res is PackedScene):
 		var model_fallbacks = [
-			"res://scenes/zombies/models/zombie_scary.scn",
-			"res://assets/3d/zombies/zombie_scary.glb",
-			"res://assets/3d/zombies/zombie_normal.glb"
+			"res://scenes/zombies/models/RealZombieOffice.scn",
+			"res://scenes/zombies/models/RealTitanBrute.scn"
 		]
 		for fallback_path in model_fallbacks:
 			if not ResourceLoader.exists(fallback_path):
@@ -456,8 +484,7 @@ func _apply_archetype():
 			"res://scenes/zombies/models/RealZombie6ft.scn",
 			"res://scenes/zombies/models/RealZombieBiker.scn",
 			"res://scenes/zombies/models/RealTitanBrute.scn",
-			"res://scenes/zombies/models/RealVelociraptor.scn",
-			"res://scenes/zombies/models/zombie_realistic_human.scn"
+			"res://scenes/zombies/models/infected_dog.tscn"
 		]
 		var wrapper = Node3D.new()
 		wrapper.name = "ModelWrapper"
@@ -480,6 +507,10 @@ func _apply_archetype():
 				active_anim_player.speed_scale = randf_range(1.15, 1.3)
 			else:
 				active_anim_player.speed_scale = randf_range(0.95, 1.1)
+			
+			var default_anim = "run" if (archetype in ["fast", "dog"]) else ("heavy_walk" if archetype == "heavy" else "walk")
+			if active_anim_player.has_animation(default_anim):
+				active_anim_player.play(default_anim)
 			
 		# Material appearance variation across all meshes (using cached shared materials)
 		if archetype != "dog":
@@ -580,15 +611,15 @@ func _play_anim(anim_name: String, custom_blend: float = -1.0):
 	var candidates: Array = []
 	match anim_name:
 		"walk", "run", "heavy_walk", "fast_walk":
-			candidates = ["Walk", "walk", "fast_walk", "run", "heavy_walk", "Fox|Fox_WalkFast_F"]
+			candidates = ["walk", "Walk", "run", "heavy_walk", "fast_walk", "Fox|Fox_WalkFast_F", "mixamo_com"]
 		"attack", "heavy_attack", "attack_windup", "slam", "roar":
-			candidates = ["Attack_mixamo_vitruvian", "Attack", "attack", "heavy_attack", "attack_windup", "slam", "roar"]
+			candidates = ["attack", "Attack", "heavy_attack", "Attack_mixamo_vitruvian", "attack_windup", "slam", "roar"]
 		"idle":
-			candidates = ["Idle", "HappyIdle", "Sway", "idle", "Fox|Fox_Stand"]
+			candidates = ["idle", "Idle", "HappyIdle", "Sway", "Fox|Fox_Stand"]
 		"death":
-			candidates = ["Death_mixamo_vitruvian", "Death", "death", "stagger"]
+			candidates = ["death", "Death", "Death_mixamo_vitruvian", "stagger"]
 		"stagger", "hit_react", "hit", "impact", "hit_front", "hit_body":
-			candidates = ["HitReaction_mixamo_vitruvian", "hit_react", "stagger", "hit", "impact", "hit_front", "hit_body", "headshot_reaction"]
+			candidates = ["hit_front", "hit", "hit_react", "impact", "stagger", "hit_body", "headshot_reaction", "HitReaction_mixamo_vitruvian"]
 		_:
 			candidates = [anim_name]
 				
@@ -602,9 +633,11 @@ func _play_anim(anim_name: String, custom_blend: float = -1.0):
 
 func _on_health_changed(hp):
 	if archetype == "boss":
-		var hud = get_tree().get_first_node_in_group("hud")
-		if hud and hud.has_method("update_boss_health"):
-			hud.update_boss_health(hp)
+		var tree = get_tree()
+		if tree:
+			var hud = tree.get_first_node_in_group("hud")
+			if hud and hud.has_method("update_boss_health"):
+				hud.update_boss_health(hp)
 		var event_bus = get_node_or_null("/root/EventBus")
 		if event_bus and event_bus.has_signal("boss_health_changed"):
 			var max_hp = archetype_data["boss"]["hp"]
@@ -626,21 +659,52 @@ func take_damage(amount: float, is_headshot: bool = false, hit_dir: Vector3 = Ve
 				sfx_headshot.stream = _load_audio("res://audio/ui/sfx_hitmarker_tick.wav")
 			if sfx_headshot.stream and is_inside_tree():
 				sfx_headshot.play()
+
+	var actual_damage = amount
+	if archetype == "boss":
+		# Mutated Carapace: 85% damage reduction on body (15% taken), 65% reduction on headshots (35% taken)
+		actual_damage = amount * (0.35 if is_headshot else 0.15)
+		# Heavy explosive/burst hit cap so boss fight requires ~5 minutes of tactical sustained fire
+		actual_damage = min(actual_damage, 350.0)
+
 	# Compute projected HP and trigger 3D overhead damage popup
 	var cur_hp = health_component.current_health if health_component else 50.0
 	var max_hp = health_component.max_health if health_component else 50.0
-	var new_hp = max(0.0, cur_hp - amount)
+	var new_hp = max(0.0, cur_hp - actual_damage)
 	if health_bar_3d:
-		health_bar_3d.on_damaged(new_hp, max_hp, amount, is_headshot)
+		health_bar_3d.on_damaged(new_hp, max_hp, actual_damage, is_headshot)
 		
-	# Apply physical impact knockback
-	if hit_dir != Vector3.ZERO:
-		var knock_force = clamp(amount * 0.06, 0.4, 3.5)
-		velocity += hit_dir.normalized() * knock_force
+	# Apply physical impact knockback (pushed directly away from player)
+	var effective_dir = hit_dir
+	if effective_dir.length_squared() < 0.001:
+		if not is_instance_valid(player):
+			player = get_tree().get_first_node_in_group("player")
+		if is_instance_valid(player):
+			effective_dir = (global_position - player.global_position).normalized()
+			effective_dir.y = 0.0
+
+	if effective_dir != Vector3.ZERO:
+		if archetype == "boss":
+			# Boss Knockback: Every bullet hit delivers substantial backward impulse away from the player
+			# Sustained fire pushes the boss back, keeping it out of melee range ("door jaaye pass nahi aa paye")
+			var boss_knock = clampf(amount * 0.14 + (2.2 if is_headshot else 1.4), 2.2, 6.5)
+			velocity += effective_dir.normalized() * boss_knock
+			ai_state = AIState.STAGGER
+			stagger_timer = 0.40
+			if active_anim_player and active_anim_player.has_animation("stagger"):
+				_play_anim("stagger")
+			elif active_anim_player and active_anim_player.has_animation("hit"):
+				_play_anim("hit")
+		else:
+			var knock_force = clamp(actual_damage * 0.06, 0.4, 3.5)
+			velocity += effective_dir.normalized() * knock_force
 
 	if health_component:
-		health_component.take_damage(amount)
+		health_component.take_damage(actual_damage)
 	if is_dead:
+		return
+		
+	if archetype == "boss":
 		return
 		
 	# Hurt reactions
@@ -905,11 +969,58 @@ func _on_died():
 	var eg = get_node_or_null("EyeGlow")
 	if eg:
 		eg.visible = false
+	var bone_eg = find_child("EyeGlow", true, false)
+	if bone_eg:
+		bone_eg.visible = false
 	_remove_from_zombie_groups()
 	
 	if collision_shape:
 		collision_shape.set_deferred("disabled", true)
 	velocity = Vector3.ZERO
+	
+	if last_hit_was_headshot:
+		var head_y = 1.68
+		if archetype == "dog":
+			head_y = 0.82
+		elif archetype == "heavy":
+			head_y = 1.95
+		elif archetype == "boss":
+			head_y = 2.45
+		elif archetype in ["rat", "rats"]:
+			head_y = 0.15
+		elif archetype in ["bat", "bats"]:
+			head_y = 0.05
+		
+		# Head bone scaling: If a Skeleton3D exists, find "Head" / "mixamorig_Head" bone index and set scale to Vector3.ZERO
+		var skel: Skeleton3D = skeleton if skeleton else (find_child("Skeleton3D", true, false) as Skeleton3D)
+		if skel:
+			var head_idx = skel.find_bone("mixamorig_Head")
+			if head_idx == -1:
+				head_idx = skel.find_bone("Head")
+			if head_idx == -1:
+				for b_i in range(skel.get_bone_count()):
+					var b_name = skel.get_bone_name(b_i)
+					if "Head" in b_name or "head" in b_name:
+						head_idx = b_i
+						break
+			if head_idx != -1:
+				skel.set_bone_pose_scale(head_idx, Vector3.ZERO)
+		
+		var head_zone = get_node_or_null("HeadHitZone")
+		if head_zone:
+			head_zone.visible = false
+		var eg2 = find_child("EyeGlow", true, false)
+		if eg2:
+			eg2.visible = false
+			
+		# Instantiate and spawn HeadshotGoreEffect.tscn arterial crimson blood splatter
+		var gore_scene = load("res://scenes/weapons/HeadshotGoreEffect.tscn")
+		if gore_scene and is_inside_tree():
+			var gore = gore_scene.instantiate()
+			var scene_root = get_tree().current_scene if (get_tree() and get_tree().current_scene) else get_parent()
+			if scene_root:
+				scene_root.add_child(gore)
+				gore.global_position = global_position + Vector3(0, head_y, 0)
 	
 	_play_anim("death")
 	if model_instance and archetype != "dog":

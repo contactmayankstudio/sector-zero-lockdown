@@ -44,8 +44,16 @@ var pending_confirm_action: String = ""
 var player = null
 var look_touch_id: int = -1
 var fire_touch_id: int = -1
+var button_touch_ids: Dictionary = {}
 var is_game_over: bool = false
 var hitmarker_timer: SceneTreeTimer = null
+
+func _get_player():
+	if not player or not is_instance_valid(player):
+		player = get_tree().get_first_node_in_group("player") if get_tree() else null
+		if not player and get_parent() and get_parent().is_in_group("player"):
+			player = get_parent()
+	return player
 
 func _ready():
 	add_to_group("hud")
@@ -54,6 +62,36 @@ func _ready():
 	_init_damage_overlay()
 	_connect_controls()
 	_connect_pause_menu()
+	
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus:
+		event_bus.objective_updated.connect(func(title, _desc, prog, target):
+			if target <= 0:
+				update_objective(title, "ENDLESS SURVIVAL  •  WAVE %d" % prog)
+			else:
+				update_objective(title, "Zombies Remaining: %d" % max(0, target - prog))
+		)
+		event_bus.weapon_fired.connect(func(_w, _c, _m): expand_crosshair())
+		event_bus.wave_started.connect(func(wave_num: int, total_waves: int):
+			update_wave(wave_num, total_waves)
+			_show_wave_banner(wave_num, total_waves, false)
+		)
+		event_bus.wave_completed.connect(func(wave_num: int):
+			_show_wave_banner(wave_num, 0, true)
+		)
+		if event_bus.has_signal("boss_spawned"):
+			event_bus.boss_spawned.connect(_on_boss_spawned)
+		if event_bus.has_signal("boss_health_changed"):
+			event_bus.boss_health_changed.connect(func(cur_hp: float, max_hp: float):
+				if cur_hp > 0.0:
+					show_boss_health("TITAN MUTANT", max_hp)
+					update_boss_health(cur_hp)
+				else:
+					update_boss_health(0.0)
+			)
+		if event_bus.has_signal("enemy_killed"):
+			event_bus.enemy_killed.connect(_on_enemy_killed)
+			
 	if get_tree():
 		await get_tree().process_frame
 	player = get_tree().get_first_node_in_group("player") if get_tree() else null
@@ -75,33 +113,6 @@ func _ready():
 			mission_mgr.mission_completed.connect(_on_game_over)
 		if not mission_mgr.mission_failed.is_connected(_on_game_over):
 			mission_mgr.mission_failed.connect(_on_game_over)
-			
-	var event_bus = get_node_or_null("/root/EventBus")
-	if event_bus:
-		event_bus.objective_updated.connect(func(title, _desc, prog, target):
-			if target <= 0:
-				update_objective(title, "ENDLESS SURVIVAL  •  WAVE %d" % prog)
-			else:
-				update_objective(title, "Zombies Remaining: %d" % max(0, target - prog))
-		)
-		event_bus.weapon_fired.connect(func(_w, _c, _m): expand_crosshair())
-		event_bus.wave_started.connect(func(wave_num: int, total_waves: int):
-			update_wave(wave_num, total_waves)
-			_show_wave_banner(wave_num, total_waves, false)
-		)
-		event_bus.wave_completed.connect(func(wave_num: int):
-			_show_wave_banner(wave_num, 0, true)
-		)
-		if event_bus.has_signal("boss_health_changed"):
-			event_bus.boss_health_changed.connect(func(cur_hp: float, max_hp: float):
-				if cur_hp > 0.0:
-					show_boss_health("APEX MUTANT", max_hp)
-					update_boss_health(cur_hp)
-				else:
-					update_boss_health(0.0)
-			)
-		if event_bus.has_signal("enemy_killed"):
-			event_bus.enemy_killed.connect(_on_enemy_killed)
 
 var damage_overlay: ColorRect
 var active_damage_arcs: Array = []
@@ -131,6 +142,12 @@ func _init_damage_overlay():
 	_init_directional_damage()
 	_init_low_hp_vignette()
 	_init_heartbeat_audio()
+	_init_tactical_compass()
+	_init_gta_minimap()
+	_init_tactical_killfeed()
+	_init_armor_bar()
+	_init_wanted_stars()
+	_init_wasted_overlay()
 
 func _init_blood_splatter_overlay():
 	if not blood_splatter_overlay and has_node("Control"):
@@ -357,41 +374,100 @@ func _connect_controls():
 			fire_button.gui_input.connect(_on_fire_button_input)
 		
 	if reload_button:
-		reload_button.pressed.connect(func():
-			if get_tree().paused: return
-			var audio = get_node_or_null("/root/AudioManager")
-			if audio: audio.play_ui_click()
-			if player and player.has_method("_trigger_reload"):
-				player._trigger_reload()
+		reload_button.pressed.connect(_on_reload_button_pressed)
+		reload_button.gui_input.connect(func(event: InputEvent):
+			if event is InputEventScreenTouch:
+				if event.pressed:
+					button_touch_ids[event.index] = true
+					_on_reload_button_pressed()
+				else:
+					button_touch_ids.erase(event.index)
+				reload_button.accept_event()
 		)
 		
 	if switch_button:
-		switch_button.pressed.connect(func():
-			if get_tree().paused: return
-			var audio = get_node_or_null("/root/AudioManager")
-			if audio: audio.play_ui_click()
-			if player and player.has_method("switch_weapon"):
-				player.switch_weapon()
+		switch_button.pressed.connect(_on_switch_button_pressed)
+		switch_button.gui_input.connect(func(event: InputEvent):
+			if event is InputEventScreenTouch:
+				if event.pressed:
+					button_touch_ids[event.index] = true
+					_on_switch_button_pressed()
+				else:
+					button_touch_ids.erase(event.index)
+				switch_button.accept_event()
 		)
 		
 	if grenade_button:
-		grenade_button.pressed.connect(func():
-			if get_tree().paused: return
-			var audio = get_node_or_null("/root/AudioManager")
-			if audio: audio.play_ui_click()
-			if player and player.has_method("throw_grenade"):
-				player.throw_grenade()
+		grenade_button.pressed.connect(_on_grenade_button_pressed)
+		grenade_button.gui_input.connect(func(event: InputEvent):
+			if event is InputEventScreenTouch:
+				if event.pressed:
+					button_touch_ids[event.index] = true
+					_on_grenade_button_pressed()
+				else:
+					button_touch_ids.erase(event.index)
+				grenade_button.accept_event()
 		)
 		
 	if look_area:
 		look_area.gui_input.connect(_on_look_area_input)
 		
 	if pause_button:
-		pause_button.pressed.connect(func():
-			var audio = get_node_or_null("/root/AudioManager")
-			if audio: audio.play_ui_click()
-			toggle_pause()
+		pause_button.pressed.connect(_on_pause_button_pressed)
+		pause_button.gui_input.connect(func(event: InputEvent):
+			if event is InputEventScreenTouch:
+				if event.pressed:
+					button_touch_ids[event.index] = true
+					_on_pause_button_pressed()
+				else:
+					button_touch_ids.erase(event.index)
+				pause_button.accept_event()
 		)
+
+var _last_reload_time: float = 0.0
+func _on_reload_button_pressed():
+	var now = Time.get_ticks_msec() / 1000.0
+	if now - _last_reload_time < 0.2: return
+	_last_reload_time = now
+	if get_tree().paused: return
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio: audio.play_ui_click()
+	var p = _get_player()
+	if p and p.has_method("_trigger_reload"):
+		p._trigger_reload()
+
+var _last_switch_time: float = 0.0
+func _on_switch_button_pressed():
+	var now = Time.get_ticks_msec() / 1000.0
+	if now - _last_switch_time < 0.2: return
+	_last_switch_time = now
+	if get_tree().paused: return
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio: audio.play_ui_click()
+	var p = _get_player()
+	if p and p.has_method("switch_weapon"):
+		p.switch_weapon()
+
+var _last_grenade_time: float = 0.0
+func _on_grenade_button_pressed():
+	var now = Time.get_ticks_msec() / 1000.0
+	if now - _last_grenade_time < 0.2: return
+	_last_grenade_time = now
+	if get_tree().paused: return
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio: audio.play_ui_click()
+	var p = _get_player()
+	if p and p.has_method("throw_grenade"):
+		p.throw_grenade()
+
+var _last_pause_time: float = 0.0
+func _on_pause_button_pressed():
+	var now = Time.get_ticks_msec() / 1000.0
+	if now - _last_pause_time < 0.2: return
+	_last_pause_time = now
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio: audio.play_ui_click()
+	toggle_pause()
 
 func trigger_damage_effect(intensity: float = 1.0, attacker_pos: Vector3 = Vector3.ZERO):
 	if attacker_pos != Vector3.ZERO:
@@ -401,58 +477,67 @@ func trigger_damage_effect(intensity: float = 1.0, attacker_pos: Vector3 = Vecto
 
 func _on_joystick_movement(vec: Vector2):
 	if is_game_over or get_tree().paused: return
-	if player and player.has_method("set_virtual_movement"):
-		player.set_virtual_movement(vec)
+	var p = _get_player()
+	if p and p.has_method("set_virtual_movement"):
+		p.set_virtual_movement(vec)
 
 func _on_fire_button_down():
 	if is_game_over or get_tree().paused: return
-	if player and player.has_method("start_fire"):
-		player.start_fire()
+	var p = _get_player()
+	if p and p.has_method("start_fire"):
+		p.start_fire()
 
 func _on_fire_button_up():
 	fire_touch_id = -1
-	if player and player.has_method("stop_fire"):
-		player.stop_fire()
+	var p = _get_player()
+	if p and p.has_method("stop_fire"):
+		p.stop_fire()
 
 func _on_fire_button_input(event: InputEvent):
 	if is_game_over or get_tree().paused: return
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			fire_touch_id = event.index
-			if player and player.has_method("start_fire"):
-				player.start_fire()
+			button_touch_ids[event.index] = true
+			var p = _get_player()
+			if p and p.has_method("start_fire"):
+				p.start_fire()
 		else:
+			button_touch_ids.erase(event.index)
 			if event.index == fire_touch_id:
 				fire_touch_id = -1
-				if player and player.has_method("stop_fire"):
-					player.stop_fire()
+				var p = _get_player()
+				if p and p.has_method("stop_fire"):
+					p.stop_fire()
+		fire_button.accept_event()
 
 func _on_look_area_input(event: InputEvent):
-	if is_game_over or get_tree().paused or not player or not player.has_method("rotate_camera"):
+	var p = _get_player()
+	if is_game_over or get_tree().paused or not p or not p.has_method("rotate_camera"):
 		return
 		
 	if event is InputEventScreenTouch:
-		if event.index == fire_touch_id:
+		if event.index == fire_touch_id or button_touch_ids.has(event.index):
 			return
 		if event.pressed:
 			if look_touch_id == -1:
 				look_touch_id = event.index
-				if player and player.has_method("reset_camera_drag"):
-					player.reset_camera_drag()
+				if p.has_method("reset_camera_drag"):
+					p.reset_camera_drag()
 		else:
 			if event.index == look_touch_id or event.is_canceled():
 				look_touch_id = -1
-				if player and player.has_method("reset_camera_drag"):
-					player.reset_camera_drag()
+				if p.has_method("reset_camera_drag"):
+					p.reset_camera_drag()
 	elif event is InputEventScreenDrag:
-		if event.index == fire_touch_id:
+		if event.index == fire_touch_id or button_touch_ids.has(event.index):
 			return
 		if look_touch_id == -1:
 			look_touch_id = event.index
 		if event.index == look_touch_id:
-			player.rotate_camera(event.relative.x, event.relative.y)
+			p.rotate_camera(event.relative.x, event.relative.y)
 	elif event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		player.rotate_camera(event.relative.x, event.relative.y)
+		p.rotate_camera(event.relative.x, event.relative.y)
 
 func _unhandled_input(event: InputEvent):
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -558,23 +643,23 @@ func _show_killstreak_badge(count: int, is_headshot: bool):
 	
 	match count:
 		2:
-			badge_title = "DOUBLE KILL!"
+			badge_title = "DOUBLE KILL! COMBO x2"
 			badge_color = Color(1.0, 0.84, 0.0, 1.0)
 			bonus_pts = 50
 		3:
-			badge_title = "TRIPLE KILL!"
+			badge_title = "TRIPLE KILL! COMBO x3"
 			badge_color = Color(1.0, 0.55, 0.0, 1.0)
 			bonus_pts = 100
 		4:
-			badge_title = "QUAD KILL!"
+			badge_title = "QUAD KILL! COMBO x4"
 			badge_color = Color(1.0, 0.25, 0.05, 1.0)
 			bonus_pts = 150
 		5:
-			badge_title = "RAMPAGE!"
+			badge_title = "RAMPAGE! COMBO x5"
 			badge_color = Color(1.0, 0.1, 0.2, 1.0)
 			bonus_pts = 250
 		_:
-			badge_title = "UNSTOPPABLE! x%d" % count
+			badge_title = "UNSTOPPABLE! COMBO x%d" % count
 			badge_color = Color(1.0, 0.05, 0.4, 1.0)
 			bonus_pts = 350
 			
@@ -586,10 +671,13 @@ func _show_killstreak_badge(count: int, is_headshot: bool):
 	if save_mgr and save_mgr.has_method("add_cash"):
 		save_mgr.add_cash(bonus_pts)
 		
-	_create_badge_node(badge_title, "+%d PTS" % bonus_pts, badge_color, is_headshot, count)
+	_create_badge_node(badge_title, "+$%d CASH" % bonus_pts, badge_color, is_headshot, count)
 
 func _show_headshot_badge():
-	_create_badge_node("HEADSHOT", "+50 BONUS", Color(1.0, 0.2, 0.25, 1.0), true, 1)
+	var save_mgr = get_node_or_null("/root/SaveManager")
+	if save_mgr and save_mgr.has_method("add_cash"):
+		save_mgr.add_cash(50)
+	_create_badge_node("HEADSHOT! +$50 CASH", "+$50 CASH BONUS", Color(1.0, 0.2, 0.25, 1.0), true, 1)
 
 func _show_boss_eliminated_badge():
 	_create_badge_node("BOSS ELIMINATED!", "+1000 REWARD", Color(1.0, 0.85, 0.1, 1.0), false, 5)
@@ -854,12 +942,480 @@ func _execute_exit():
 	get_tree().change_scene_to_file("res://scenes/UI/MissionSelect.tscn")
 
 var crosshair_spread: float = 0.0
+var compass_container: PanelContainer = null
+var compass_label: Label = null
+
+func _init_tactical_compass():
+	if not has_node("Control") or compass_container:
+		return
+	compass_container = PanelContainer.new()
+	compass_container.name = "TacticalCompass"
+	compass_container.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	compass_container.anchor_left = 0.5
+	compass_container.anchor_right = 0.5
+	compass_container.offset_left = -170.0
+	compass_container.offset_right = 170.0
+	compass_container.offset_top = 46.0
+	compass_container.offset_bottom = 74.0
+	compass_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var sb = StyleBoxFlat.new()
+	sb.bg_color = Color(0.04, 0.06, 0.10, 0.68)
+	sb.border_width_bottom = 1
+	sb.border_width_left = 1
+	sb.border_width_right = 1
+	sb.border_width_top = 1
+	sb.border_color = Color(0.20, 0.75, 1.0, 0.45)
+	sb.corner_radius_top_left = 5
+	sb.corner_radius_top_right = 5
+	sb.corner_radius_bottom_left = 5
+	sb.corner_radius_bottom_right = 5
+	compass_container.add_theme_stylebox_override("panel", sb)
+	
+	compass_label = Label.new()
+	compass_label.name = "CompassLabel"
+	compass_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	compass_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	compass_label.add_theme_font_size_override("font_size", 12)
+	compass_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.35, 1.0))
+	compass_label.text = "160  ·  ▼  180° S  ▼  ·  200"
+	
+	compass_container.add_child(compass_label)
+	$Control.add_child(compass_container)
+
+func _update_tactical_compass():
+	if not compass_label or not is_instance_valid(compass_label):
+		return
+	var cam = get_viewport().get_camera_3d() if get_viewport() else null
+	if not cam:
+		return
+	var yaw_deg = int(fmod(rad_to_deg(cam.global_rotation.y) + 360.0, 360.0))
+	var card = "N"
+	if yaw_deg >= 338 or yaw_deg < 23:
+		card = "N"
+	elif yaw_deg >= 23 and yaw_deg < 68:
+		card = "NE"
+	elif yaw_deg >= 68 and yaw_deg < 113:
+		card = "E"
+	elif yaw_deg >= 113 and yaw_deg < 158:
+		card = "SE"
+	elif yaw_deg >= 158 and yaw_deg < 203:
+		card = "S"
+	elif yaw_deg >= 203 and yaw_deg < 248:
+		card = "SW"
+	elif yaw_deg >= 248 and yaw_deg < 293:
+		card = "W"
+	elif yaw_deg >= 293 and yaw_deg < 338:
+		card = "NW"
+	
+	var left_deg = int(fmod(yaw_deg - 20 + 360.0, 360.0))
+	var right_deg = int(fmod(yaw_deg + 20, 360.0))
+	compass_label.text = "%03d  ·  ▼  %03d° %s  ▼  ·  %03d" % [left_deg, yaw_deg, card, right_deg]
+
+var gta_minimap: Control = null
+var killfeed_vbox: VBoxContainer = null
+var multi_kill_count: int = 0
+var last_kill_time: float = 0.0
+var kill_banner_label: Label = null
+
+# GTA 5 & PUBG Pro Real Features
+var armor_bar: ProgressBar = null
+var armor_label: Label = null
+var wanted_container: HBoxContainer = null
+var wanted_stars: Array[Label] = []
+var current_wanted_level: int = 0
+var wanted_flash_timer: float = 0.0
+var wasted_overlay: ColorRect = null
+var wasted_label: Label = null
+var wasted_sub_label: Label = null
+var center_notification_label: Label = null
+var airdrop_prompt_panel: PanelContainer = null
+var airdrop_prompt_label: Label = null
+var _cached_wanted_player: AudioStreamPlayer = null
+
+func _init_gta_minimap() -> void:
+	if not has_node("Control") or gta_minimap:
+		return
+	var minimap_script = preload("res://scripts/UI/GTAMinimap.gd")
+	gta_minimap = minimap_script.new()
+	gta_minimap.name = "GTARadarMinimap"
+	gta_minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	gta_minimap.anchor_left = 1.0
+	gta_minimap.anchor_right = 1.0
+	gta_minimap.anchor_top = 0.0
+	gta_minimap.anchor_bottom = 0.0
+	gta_minimap.offset_left = -155.0
+	gta_minimap.offset_right = -15.0
+	gta_minimap.offset_top = 65.0
+	gta_minimap.offset_bottom = 205.0
+	gta_minimap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	$Control.add_child(gta_minimap)
+
+func _init_tactical_killfeed() -> void:
+	if not has_node("Control") or killfeed_vbox:
+		return
+	killfeed_vbox = VBoxContainer.new()
+	killfeed_vbox.name = "KillFeedContainer"
+	killfeed_vbox.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	killfeed_vbox.anchor_left = 1.0
+	killfeed_vbox.anchor_right = 1.0
+	killfeed_vbox.offset_left = -380.0
+	killfeed_vbox.offset_right = -165.0
+	killfeed_vbox.offset_top = 70.0
+	killfeed_vbox.offset_bottom = 220.0
+	killfeed_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	$Control.add_child(killfeed_vbox)
+
+	# Multi-Kill Streak Banner (Center Screen)
+	kill_banner_label = Label.new()
+	kill_banner_label.name = "KillStreakBanner"
+	kill_banner_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	kill_banner_label.anchor_left = 0.5
+	kill_banner_label.anchor_right = 0.5
+	kill_banner_label.offset_left = -220.0
+	kill_banner_label.offset_right = 220.0
+	kill_banner_label.offset_top = 80.0
+	kill_banner_label.offset_bottom = 115.0
+	kill_banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	kill_banner_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	kill_banner_label.add_theme_font_size_override("font_size", 16)
+	kill_banner_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2, 1.0))
+	kill_banner_label.modulate.a = 0.0
+	$Control.add_child(kill_banner_label)
+
+func add_killfeed_entry(killer_name: String, weapon_icon: String, victim_name: String, is_roadkill: bool = false) -> void:
+	if not killfeed_vbox or not is_inside_tree():
+		return
+	
+	while killfeed_vbox.get_child_count() >= 4:
+		var old = killfeed_vbox.get_child(0)
+		killfeed_vbox.remove_child(old)
+		old.queue_free()
+		
+	var entry = PanelContainer.new()
+	var sb = StyleBoxFlat.new()
+	sb.bg_color = Color(0.06, 0.08, 0.12, 0.75)
+	sb.border_width_left = 3
+	sb.border_color = Color(1.0, 0.35, 0.2, 0.90) if is_roadkill else Color(0.3, 0.85, 1.0, 0.80)
+	sb.corner_radius_top_left = 4
+	sb.corner_radius_top_right = 4
+	sb.corner_radius_bottom_left = 4
+	sb.corner_radius_bottom_right = 4
+	entry.add_theme_stylebox_override("panel", sb)
+	
+	var lbl = Label.new()
+	lbl.add_theme_font_size_override("font_size", 11)
+	lbl.text = " %s  %s  %s " % [killer_name, weapon_icon, victim_name]
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	entry.add_child(lbl)
+	killfeed_vbox.add_child(entry)
+	
+	var tw = create_tween()
+	tw.tween_interval(3.5)
+	tw.tween_property(entry, "modulate:a", 0.0, 0.5)
+	tw.tween_callback(entry.queue_free)
+	
+	# Multi-Kill Streaks
+	var now = Time.get_ticks_msec() / 1000.0
+	if now - last_kill_time < 3.5:
+		multi_kill_count += 1
+	else:
+		multi_kill_count = 1
+	last_kill_time = now
+	
+	if multi_kill_count >= 2:
+		_show_kill_streak_banner(multi_kill_count, is_roadkill)
+
+func _show_kill_streak_banner(streak: int, is_roadkill: bool) -> void:
+	if not kill_banner_label:
+		return
+	var text = ""
+	var col = Color(1.0, 0.85, 0.2)
+	match streak:
+		2:
+			text = "🔥 DOUBLE KILL! 🔥 (+$250)"
+			col = Color(1.0, 0.85, 0.25)
+		3:
+			text = "⚡ TRIPLE KILL! ⚡ (+$500)"
+			col = Color(1.0, 0.60, 0.15)
+		4:
+			text = "💀 QUAD KILL! 💀 (+$800)"
+			col = Color(1.0, 0.35, 0.20)
+		_:
+			text = "💥 RAMPAGE x%d! 💥 (+$1200)" % streak
+			col = Color(1.0, 0.20, 0.40)
+			
+	if is_roadkill:
+		text = "🚗💀 ROAD RAGE SMASH! 💀 (+$350)"
+		col = Color(1.0, 0.30, 0.20)
+		
+	kill_banner_label.text = text
+	kill_banner_label.add_theme_color_override("font_color", col)
+	
+	var tw = create_tween()
+	tw.tween_property(kill_banner_label, "modulate:a", 1.0, 0.15)
+	tw.tween_property(kill_banner_label, "scale", Vector2(1.15, 1.15), 0.15)
+	tw.tween_property(kill_banner_label, "scale", Vector2(1.0, 1.0), 0.15)
+	tw.tween_interval(1.8)
+	tw.tween_property(kill_banner_label, "modulate:a", 0.0, 0.4)
+
+func _init_armor_bar() -> void:
+	if armor_bar or not has_node("Control/TopBar/Margin/HBox/LeftBox"):
+		return
+	var left_box = $Control/TopBar/Margin/HBox/LeftBox
+	
+	var hbox_armor = HBoxContainer.new()
+	hbox_armor.name = "HBoxArmor"
+	
+	armor_bar = ProgressBar.new()
+	armor_bar.name = "ArmorBar"
+	armor_bar.custom_minimum_size = Vector2(95, 14)
+	armor_bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	armor_bar.show_percentage = false
+	armor_bar.max_value = 150.0
+	armor_bar.value = 150.0
+	
+	var bg_style = StyleBoxFlat.new()
+	bg_style.bg_color = Color(0.06, 0.10, 0.16, 0.8)
+	bg_style.set_corner_radius_all(3)
+	
+	var fill_style = StyleBoxFlat.new()
+	fill_style.bg_color = Color(0.18, 0.65, 0.95, 0.92) # Neon cyan armor
+	fill_style.set_corner_radius_all(3)
+	
+	armor_bar.add_theme_stylebox_override("background", bg_style)
+	armor_bar.add_theme_stylebox_override("fill", fill_style)
+	
+	armor_label = Label.new()
+	armor_label.name = "ArmorLabel"
+	armor_label.text = " 🛡️ 150"
+	armor_label.add_theme_font_size_override("font_size", 12)
+	armor_label.add_theme_color_override("font_color", Color(0.35, 0.85, 1.0))
+	
+	hbox_armor.add_child(armor_bar)
+	hbox_armor.add_child(armor_label)
+	left_box.add_child(hbox_armor)
+
+func update_armor(value: float, max_val: float = 150.0) -> void:
+	if not armor_bar:
+		_init_armor_bar()
+	if armor_bar:
+		armor_bar.max_value = max_val
+		armor_bar.value = value
+	if armor_label:
+		armor_label.text = " 🛡️ " + str(int(value))
+
+func _init_wanted_stars() -> void:
+	if not has_node("Control") or wanted_container:
+		return
+	wanted_container = HBoxContainer.new()
+	wanted_container.name = "WantedStarsContainer"
+	wanted_container.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	wanted_container.anchor_left = 1.0
+	wanted_container.anchor_right = 1.0
+	wanted_container.offset_left = -155.0
+	wanted_container.offset_right = -15.0
+	wanted_container.offset_top = 208.0
+	wanted_container.offset_bottom = 236.0
+	wanted_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	wanted_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	
+	wanted_stars.clear()
+	for i in range(5):
+		var star = Label.new()
+		star.name = "Star_%d" % i
+		star.text = "★"
+		star.add_theme_font_size_override("font_size", 22)
+		star.add_theme_color_override("font_color", Color(0.3, 0.3, 0.3, 0.4))
+		wanted_container.add_child(star)
+		wanted_stars.append(star)
+		
+	$Control.add_child(wanted_container)
+
+func update_wanted_level(stars: int) -> void:
+	var old_level = current_wanted_level
+	current_wanted_level = clamp(stars, 0, 5)
+	if current_wanted_level > old_level:
+		_play_wanted_alert()
+		show_center_notification("★ GTA WANTED LEVEL %d ★" % current_wanted_level, 2.5)
+	_refresh_wanted_stars()
+
+func _refresh_wanted_stars() -> void:
+	for i in range(wanted_stars.size()):
+		if i < current_wanted_level:
+			wanted_stars[i].text = "★"
+			wanted_stars[i].add_theme_color_override("font_color", Color(1.0, 0.85, 0.15, 1.0))
+		else:
+			wanted_stars[i].text = "☆"
+			wanted_stars[i].add_theme_color_override("font_color", Color(0.35, 0.35, 0.35, 0.4))
+
+func _play_wanted_alert() -> void:
+	if not _cached_wanted_player:
+		_cached_wanted_player = AudioStreamPlayer.new()
+		_cached_wanted_player.bus = "SFX"
+		_cached_wanted_player.volume_db = 2.0
+		add_child(_cached_wanted_player)
+	var sound = load("res://audio/ui/sfx_slowmo_enter.wav")
+	if sound:
+		_cached_wanted_player.stream = sound
+		_cached_wanted_player.pitch_scale = randf_range(1.2, 1.4)
+		_cached_wanted_player.play()
+
+func _init_wasted_overlay() -> void:
+	if not has_node("Control") or wasted_overlay:
+		return
+	wasted_overlay = ColorRect.new()
+	wasted_overlay.name = "WastedOverlay"
+	wasted_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	wasted_overlay.color = Color(0.12, 0.02, 0.02, 0.0)
+	wasted_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	wasted_overlay.visible = false
+	
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.anchor_left = 0.5
+	vbox.anchor_right = 0.5
+	vbox.anchor_top = 0.5
+	vbox.anchor_bottom = 0.5
+	vbox.offset_left = -300.0
+	vbox.offset_right = 300.0
+	vbox.offset_top = -70.0
+	vbox.offset_bottom = 70.0
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	
+	wasted_label = Label.new()
+	wasted_label.text = "WASTED"
+	wasted_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	wasted_label.add_theme_font_size_override("font_size", 72)
+	wasted_label.add_theme_color_override("font_color", Color(0.95, 0.08, 0.08, 1.0))
+	wasted_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.95))
+	wasted_label.add_theme_constant_override("shadow_offset_x", 4)
+	wasted_label.add_theme_constant_override("shadow_offset_y", 4)
+	
+	wasted_sub_label = Label.new()
+	wasted_sub_label.text = "RESPAWNING IN SECTOR ZERO..."
+	wasted_sub_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	wasted_sub_label.add_theme_font_size_override("font_size", 18)
+	wasted_sub_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9, 0.85))
+	
+	vbox.add_child(wasted_label)
+	vbox.add_child(wasted_sub_label)
+	wasted_overlay.add_child(vbox)
+	$Control.add_child(wasted_overlay)
+
+func show_wasted_screen() -> void:
+	if not wasted_overlay:
+		_init_wasted_overlay()
+	wasted_overlay.visible = true
+	var tw = create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(wasted_overlay, "color:a", 0.72, 0.4).set_ease(Tween.EASE_OUT)
+	wasted_label.scale = Vector2(1.25, 1.25)
+	wasted_label.pivot_offset = wasted_label.size / 2.0
+	tw.tween_property(wasted_label, "scale", Vector2.ONE, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func hide_wasted_screen() -> void:
+	if not wasted_overlay:
+		return
+	var tw = create_tween()
+	tw.tween_property(wasted_overlay, "color:a", 0.0, 0.5)
+	tw.tween_callback(func():
+		if wasted_overlay:
+			wasted_overlay.visible = false
+	)
+
+func show_center_notification(text: String, duration: float = 3.0) -> void:
+	if not has_node("Control"):
+		return
+	if not center_notification_label:
+		center_notification_label = Label.new()
+		center_notification_label.name = "CenterNotification"
+		center_notification_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
+		center_notification_label.anchor_left = 0.5
+		center_notification_label.anchor_right = 0.5
+		center_notification_label.offset_left = -300.0
+		center_notification_label.offset_right = 300.0
+		center_notification_label.offset_top = 110.0
+		center_notification_label.offset_bottom = 150.0
+		center_notification_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		center_notification_label.add_theme_font_size_override("font_size", 20)
+		center_notification_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.2))
+		center_notification_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.85))
+		center_notification_label.add_theme_constant_override("shadow_offset_y", 2)
+		center_notification_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		$Control.add_child(center_notification_label)
+		
+	center_notification_label.text = text
+	center_notification_label.visible = true
+	center_notification_label.modulate.a = 1.0
+	
+	var tw = create_tween()
+	tw.tween_interval(duration)
+	tw.tween_property(center_notification_label, "modulate:a", 0.0, 0.45)
+	tw.tween_callback(func():
+		if center_notification_label:
+			center_notification_label.visible = false
+	)
+
+func show_airdrop_prompt(show: bool, text: String = "📦 [E] / TAP: LOOT PUBG AIRDROP (L3 Gear + $3500 + Full Ammo)") -> void:
+	if not has_node("Control"):
+		return
+	if not airdrop_prompt_panel:
+		airdrop_prompt_panel = PanelContainer.new()
+		airdrop_prompt_panel.name = "AirdropPromptPanel"
+		airdrop_prompt_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+		airdrop_prompt_panel.anchor_left = 0.5
+		airdrop_prompt_panel.anchor_right = 0.5
+		airdrop_prompt_panel.anchor_top = 1.0
+		airdrop_prompt_panel.anchor_bottom = 1.0
+		airdrop_prompt_panel.offset_left = -260.0
+		airdrop_prompt_panel.offset_right = 260.0
+		airdrop_prompt_panel.offset_top = -140.0
+		airdrop_prompt_panel.offset_bottom = -95.0
+		airdrop_prompt_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		
+		var sb = StyleBoxFlat.new()
+		sb.bg_color = Color(0.10, 0.12, 0.18, 0.88)
+		sb.border_width_left = 2
+		sb.border_width_right = 2
+		sb.border_width_top = 2
+		sb.border_width_bottom = 2
+		sb.border_color = Color(1.0, 0.82, 0.15, 0.95)
+		sb.set_corner_radius_all(6)
+		airdrop_prompt_panel.add_theme_stylebox_override("panel", sb)
+		
+		airdrop_prompt_label = Label.new()
+		airdrop_prompt_label.name = "Label"
+		airdrop_prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		airdrop_prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		airdrop_prompt_label.add_theme_font_size_override("font_size", 16)
+		airdrop_prompt_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.6))
+		airdrop_prompt_panel.add_child(airdrop_prompt_label)
+		$Control.add_child(airdrop_prompt_panel)
+		
+	if show:
+		airdrop_prompt_label.text = text
+		airdrop_prompt_panel.visible = true
+	else:
+		if airdrop_prompt_panel:
+			airdrop_prompt_panel.visible = false
 
 func _process(delta):
 	if crosshair and not is_game_over:
 		crosshair_spread = lerp(crosshair_spread, 0.0, 10.0 * delta)
 		var base_scale = 1.0 + crosshair_spread
 		crosshair.scale = Vector2(base_scale, base_scale)
+	
+	# Update Wanted Level Stars Pulse (GTA 5 police heat flash)
+	if current_wanted_level > 0 and wanted_container and wanted_container.visible:
+		wanted_flash_timer += delta
+		var is_flash = int(wanted_flash_timer * 4.0) % 2 == 0
+		var star_color = Color(1.0, 0.85, 0.15, 1.0) if is_flash else Color(1.0, 0.25, 0.25, 1.0)
+		for i in range(current_wanted_level):
+			if i < wanted_stars.size():
+				wanted_stars[i].add_theme_color_override("font_color", star_color)
+	
+	_update_tactical_compass()
 	
 	# Update active directional damage indicator arcs
 	if active_damage_arcs.size() > 0:
@@ -1111,6 +1667,83 @@ func _show_wave_banner(wave_num: int, total_waves: int, is_cleared: bool):
 			wave_banner_panel.visible = false
 	)
 
+var boss_warning_panel: Panel = null
+
+func _on_boss_spawned(b_name = "TITAN MUTANT", max_hp: float = 35000.0):
+	var display_name = "TITAN MUTANT"
+	if b_name is String:
+		display_name = b_name
+	elif b_name is Node:
+		display_name = b_name.name
+	show_boss_health(display_name, max_hp)
+	_show_boss_warning_siren_banner("⚠️ WARNING: TITAN MUTANT APPROACHING ⚠️")
+
+func _show_boss_warning_siren_banner(banner_text: String = "⚠️ WARNING: TITAN MUTANT APPROACHING ⚠️"):
+	if not boss_warning_panel and has_node("Control"):
+		boss_warning_panel = Panel.new()
+		boss_warning_panel.name = "BossWarningBanner"
+		boss_warning_panel.layout_mode = 1
+		boss_warning_panel.anchors_preset = Control.PRESET_CENTER_TOP
+		boss_warning_panel.anchor_left = 0.5
+		boss_warning_panel.anchor_right = 0.5
+		boss_warning_panel.offset_left = -300.0
+		boss_warning_panel.offset_right = 300.0
+		boss_warning_panel.offset_top = 102.0
+		boss_warning_panel.offset_bottom = 152.0
+		boss_warning_panel.grow_horizontal = 2
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0.85, 0.05, 0.05, 0.9)
+		style.border_width_left = 3
+		style.border_width_right = 3
+		style.border_width_top = 3
+		style.border_width_bottom = 3
+		style.border_color = Color(1.0, 0.9, 0.1, 1.0)
+		style.corner_radius_top_left = 6
+		style.corner_radius_top_right = 6
+		style.corner_radius_bottom_right = 6
+		style.corner_radius_bottom_left = 6
+		boss_warning_panel.add_theme_stylebox_override("panel", style)
+		
+		var lbl = Label.new()
+		lbl.name = "WarningLabel"
+		lbl.text = banner_text
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		lbl.anchors_preset = Control.PRESET_FULL_RECT
+		lbl.add_theme_font_size_override("font_size", 18)
+		lbl.add_theme_color_override("font_color", Color(1.0, 1.0, 0.2))
+		boss_warning_panel.add_child(lbl)
+		$Control.add_child(boss_warning_panel)
+		
+	if boss_warning_panel:
+		var lbl = boss_warning_panel.get_node_or_null("WarningLabel") as Label
+		if lbl:
+			lbl.text = banner_text
+		boss_warning_panel.visible = true
+		boss_warning_panel.modulate.a = 1.0
+		
+		# Play siren warning audio
+		var siren_player = AudioStreamPlayer.new()
+		var siren_res = load("res://audio/ambience/dark/dark_ambiences/ambience-5.wav")
+		if siren_res:
+			siren_player.stream = siren_res
+			siren_player.bus = "SFX"
+			add_child(siren_player)
+			siren_player.play()
+			siren_player.finished.connect(siren_player.queue_free)
+				
+		var tw = create_tween().set_loops(4)
+		tw.tween_property(boss_warning_panel, "modulate:a", 0.3, 0.25)
+		tw.tween_property(boss_warning_panel, "modulate:a", 1.0, 0.25)
+		
+		var fade_tw = create_tween()
+		fade_tw.tween_interval(3.0)
+		fade_tw.tween_property(boss_warning_panel, "modulate:a", 0.0, 0.5)
+		fade_tw.tween_callback(func():
+			if is_instance_valid(boss_warning_panel):
+				boss_warning_panel.visible = false
+		)
+
 func show_boss_health(b_name: String, max_hp: float):
 	if boss_health_bar:
 		boss_health_bar.max_value = max_hp
@@ -1121,7 +1754,7 @@ func show_boss_health(b_name: String, max_hp: float):
 
 func update_boss_health(value: float):
 	if boss_health_bar:
-		boss_health_bar.value = value
+		boss_health_bar.value = clamp(value, 0.0, boss_health_bar.max_value)
 		if value <= 0:
 			boss_health_bar.hide()
 

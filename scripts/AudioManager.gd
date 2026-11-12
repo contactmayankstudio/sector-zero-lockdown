@@ -11,7 +11,7 @@ var sounds = {
 	"defeat": "res://audio/ui/sfx_defeat.wav",
 	"footstep": "res://audio/player/sfx_footstep.wav",
 	"hit_body": "res://audio/ui/sfx_hitmarker_tick.wav",
-	"hit_headshot": "res://audio/ui/sfx_hitmarker_tick.wav",
+	"hit_headshot": "res://audio/impacts/sfx_headshot_crunch.wav",
 	"slowmo_enter": "res://audio/ui/sfx_slowmo_enter.wav",
 	"slowmo_exit": "res://audio/ui/sfx_slowmo_exit.wav"
 }
@@ -25,6 +25,7 @@ var ambience_paths = {
 var bg_player: AudioStreamPlayer = null
 var horror_drone_player: AudioStreamPlayer = null
 var combat_music_player: AudioStreamPlayer = null
+var horror_wave_player: AudioStreamPlayer = null
 var is_combat_music_active: bool = false
 var current_ambience_key: String = ""
 
@@ -86,6 +87,12 @@ func _ready():
 	add_child(combat_music_player)
 	combat_music_player.finished.connect(_on_combat_music_finished)
 	
+	horror_wave_player = AudioStreamPlayer.new()
+	horror_wave_player.name = "HorrorWavePlayer"
+	horror_wave_player.bus = "Music"
+	horror_wave_player.volume_db = 1.0
+	add_child(horror_wave_player)
+	
 	_connect_signals()
 	call_deferred("_connect_signals")
 	call_deferred("_load_saved_volumes")
@@ -123,14 +130,63 @@ func _connect_signals():
 		if event_bus.has_signal("mission_finished") and not event_bus.mission_finished.is_connected(_on_mission_finished):
 			event_bus.mission_finished.connect(_on_mission_finished)
 
-func _on_wave_started(_w, _t):
+func _on_wave_started(w: int, t: int):
+	play_wave_horror_music(w, t)
 	play_combat_music()
 
 func _on_wave_completed(_w):
 	stop_combat_music(0.8)
+	if horror_wave_player and horror_wave_player.playing:
+		var tw = create_tween()
+		tw.tween_property(horror_wave_player, "volume_db", -36.0, 0.8)
+		tw.tween_callback(horror_wave_player.stop)
 
 func _on_mission_finished(_id, _s):
 	stop_combat_music(0.5)
+	if horror_wave_player and horror_wave_player.playing:
+		horror_wave_player.stop()
+
+func play_wave_horror_music(current_wave: int, total_waves: int = 0):
+	if not horror_wave_player:
+		horror_wave_player = AudioStreamPlayer.new()
+		horror_wave_player.name = "HorrorWavePlayer"
+		horror_wave_player.bus = "Music"
+		add_child(horror_wave_player)
+		
+	# Select horror ambience stinger based on wave intensity
+	var stinger_path = "res://audio/ambience/dark/dark_ambiences/ambience-1.wav"
+	if current_wave >= 3 or (total_waves > 0 and current_wave >= total_waves):
+		stinger_path = "res://audio/ambience/dark/dark_ambiences/ambience-5.wav"
+	elif current_wave % 2 == 0:
+		stinger_path = "res://audio/ambience/dark/dark_ambiences/ambience-3.wav"
+		
+	var s = _load_audio(stinger_path)
+	if s:
+		horror_wave_player.stream = s
+		horror_wave_player.volume_db = 2.0
+		horror_wave_player.play()
+		
+	# Ominous growl or boss roar at wave onset for horror immersion
+	if current_wave >= 3 or (total_waves > 0 and current_wave == total_waves):
+		var roar_stream = _load_audio("res://audio/zombies/sfx_boss_roar.wav")
+		if roar_stream:
+			var roar_p = AudioStreamPlayer.new()
+			roar_p.stream = roar_stream
+			roar_p.bus = "SFX"
+			roar_p.volume_db = 2.0
+			add_child(roar_p)
+			roar_p.finished.connect(func(): roar_p.queue_free())
+			roar_p.play()
+	else:
+		var growl_stream = _load_audio("res://audio/zombies/sfx_zombie_growl.wav")
+		if growl_stream:
+			var growl_p = AudioStreamPlayer.new()
+			growl_p.stream = growl_stream
+			growl_p.bus = "SFX"
+			growl_p.volume_db = 1.0
+			add_child(growl_p)
+			growl_p.finished.connect(func(): growl_p.queue_free())
+			growl_p.play()
 
 func _on_combat_music_finished():
 	if is_combat_music_active and combat_music_player:

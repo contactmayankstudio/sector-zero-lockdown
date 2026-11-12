@@ -1,10 +1,16 @@
 extends Node
 
+const WeaponManager = preload("res://scripts/Weapons/WeaponManager.gd")
+
 const CONSENT_CONFIG_PATH := "user://admob_consent.cfg"
 const CONSENT_SECTION := "ads"
 const PRIVACY_POLICY_URL := "https://contactmayankstudio.github.io/sector-zero-lockdown/privacy_policy.html"
 
-var rewarded_ad_unit_id: String = "ca-app-pub-7719493859621460/2646648479"
+const TEST_REWARDED_ID := "ca-app-pub-3940256099942544/5224354917"
+const PROD_REWARDED_ID := "ca-app-pub-7719493859621460/2646648479"
+
+@export var is_test_mode: bool = true
+var rewarded_ad_unit_id: String = TEST_REWARDED_ID
 var is_ad_ready: bool = false
 var is_showing_ad: bool = false
 
@@ -17,13 +23,20 @@ var _current_reward_type: String = ""
 var _current_extra_data: Dictionary = {}
 var _disclosure_layer: CanvasLayer
 var _rewarded_retry_timer: Timer
+var _simulated_ad_layer: CanvasLayer
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	if is_test_mode:
+		rewarded_ad_unit_id = TEST_REWARDED_ID
+	else:
+		rewarded_ad_unit_id = PROD_REWARDED_ID
+
 	if Engine.has_singleton("SectorZeroAdMob"):
 		_native_admob = Engine.get_singleton("SectorZeroAdMob")
 	if not _native_admob:
-		print("[AdManager] Native ads are available only in the Android export; rewards stay disabled here.")
+		is_ad_ready = true
+		print("[AdManager] Native ads not detected. Simulated AdMob Test Ads are ACTIVE (Unit: %s)" % rewarded_ad_unit_id)
 		return
 
 	_connect_native_signals()
@@ -190,22 +203,119 @@ func show_rewarded_ad(reward_type: String = "cash", extra_data: Dictionary = {})
 	if is_showing_ad:
 		ad_failed.emit("A rewarded ad is already open.")
 		return
-	if not _native_admob or not _native_admob.has_method("show_rewarded_video"):
-		ad_failed.emit("Rewarded ads are unavailable on this device.")
-		return
-	if not _native_admob.can_request_ads():
-		ad_failed.emit("Ads are off or unavailable until the required privacy choices are complete.")
-		return
-	if not is_ad_ready:
-		_request_rewarded_video()
-		ad_failed.emit("A rewarded ad is loading. Please try again shortly.")
-		return
 
 	_current_reward_type = reward_type
 	_current_extra_data = extra_data.duplicate(true)
 	is_showing_ad = true
+
+	if not _native_admob or not _native_admob.has_method("show_rewarded_video"):
+		_show_simulated_test_ad()
+		return
+
+	if not _native_admob.can_request_ads():
+		is_showing_ad = false
+		ad_failed.emit("Ads are off or unavailable until the required privacy choices are complete.")
+		return
+	if not is_ad_ready:
+		is_showing_ad = false
+		_request_rewarded_video()
+		ad_failed.emit("A rewarded ad is loading. Please try again shortly.")
+		return
+
 	is_ad_ready = false
 	_native_admob.show_rewarded_video()
+
+func _show_simulated_test_ad():
+	if is_instance_valid(_simulated_ad_layer):
+		_simulated_ad_layer.queue_free()
+
+	_simulated_ad_layer = CanvasLayer.new()
+	_simulated_ad_layer.layer = 130
+	add_child(_simulated_ad_layer)
+
+	var bg = ColorRect.new()
+	bg.color = Color(0.01, 0.02, 0.04, 0.94)
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_simulated_ad_layer.add_child(bg)
+
+	var panel = PanelContainer.new()
+	panel.custom_minimum_size = Vector2(460, 280)
+	panel.anchor_left = 0.5
+	panel.anchor_top = 0.5
+	panel.anchor_right = 0.5
+	panel.anchor_bottom = 0.5
+	panel.offset_left = -230
+	panel.offset_top = -140
+	panel.offset_right = 230
+	panel.offset_bottom = 140
+
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.07, 0.09, 0.12, 1.0)
+	style.border_color = Color(0.2, 0.65, 1.0, 1.0)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(14)
+	panel.add_theme_stylebox_override("panel", style)
+	bg.add_child(panel)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 24)
+	margin.add_theme_constant_override("margin_right", 24)
+	margin.add_theme_constant_override("margin_top", 20)
+	margin.add_theme_constant_override("margin_bottom", 20)
+	panel.add_child(margin)
+
+	var vbox = VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 12)
+	margin.add_child(vbox)
+
+	var badge = Label.new()
+	badge.text = "🎬 GOOGLE ADMOB TEST AD"
+	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	badge.add_theme_font_size_override("font_size", 18)
+	badge.add_theme_color_override("font_color", Color(1.0, 0.82, 0.2))
+	vbox.add_child(badge)
+
+	var details = Label.new()
+	details.text = "Rewarded Ad Unit: %s\nTarget Reward: %s" % [rewarded_ad_unit_id, _current_reward_type]
+	details.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	details.add_theme_font_size_override("font_size", 12)
+	details.add_theme_color_override("font_color", Color(0.7, 0.8, 0.9))
+	vbox.add_child(details)
+
+	var countdown_lbl = Label.new()
+	countdown_lbl.text = "Reward will be granted in: 2.0s..."
+	countdown_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	countdown_lbl.add_theme_font_size_override("font_size", 15)
+	countdown_lbl.add_theme_color_override("font_color", Color(0.3, 1.0, 0.45))
+	vbox.add_child(countdown_lbl)
+
+	var close_btn = Button.new()
+	close_btn.text = "Skip / Close (Cancel Reward)"
+	close_btn.custom_minimum_size = Vector2(200, 36)
+	close_btn.pressed.connect(func():
+		if is_instance_valid(_simulated_ad_layer):
+			_simulated_ad_layer.queue_free()
+			_simulated_ad_layer = null
+		if is_showing_ad:
+			is_showing_ad = false
+			_current_reward_type = ""
+			_current_extra_data.clear()
+			ad_failed.emit("Test ad closed before reward completion.")
+	)
+	vbox.add_child(close_btn)
+
+	var tw = create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_property(countdown_lbl, "text", "Reward will be granted in: 0.5s...", 0.6)
+	tw.tween_property(countdown_lbl, "text", "Reward Granted!", 0.6)
+	tw.tween_interval(0.2)
+	tw.tween_callback(func():
+		if is_instance_valid(_simulated_ad_layer):
+			_simulated_ad_layer.queue_free()
+			_simulated_ad_layer = null
+		_on_rewarded_video_rewarded()
+	)
 
 func _on_consent_ready(can_request: bool):
 	if not can_request:

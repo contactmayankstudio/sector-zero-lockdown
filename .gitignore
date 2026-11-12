@@ -1,11 +1,34 @@
+# Godot engine cache & exports
 .godot/
 *.apk
 *.idsig
+*.keystore*
+*.bak
+*.aab
+build/
+
+# Android build outputs & local caches
+android/
+*.hprof
+
+# Scratch, raw downloads & quarantine assets
+real/
+quarantine_suspect_assets/
+assets_tests/
+downloads/
+scratch/
+*.part
+
+# Firebase secrets & local credentials
+google-services.json
+
+# Oversized binary scene exceeding GitHub 100MB limit
+scenes/environments/models/RealApartment.scn
+
+# Tooling caches
 tools/blender/generated/
 __pycache__/
 *.pyc
 .env*
 assets/ai_generated/**/*.glb
-*.keystore
-*.aab
-build/
+*.old

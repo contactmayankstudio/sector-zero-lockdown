@@ -1,6 +1,8 @@
 class_name WeaponManager
 extends Node
 
+const WeaponData = preload("res://scripts/Weapons/WeaponData.gd")
+
 # Canonical registry of all 10 weapons
 const WEAPON_REGISTRY: Dictionary = {
 	"negev_ng7": {
@@ -23,7 +25,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/grenade_mk2.tres",
 		"scene_path": "res://scenes/weapons/models/grenade_mk2.scn",
 		"model_path": "res://scenes/weapons/models/grenade_mk2.scn",
-		"unlock_price": 1800,
+		"unlock_price": 12000,
 		"default_unlocked": false,
 		"aliases": ["grenade"]
 	},
@@ -35,7 +37,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/car_smg.tres",
 		"scene_path": "res://scenes/weapons/models/car_smg.scn",
 		"model_path": "res://scenes/weapons/models/car_smg.scn",
-		"unlock_price": 2800,
+		"unlock_price": 22500,
 		"default_unlocked": false,
 		"aliases": ["car"]
 	},
@@ -47,7 +49,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/pestilence_handgun.tres",
 		"scene_path": "res://scenes/weapons/models/pestilence_handgun.scn",
 		"model_path": "res://scenes/weapons/models/pestilence_handgun.scn",
-		"unlock_price": 4000,
+		"unlock_price": 28000,
 		"default_unlocked": false,
 		"aliases": ["pestilence"]
 	},
@@ -59,7 +61,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/akx_scifi.tres",
 		"scene_path": "res://scenes/weapons/models/akx_scifi.scn",
 		"model_path": "res://scenes/weapons/models/akx_scifi.scn",
-		"unlock_price": 5500,
+		"unlock_price": 35000,
 		"default_unlocked": false,
 		"aliases": ["akx"]
 	},
@@ -71,7 +73,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/prowler_smg.tres",
 		"scene_path": "res://scenes/weapons/models/prowler_smg.scn",
 		"model_path": "res://scenes/weapons/models/prowler_smg.scn",
-		"unlock_price": 7500,
+		"unlock_price": 45000,
 		"default_unlocked": false,
 		"aliases": ["prowler"]
 	},
@@ -83,7 +85,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/primordium_vandal.tres",
 		"scene_path": "res://scenes/weapons/models/primordium_vandal.scn",
 		"model_path": "res://scenes/weapons/models/primordium_vandal.scn",
-		"unlock_price": 10000,
+		"unlock_price": 58000,
 		"default_unlocked": false,
 		"aliases": ["vandal"]
 	},
@@ -95,7 +97,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/arcade_gun.tres",
 		"scene_path": "res://scenes/weapons/models/arcade_gun.scn",
 		"model_path": "res://scenes/weapons/models/arcade_gun.scn",
-		"unlock_price": 13000,
+		"unlock_price": 72000,
 		"default_unlocked": false,
 		"aliases": ["arcade"]
 	},
@@ -107,7 +109,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/prowl_blaster.tres",
 		"scene_path": "res://scenes/weapons/models/prowl_blaster.scn",
 		"model_path": "res://scenes/weapons/models/prowl_blaster.scn",
-		"unlock_price": 16500,
+		"unlock_price": 88000,
 		"default_unlocked": false,
 		"aliases": ["prowl"]
 	},
@@ -119,7 +121,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/vaccinator_energy.tres",
 		"scene_path": "res://scenes/weapons/models/vaccinator_energy.scn",
 		"model_path": "res://scenes/weapons/models/vaccinator_energy.scn",
-		"unlock_price": 20500,
+		"unlock_price": 105000,
 		"default_unlocked": false,
 		"aliases": ["vaccinator"]
 	},
@@ -131,7 +133,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/retro_ray_gun.tres",
 		"scene_path": "res://scenes/weapons/models/retro_ray_gun.scn",
 		"model_path": "res://scenes/weapons/models/retro_ray_gun.scn",
-		"unlock_price": 25000,
+		"unlock_price": 130000,
 		"default_unlocked": false,
 		"aliases": ["disintegrator"]
 	},
@@ -143,7 +145,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/ray_gun_cod.tres",
 		"scene_path": "res://scenes/weapons/models/ray_gun_cod.scn",
 		"model_path": "res://scenes/weapons/models/ray_gun_cod.scn",
-		"unlock_price": 30000,
+		"unlock_price": 160000,
 		"default_unlocked": false,
 		"aliases": ["raygun", "ray_gun"]
 	},
@@ -155,7 +157,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/axon_cannon.tres",
 		"scene_path": "res://scenes/weapons/models/axon_cannon.scn",
 		"model_path": "res://scenes/weapons/models/axon_cannon.scn",
-		"unlock_price": 36000,
+		"unlock_price": 200000,
 		"default_unlocked": false,
 		"aliases": ["axon"]
 	},
@@ -167,7 +169,7 @@ const WEAPON_REGISTRY: Dictionary = {
 		"resource_path": "res://resources/weapons/rocket_launcher.tres",
 		"scene_path": "res://scenes/weapons/models/rocket_launcher.scn",
 		"model_path": "res://scenes/weapons/models/rocket_launcher.scn",
-		"unlock_price": 45000,
+		"unlock_price": 250000,
 		"default_unlocked": false,
 		"aliases": ["rpg", "rocket"]
 	}

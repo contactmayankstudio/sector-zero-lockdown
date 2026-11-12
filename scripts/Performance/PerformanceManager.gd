@@ -59,20 +59,21 @@ func _process(delta):
 			current_fps = mon_fps
 	frame_time_ms = delta * 1000.0
 	
-	# Adaptive performance & frame pacing protection
-	if not is_adaptive_throttling:
-		if current_fps < 28.0:
-			low_fps_timer += delta
-			if low_fps_timer >= 3.0:
-				is_adaptive_throttling = true
-				low_fps_timer = 0.0
-				recovery_fps_timer = 0.0
-				pre_throttle_profile = current_profile
-				if current_profile > Profile.LOW:
-					set_profile(Profile.LOW)
-					print("[%d ms] [PERF:ADAPTIVE] Frame pacing dip detected (%.1f ms). Throttling to LOW." % [Time.get_ticks_msec(), frame_time_ms])
-		else:
-			low_fps_timer = max(0.0, low_fps_timer - delta)
+	# Adaptive performance & frame pacing protection (mobile only, after scene settles)
+	if OS.get_name() == "Android" and Time.get_ticks_msec() > 15000:
+		if not is_adaptive_throttling:
+			if current_fps < 28.0:
+				low_fps_timer += delta
+				if low_fps_timer >= 4.0:
+					is_adaptive_throttling = true
+					low_fps_timer = 0.0
+					recovery_fps_timer = 0.0
+					pre_throttle_profile = current_profile
+					if current_profile > Profile.LOW:
+						set_profile(Profile.LOW)
+						print("[%d ms] [PERF:ADAPTIVE] Frame pacing dip detected (%.1f ms). Throttling to LOW." % [Time.get_ticks_msec(), frame_time_ms])
+			else:
+				low_fps_timer = max(0.0, low_fps_timer - delta)
 	else:
 		# Recovery logic: if FPS sustains > 29.0 for 4+ seconds, recover profile
 		if current_fps > 29.0:

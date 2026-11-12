@@ -190,6 +190,18 @@ func _update_audio_btn_text():
 			audio_toggle_btn.text = "🔊 AUDIO: ON"
 			audio_toggle_btn.modulate = Color(0, 0.9, 1)
 
+func _on_gta_open_world_button_pressed():
+	var audio_mgr = get_node_or_null("/root/AudioManager")
+	if audio_mgr and audio_mgr.has_method("play_ui_click"):
+		audio_mgr.play_ui_click()
+	get_tree().change_scene_to_file("res://scenes/world/GTAOpenWorld.tscn")
+
+func _on_highway_car_button_pressed():
+	var audio_mgr = get_node_or_null("/root/AudioManager")
+	if audio_mgr and audio_mgr.has_method("play_ui_click"):
+		audio_mgr.play_ui_click()
+	get_tree().change_scene_to_file("res://scenes/environments/ZombieNightHighway.tscn")
+
 func _on_start_button_pressed():
 	var audio_mgr = get_node_or_null("/root/AudioManager")
 	if audio_mgr and audio_mgr.has_method("play_ui_click"):

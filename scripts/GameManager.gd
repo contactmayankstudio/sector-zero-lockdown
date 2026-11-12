@@ -287,6 +287,7 @@ func spawn_wave():
 			spawn_zombie(endless_special, "SpawnFront" if endless_special == "boss" else "")
 			special_spawned = true
 		elif not is_endless_mode and current_wave >= 3 and not special_spawned and spawned_so_far >= count - 2:
+			max_active_zombies = 4 # Keep APU smooth & focused during boss showdown
 			spawn_zombie("boss", "SpawnFront")
 			special_spawned = true
 		else:
@@ -498,6 +499,8 @@ func _pick_archetype() -> String:
 			return "realistic"
 
 func _on_enemy_killed_event(_archetype: String, _is_headshot: bool, _pos: Vector3):
+	if _archetype == "boss":
+		max_active_zombies = 6
 	call_deferred("_check_living_zombies")
 
 func _check_living_zombies():

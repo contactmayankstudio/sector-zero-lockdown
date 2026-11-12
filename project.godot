@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Sector Zero: Lockdown"
 run/main_scene="res://scenes/UI/MainMenu.tscn"
-config/features=PackedStringArray("4.3", "Mobile")
+config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.png"
 boot_splash/image="res://textures/ui/boot_splash.png"
 boot_splash/bg_color=Color(0.04, 0.05, 0.07, 1)
@@ -38,19 +38,21 @@ EventBus="*res://scripts/Core/EventBus.gd"
 LoadingManager="*res://scripts/Loading/LoadingManager.gd"
 PerformanceManager="*res://scripts/Performance/PerformanceManager.gd"
 ChallengeManager="*res://scripts/Core/ChallengeManager.gd"
+SectorZeroGameCore="*res://scripts/CSharp/Core/SectorZeroGameCore.cs"
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
-window/size/window_width_override=960
-window/size/window_height_override=540
+window/size/window_width_override=1280
+window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
+pointing/emulate_mouse_from_touch=true
 
 [input]
 
@@ -96,7 +98,7 @@ environment/defaults/default_clear_color=Color(0.04, 0.05, 0.07, 1)
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
-scaling_3d/scale=0.85
+scaling_3d/scale=1.0
 scaling_3d/mode=0
 anti_aliasing/quality/msaa_3d=0
 lights_and_shadows/directional_shadow/size=1024
@@ -108,3 +110,7 @@ mesh_lod/lod_change/threshold_pixels=4.0
 [audio]
 
 buses/default_bus_layout="res://default_bus_layout.tres"
+
+[dotnet]
+
+project/assembly_name="SectorZeroLockdown"

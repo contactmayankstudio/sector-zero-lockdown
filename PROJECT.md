@@ -1,74 +1,90 @@
-# Project: Sector Zero: Lockdown — DEAD TARGET Style Realistic 3D Overhaul
+# Project: Sector Zero: Lockdown — Generation 6 (Godot 4.7.2 Mono / .NET 8)
 
 ## Architecture
-Sector Zero: Lockdown is a mobile-first stationary 3D zombie FPS built with Godot 4 under the `gl_compatibility` renderer.
-This overhaul transforms the game into a DEAD TARGET style realistic visual and combat experience:
-- **High-Fidelity Weapon Pipeline**: PBR-textured weapon models imported from `real assent grafix import karna he` (Flatline AR, CAR SMG, M134 Minigun, Hawk Shotgun, Vantage Sniper). StandardMaterial3D conversion with diffuse/normal/metallic-roughness textures to resolve GLES3 `KHR_materials_pbrSpecularGlossiness` compatibility. Standardized `MuzzleSocket`, recoil kickback, procedural reload animations, and weapon upgrade progression.
-- **Realistic Environment Staging**: Expansive urban complexes (`street_city_7_for_games_free(1).glb`, `tram_station(1).glb`, `street_city_buildings_8.glb`) configured with golden-hour/night PBR directional lighting, filmic tonemapping, crisp orthogonal shadows, zero-glare mobile atmospheric fog, 360-degree navigation regions, and stationary combat cover staging.
-- **Visceral Combat Feedback**: Impactful hit reactions, headshot multipliers (2.5x) with audio punch, mobile-safe `CPUParticles3D` blood splatters, dynamic hitmarkers, and distinct zombie damage/stagger states.
-- **Mobile Performance Safeguards**: Strict `gl_compatibility` budget (<100 draw calls, <=3 active dynamic lights, ASTC/ETC2 texture compression, .gdignore on raw bulk asset folders) ensuring smooth 30/60 FPS on Android.
+- **Engine**: Godot 4.7.2 Mono (`4.7.2.stable.mono.official.ed1daf0bf`)
+- **Runtime**: .NET 8.0 SDK (8.0.425) / C#
+- **Renderer**: Linux OpenGL 3 (`gl_compatibility`)
+- **Target Hardware**: AMD Kabini APU (3.3 GB shared DDR3 RAM, Radeon HD 8210/8400 graphics)
+- **Primary Scene**: `scenes/environments/CityCarZombieArena.tscn`
+- **Subsystem Architecture**:
+  1. **Permanent 3D Terrain Collision & Smooth Transitions**:
+     - Pre-baked `ConcavePolygonShape3D` colliders in `.tscn` on `MountainWest_Physics`, `MountainEast_Physics`, `ValleyFloor_Physics`, `MountainNorthWall_Physics`, `MountainSouthWall_Physics`, `DirtPath_West_Physics`, `DirtPath_East_Physics`, `MountainRoad_West_Physics`, `MountainRoad_East_Physics`, `SidewalkLeft/Col`, `SidewalkRight/Col`, `DirtShoulderLeft/Col`, `DirtShoulderRight/Col`.
+     - Zero runtime delay: eliminate dynamic `create_trimesh_collision()` loop from `CityCarZombieArena.gd` (saving 65s and >350 MB RAM, eliminating OOM 137).
+     - Smooth transitions: flush highway-to-sidewalk and sidewalk-to-shoulder transitions (no 0.12m vertical lips), removal of highway barrier props (`Barrier_0`–`Barrier_7`) at `x = ±10.5m`.
+  2. **Vehicle Physics & 4x4 Mountain Climbing**:
+     - `DrivableCar`: 4x4 incline crawl torque, suspension travel 0.35m, rest length 0.28m, wheel radius 0.44m, ground clearance >= 0.55m, slope-aligned incline assist (integrated with `VehiclePhysicsHelper.cs`), anti-dig lift that preserves normal wheel contact.
+     - `DrivableBike`: responsive lean and climb traction up to 45° inclines.
+  3. **C# .NET 8 Architecture & Core Subsystems**:
+     - `SectorZeroLockdown.sln`: clean build with 0 warnings and 0 errors under `/home/am/.dotnet/dotnet`.
+     - `SectorZeroGameCore.cs`: active Autoload engine coordinator.
+     - `WorldChunkStreamer.cs`: 7x7 chunk grid (120m chunk size, 3 chunk view distance = 840m x 840m envelope) managing APU memory budget without stutter.
+     - `ZombieSwarmOptimizer.cs`: high-density horde simulation manager.
+     - `DamageSystem.cs`: unified damage and hit calculation.
+     - `VehiclePhysicsHelper.cs`: C# helper for incline assist and bike lean.
+  4. **Alpine Visual Clarity & MultiMesh Optimization**:
+     - PBR Materials: `mat_real_grass_pbr.tres`, `mat_dirt_pbr.tres`, `mat_real_mountain_cliff.tres` with `albedo_color = Color(1, 1, 1, 1)`, crisp triplanar world-space UV tiling.
+     - Viewport: full native resolution (`scaling_3d_scale = 1.0`, no bilinear blur).
+     - Environment: `fog_density = 0.00010`, `fog_aerial_perspective = 0.0`, `tonemap_exposure = 1.15`.
+     - MultiMeshes: 400 trees, 400 rocks, 500 bushes (1,300 total) with `cast_shadow = 0` and draw distances 150m/110m/90m for steady 45-60 FPS on AMD Kabini APU.
 
 ## Feature Inventory
-Every feature identified during the Survey phase is cataloged below with its assigned milestone:
-
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
-| 1 | F1: Curate Asset Folders & `.gdignore` Protection | Add `.gdignore` to raw `real assent grafix import karna he` directory and curate selected models into `assets/3d/` | M1 | Survey (Explorer 3 / Pipeline) |
-| 2 | F2: Realistic Urban Street Staging | Integrate `street_city_7_for_games_free(1).glb` and `street_city_buildings_8.glb` into realistic street arena with asphalt PBR and navigation | M1 | Survey (Explorer 1 / Assets) |
-| 3 | F3: Tram Station Transit Hub Arena | Integrate `tram_station(1).glb` (mobile 1K textures) with platforms, tracks, canopies, and 360-degree zombie spawners | M1 | Survey (Explorer 1 / Assets) |
-| 4 | F4: Mobile PBR Lighting & Atmosphere | Gritty post-apocalyptic DirectionalLight3D, procedural sky, filmic tonemapping, orthogonal shadows, no SSAO/glare errors | M1 | Survey (Explorer 2 & 3) |
-| 5 | F5: Flatline AR Integration | Import `apex_legends_vk-47_flatline_overheat.glb` to `scenes/weapons/models/flatline.tscn`, PBR materials, `MuzzleSocket`, stats in `flatline.tres` | M2 | Survey (Explorer 1 / Assets) |
-| 6 | F6: CAR SMG Integration | Import `apex_legends_car_smg_brimstone.glb` to `scenes/weapons/models/car_smg.tscn`, PBR materials, `MuzzleSocket`, stats in `car_smg.tres` | M2 | Survey (Explorer 1 / Assets) |
-| 7 | F7: Rotary Minigun Integration | Import `serious_sam_3_minigun.glb` to `scenes/weapons/models/minigun.tscn`, 2K PBR materials, spinning barrel rig, stats in `minigun.tres` | M2 | Survey (Explorer 1 / Assets) |
-| 8 | F8: Viewmodel Rig & Recoil Tuning | Connect new weapons to `FPSArms` tactical rig, synchronize recoil kick, procedural Lissajous breathing, and tactical reload | M2 | Survey (Explorer 2 / Codebase) |
-| 9 | F9: Armory 3D Inspection & Economy | Update `ArmoryUI.tscn` to display 3D previews of new weapons with 4-stat upgrade matrix and unlock progression | M2 | Survey (Explorer 2 / Codebase) |
-| 10 | F10: Visceral Combat Feedback & Gore VFX | Impactful headshot audio punch, golden hitmarkers, mobile-safe `CPUParticles3D` blood splatters, and zombie stagger reactions | M3 | Survey (Explorer 1, 2, 3) |
-| 11 | F11: Mobile GLES3 Compatibility Safeguards | Ensure 0 shader compilation errors, 0 missing texture pink warnings, orthogonal shadows, and light pass budget in `gl_compatibility` | M3 | Survey (Explorer 3 / Pipeline) |
-| 12 | F12: Stationary 360-Degree Combat Verification | Verify zombies navigate from all 360-degree quadrants towards stationary player, taking proper body (1.0x) and headshot (2.5x) damage | M4 | Survey (Explorer 2 / Codebase) |
-| 13 | F13: Automated Headless E2E Regression Suite | Verify `TestRunner.tscn`, `Zombie360Test.tscn`, `test_weapons_economy.gd`, and new weapon integration test pass cleanly (100% PASS) | M4 | Survey (Explorer 3 / Pipeline) |
-| 14 | F14: Forensic Integrity Audit | Independent verification by `teamwork_preview_auditor` confirming authentic implementation, 0 hardcoded cheats, 0 missing assets | M4 | Survey (Integrity Forensics) |
+| F1 | Pre-Baked Terrain ConcavePolygonShape3D Colliders | Embed ConcavePolygonShape3D colliders in CityCarZombieArena.tscn for all 9 terrain/mountain meshes, sidewalks, and shoulders | M1 | Survey 1, Survey 2 |
+| F2 | Eliminate Runtime Trimesh Collision Loop | Remove dynamic create_trimesh_collision() from CityCarZombieArena.gd, eliminating 65s load delay and OOM 137 | M1 | Survey 1, Survey 2 |
+| F3 | Smooth Highway Shoulder & Off-Road Transition | Remove 0.12m vertical lips on sidewalks/shoulders, remove highway concrete barrier props at x = ±10.5m | M1 | Survey 1 |
+| F4 | 4x4 Mountain Climbing Vehicle Physics | Fine-tune DrivableCar.gd and VehiclePhysicsHelper.cs with slope-aligned crawl torque, suspension travel, and anti-dig lift | M1 | Survey 1 |
+| F5 | C# .NET 8 Zero-Error Build & Subsystems | Verify SectorZeroLockdown.sln compiles with 0 errors/0 warnings; ensure SectorZeroGameCore, WorldChunkStreamer, ZombieSwarmOptimizer, DamageSystem active | M1 | Survey 2 |
+| F6 | Open-World Chunk Streamer Memory Management | Configure WorldChunkStreamer within 3.3 GB APU memory budget (840m envelope) without stutter | M1 | Survey 2 |
+| F7 | Full Brightness PBR Ground Materials & UV Tiling | Set albedo_color = Color(1,1,1,1) on grass, dirt, and cliff materials with crisp world-space UV tiling | M1 | Survey 3 |
+| F8 | Razor-Sharp Atmosphere & Viewport Tuning | Set scaling_3d_scale = 1.0, fog_density = 0.00010, fog_aerial_perspective = 0.0, tonemap_exposure = 1.15 in CityCarZombieArena.gd | M1 | Survey 3 |
+| F9 | MultiMesh Optimization for OpenGL 3 | Maintain 1,300 instances (trees/rocks/bushes) with cast_shadow = 0 and visibility ranges 150m/110m/90m for 45-60 FPS | M1 | Survey 3 |
+| F10 | Comprehensive Headless Automated E2E Test Suite | Automated test verifies car mountain climb, frame-0 collisions, C# build, and scene load with exit code 0 | M2 | Survey 1, 2, 3 |
 
 ## Milestones
-
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| M1 | Realistic Environment Staging & Mobile PBR Lighting (R2) | Curate models with `.gdignore` safeguard; stage high-fidelity Urban Street and Tram Station arenas with PBR materials, crisp orthogonal sun shadows, filmic tonemapping, and 360-degree navigation regions. | none | PLANNED |
-| M2 | High-Fidelity 3D Weapon Pipeline & Viewmodel Rig Integration (R1) | Integrate Flatline AR, CAR SMG, and Serious Sam Minigun models into `assets/3d/weapons/`, create viewmodel scenes with `MuzzleSocket`, configure `WeaponData` resources with audio bindings and 4 upgrade paths, hook into `Player.gd` tactical arms rig and `ArmoryUI`. | M1 | PLANNED |
-| M3 | Visceral Combat Feedback & Mobile Performance Safeguards (R3) | Implement mobile-safe `CPUParticles3D` blood/gore bursts, headshot sound punch, golden hitmarkers, distinct zombie stagger states, and audit console for 0 GLES3/gl_compatibility warnings. | M1, M2 | PLANNED |
-| M4 | E2E Regression Verification & Forensic Integrity Audit | Run complete headless test suite (`TestRunner.tscn`, `Zombie360Test.tscn`, `test_weapons_economy.gd`, and new weapon tests); run `teamwork_preview_auditor` forensic verification. | M1, M2, M3 | PLANNED |
+| M1 | Core Implementation: Permanent 3D Collision, Vehicle Climbing, C# & Visuals | F1, F2, F3, F4, F5, F6, F7, F8, F9 | None | IN_PROGRESS |
+| M2 | Automated E2E Verification & Adversarial Hardening | F10 | M1 | PLANNED |
 
 ## Interface Contracts
+### Terrain Collision ↔ Physics Engine
+- All 9 terrain and mountain meshes (`ValleyFloor`, `MountainWest`, `MountainEast`, `MountainNorthWall`, `MountainSouthWall`, `DirtPath_West`, `DirtPath_East`, `MountainRoad_West`, `MountainRoad_East`) plus sidewalks and shoulders must have pre-baked `ConcavePolygonShape3D` children on their static bodies in `CityCarZombieArena.tscn`.
+- Collision exists from frame 0 upon scene instantiation before `_ready()` runs.
+- Highway asphalt (y = 0.0m) to sidewalk and dirt shoulder step height must be <= 0.02m (no 0.12m vertical cliff).
+- Highway edge at `|x| <= 28m` is cleared of obstructing barriers.
 
-### Weapon ↔ Viewmodel Rig (`Weapon.gd` ↔ `Player.gd`)
-- Each weapon scene under `scenes/weapons/models/<name>.tscn` MUST contain a child node named `MuzzleSocket` (`Node3D`).
-- Scale and rotation of weapon models must face `-Z` forward with proper tactical eye-level offset (approx `Vector3(0.18, -0.18, -0.42)`).
-- `Weapon.gd` searches for `MuzzleSocket` in child model to position `MuzzleFlash` and `MuzzleLight`.
-- Signals: `ammo_changed(current: int, max_ammo: int)`, `weapon_reload_started(duration: float)`.
+### Vehicles ↔ Mountain Surface
+- `DrivableCar`: `wheel_radius = 0.44`, `suspension_rest_length = 0.28`, `suspension_travel = 0.35`, `BodyCollision` bottom clearance >= 0.55m.
+- Incline crawling: assist directed along slope tangent vector `(forwardDir + Vector3.Up * 0.25).Normalized()`, avoiding pure `Vector3.UP` tire unloading.
+- Mountain slope climbing capability verified up to 45° slopes.
 
-### WeaponData ↔ Armory & Gameplay (`WeaponData.gd` ↔ `ArmoryUI.gd` / `SaveManager.gd`)
-- `weapon_id`: Unique identifier matching resource filename (e.g. `flatline`, `car_smg`, `minigun`).
-- Base stats: `base_damage`, `headshot_multiplier` (>=2.0), `base_fire_rate`, `base_mag_size`, `base_reload_time`, `spread`, `recoil`.
-- 4 upgrade paths (levels 0-4): `get_damage()`, `get_mag_size()`, `get_reload_time()`, `get_spread()`, `get_upgrade_cost()`.
-- Unlocked state persisted in `SaveManager.data.unlocked_weapons`.
+### C# Subsystems ↔ Engine Architecture
+- Build command: `/home/am/.dotnet/dotnet build SectorZeroLockdown.sln` outputs 0 warnings, 0 errors.
+- Target assembly: `.godot/mono/temp/bin/Debug/SectorZeroLockdown.dll`.
+- `SectorZeroGameCore` registered as Autoload singleton.
+- `WorldChunkStreamer` and `ZombieSwarmOptimizer` active in arena scene.
 
-### Environment Arena ↔ Combat Spawner (`Environment.tscn` ↔ `GameManager.gd`)
-- `NavigationRegion3D` with baked `NavigationMesh` covering the stationary player perimeter.
-- Spawn markers positioned 10m-25m in 4 quadrants: `SpawnFront`, `SpawnLeft`, `SpawnRight`, `SpawnBack`.
-- Lighting: Exactly 1 `DirectionalLight3D` (sun, orthogonal shadow) + <= 3 `OmniLight3D` local perimeter lights.
-
-### Combat HitZone ↔ Weapon Raycast (`HitZone.gd` ↔ `Weapon.gd`)
-- Head hit zone: `zone_type = 0` (HEAD), `damage_multiplier = 2.5`.
-- Chest hit zone: `zone_type = 1` (CHEST), `damage_multiplier = 1.0`.
-- Limb hit zone: `zone_type = 2` (LIMBS), `damage_multiplier = 0.7`.
-- Hit result triggers `HUD.show_hitmarker(is_headshot)` and spawns blood particles at collision normal.
+### Shading Engine ↔ Materials
+- `resources/materials/mat_real_grass_pbr.tres`: `albedo_color = Color(1, 1, 1, 1)`, `uv1_triplanar = true`.
+- `resources/materials/mat_dirt_pbr.tres`: `albedo_color = Color(1, 1, 1, 1)`, `uv1_triplanar = true`.
+- `resources/materials/mat_real_mountain_cliff.tres`: `albedo_color = Color(1, 1, 1, 1)`, `uv1_triplanar = true`.
+- Viewport: `scaling_3d_scale = 1.0` (100% native 3D resolution).
+- Atmosphere: `fog_density = 0.00010`, `fog_aerial_perspective = 0.0`, `tonemap_exposure = 1.15`.
 
 ## Code Layout
-- `assets/3d/weapons/`: High-fidelity GLB models (`flatline.glb`, `car_smg.glb`, `minigun.glb`, `hawk_shotgun.glb`)
-- `assets/3d/environments/`: High-fidelity GLB environment models (`street_city_7.glb`, `tram_station.glb`, `street_buildings.glb`)
-- `scenes/weapons/models/`: Godot 3D viewmodel scenes with `MuzzleSocket` and PBR materials (`flatline.tscn`, `car_smg.tscn`, `minigun.tscn`)
-- `resources/weapons/`: `WeaponData` resource files (`flatline.tres`, `car_smg.tres`, `minigun.tres`, etc.)
-- `scenes/environments/`: Arena scenes (`UrbanStreet.tscn`, `RailwayStation.tscn`, `AirportServiceRoad.tscn`)
-- `scenes/player/`: `Player.tscn`, `Player.gd` (viewmodel rig, stationary rotation, recoil, ADS)
-- `scenes/UI/`: `HUD.tscn`, `ArmoryUI.tscn`
-- `scripts/Zombies/`: `EnemyBase.gd` (hit reactions, headshot multipliers, stagger)
-- `scenes/test/`: `TestRunner.tscn`, test scripts in `scripts/Tools/`
+- `scenes/environments/CityCarZombieArena.tscn`: Main arena scene with pre-baked colliders.
+- `scenes/environments/CityCarZombieArena.gd`: Arena manager script (clean, no runtime trimesh loop).
+- `tools/bake_terrain_colliders.gd`: Tool script to pre-bake ConcavePolygonShape3D colliders into scene.
+- `tools/build_advanced_terrain.gd`: Procedural terrain builder.
+- `scenes/vehicles/DrivableCar.tscn`: Police cruiser vehicle scene.
+- `scripts/Vehicles/DrivableCar.gd`: Vehicle physics and driving controller.
+- `scripts/CSharp/Vehicles/VehiclePhysicsHelper.cs`: C# vehicle physics assist helper.
+- `scripts/CSharp/Core/SectorZeroGameCore.cs`: Core C# engine singleton.
+- `scripts/CSharp/World/WorldChunkStreamer.cs`: Open-world chunk streamer.
+- `scripts/CSharp/AI/ZombieSwarmOptimizer.cs`: Zombie swarm optimization.
+- `scripts/CSharp/Combat/DamageSystem.cs`: Damage system calculation.
+- `resources/materials/mat_real_grass_pbr.tres`: PBR grass material.
+- `resources/materials/mat_dirt_pbr.tres`: PBR dirt material.
+- `resources/materials/mat_real_mountain_cliff.tres`: PBR cliff rock material.
+- `tools/verify_all_requirements.gd`: Comprehensive headless E2E verification suite.
